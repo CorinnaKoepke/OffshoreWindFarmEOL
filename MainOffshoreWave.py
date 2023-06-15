@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+
 //#############################################################################
 //  File:      MainOffshoreWave.py
 //  Function:  Generates the plots for 'Testing Resilience Aspects of Operation 
@@ -9,6 +10,7 @@
 //  Date:      June-23
 //  Copyright: (c) Fraunhofer Institute for High-Speed-Dynamics EMI
 //#############################################################################
+
 """
 
 import numpy as np
@@ -29,7 +31,7 @@ def add_months(sourcedate, months):
 
 ###############################################################################
 # choose EOL option
-Mode = 'Exten'#'Decom', #'Exten', 'Repow'
+Mode = 'Decom'#'Decom', #'Exten', 'Repow'
 
 ##############################################################################
 print('Generate synthetic wave heights')
@@ -269,73 +271,44 @@ tdegDe, propDe = degradationTime(WTlist, wmin, wmax, phigh, plow)
 
             
 #################################################################
-fig = plt.figure(figsize=(15,10))
-ax = fig.add_subplot(111)
+def plotCumSum(WTlist, t, name):
+    
+    cmap = []
+    N = len(WTlist)
+    cmap = plt.get_cmap('viridis', N)
 
-plt.xticks(fontsize=FS)
-plt.yticks(fontsize=FS)
+    fig = plt.figure(figsize=(15,10))
+    plt.xticks(fontsize=FS)
+    plt.yticks(fontsize=FS)
+    
+    w=-1
+    for i in WTlist:
+        w = w+1
+        plt.semilogy(date_list, i, color=cmap(w),label=name) 
+    plt.plot([date_list[t],date_list[t]], [min(WTlist[0]),max(WTlist[0])],color='k',label='H maximal')
+    plt.plot([eol, eol], [min(WTlist[0]),max(WTlist[0])], color='k',linestyle=':')
+    plt.xlabel('Time', fontsize=FS)
+    plt.ylabel('Cumulative sum of load changes', fontsize=FS)
+    
+    minC = Hmin
+    maxC = max(hNum)[-1]
+    norm = mpl.colors.Normalize(vmin=minC, vmax=maxC)
+      
+    # creating ScalarMappable
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+      
+    cb = plt.colorbar(sm, ticks=np.linspace(minC, maxC, N))
+    cb.ax.tick_params(labelsize=FS)
+    fig.savefig(name, dpi=100)
 
-w=-1
-cmap = []
-N = len(WaveTimeCumSum)
-cmap = plt.get_cmap('viridis', N)
-s =1/ len(max(hNum))
-for i in WaveTimeCumSum:
-    w = w+1
-    col = (0+w*s,0,1-w*s)
-    plt.semilogy(date_list, i, color=cmap(w),label=name) 
-plt.plot([date_list[tdeg],date_list[tdeg]], [min(WaveTimeCumSum[0]),max(WaveTimeCumSum[0])],color='k',label='H maximal')
-plt.plot([eol, eol], [min(WaveTimeCumSum[0]),max(WaveTimeCumSum[0])], color='k',linestyle=':')
-plt.xlabel('Time', fontsize=FS)
-plt.ylabel('Cumulative sum of load changes', fontsize=FS)
+plotCumSum(WaveTimeCumSum, tdeg, 'CumulativeTime.png')
+plotCumSum(WaveTimeCumSumDe, tdegDe, 'CumulativeTimeDecom.png')
 
-minC = Hmin
-maxC = max(hNum)[-1]
-norm = mpl.colors.Normalize(vmin=minC, vmax=maxC)
-  
-# creating ScalarMappable
-sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-sm.set_array([])
-  
-cb = plt.colorbar(sm, ticks=np.linspace(minC, maxC, N))
-cb.ax.tick_params(labelsize=FS)
-
-name = 'CumulativeTime.png'
-fig.savefig(name, dpi=100)
-
-###############################################################################
-fig = plt.figure(figsize=(15,10))
-ax = fig.add_subplot(111)
-
-
-plt.xticks(fontsize=FS)
-plt.yticks(fontsize=FS)
-
-w=-1
-s =1/ len(max(hNum))
-for i in WaveTimeCumSumDe:
-    w = w+1
-    col = (0+w*s,0,1-w*s)
-    plt.semilogy(date_list, i, color=cmap(w),label=name)
-plt.plot([date_list[tdegDe],date_list[tdegDe]], [min(WaveTimeCumSumDe[0]),max(WaveTimeCumSumDe[0])],color='k',label='H maximal')
-plt.plot([eol, eol], [min(WaveTimeCumSumDe[0]),max(WaveTimeCumSumDe[0])], color='k',linestyle=':')
-plt.xlabel('Time', fontsize=FS)
-plt.ylabel('Cumulative sum of load changes', fontsize=FS)
-
-# creating ScalarMappable
-sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-sm.set_array([])
-  
-cb = plt.colorbar(sm, ticks=np.linspace(minC, maxC, N))
-cb.ax.tick_params(labelsize=FS)
-
-name = 'CumulativeTimeDecom.png'
-fig.savefig(name, dpi=100)
 #############################################################################
 print('Generate simple 3 OSS network')
 RT = 1
 RO = 2
-
 numTurbinesPerOSS = 60
 
 #Hard coded 3 OSS: 
@@ -346,14 +319,8 @@ TT.append('OSS2')
 TT.append('OSS3')
 #https://www.wind-energie.de/fileadmin/redaktion/dokumente/publikationen-oeffentlich/themen/06-zahlen-und-fakten/20230116_Status_des_Offshore-Windenergieausbaus_Jahr_2022.pdf
 
-
 counters = np.zeros(len(TO))
 broken = np.zeros(len(TO))
-
-if Mode == 'Decom':
-    propUse = propDe
-else:
-    propUse = prop
 
 OSS = {
        'OSS1':[i for i in range(0,1*numTurbinesPerOSS)],
@@ -367,6 +334,10 @@ tt = -1
 Broken = []
 for t in date_list:
     tt = tt+1
+    if Mode == 'Decom' and t > Rebuild:
+        propUse = propDe
+    else:
+        propUse = prop
     for i in TO:
         counters[i] = counters[i]-1
         smalln = np.random.uniform(0,1,size=1)
@@ -439,6 +410,12 @@ for t in date_list:
 Energy = [np.sum(i) for i in EOut]        
     
 #############################################################################
+
+if Mode == 'Decom':
+    t = tdegDe
+else:
+    t = tdeg
+
 fig = plt.figure(figsize=(15,10))
 ax = fig.add_subplot(111)
 
@@ -446,7 +423,7 @@ plt.xticks(fontsize=FS)
 plt.yticks(fontsize=FS)
 plt.plot(date_list, Status, color='k',label='Load') #semilogx
 plt.plot([eol,eol],[min(Status),max(Status)],color='grey',label='H maximal')
-plt.plot([date_list[tdegDe],date_list[tdegDe]], [min(Status),max(Status)],color='k',label='H maximal')
+plt.plot([date_list[t],date_list[t]], [min(Status),max(Status)],color='k',label='H maximal')
 plt.xlabel('Time', fontsize=FS)
 plt.ylabel('Status', fontsize=FS)
 
@@ -462,7 +439,7 @@ plt.xticks(fontsize=FS)
 plt.yticks(fontsize=FS)
 plt.plot(date_list, Energy, color='k',label='Load') #semilogx
 plt.plot([eol,eol],[min(Energy),max(Energy)],color='grey',label='H maximal')
-plt.plot([date_list[tdegDe],date_list[tdegDe]], [min(Energy),max(Energy)],color='k',label='H maximal')
+plt.plot([date_list[t],date_list[t]], [min(Energy),max(Energy)],color='k',label='H maximal')
 plt.xlabel('Time', fontsize=FS)
 plt.ylabel('Energy [MW]', fontsize=FS)
 
