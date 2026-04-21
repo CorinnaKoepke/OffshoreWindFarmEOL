@@ -7,7 +7,7 @@
 //             Options for Offshore Wind Farms beyond the End-of-Life' by 
 //             Corinna Köpke, Jennifer Mielniczek and Alexander Stolz 
 //  Author:    Corinna Köpke
-//  Date:      June-23
+//  Date:      June-2023, updated by C. Köpke March-2026
 //  Copyright: (c) Fraunhofer Institute for High-Speed-Dynamics EMI
 //#############################################################################
 
@@ -74,7 +74,7 @@ for i in t:
     
     whn = [] #estimate the number of load changes for each discrete wave height:
     h = []
-    for j in range(Hmin,int(hmax)):
+    for j in range(Hmin,int(hmax[0])):
         h.append(j)
         r = rayleighX(j,rs)*loadChanges
         if r > 1:
@@ -122,14 +122,21 @@ ax.set_xlim(0, 12)
 
 plt.xticks(fontsize=FS)
 plt.yticks(fontsize=FS)
-sns.distplot(a=test, hist=False, color='k',kde_kws={'linestyle':'--'},label='Rayleigh distribution')
-sns.distplot(a=Hsig, bins=20, hist=True, color='k',label='H significant')
-sns.distplot(a=Hmax, bins=100, hist=True, color='grey',label='H maximal')
+
+# Histogramme anstelle von distplot
+sns.histplot(np.concatenate(Hsig), bins=20, ax=ax, color='lightblue', stat='density')
+sns.histplot(np.concatenate(Hmax), bins=100, ax=ax, color='lightgreen', stat='density')
+
+# KDE anstelle von distplot
+sns.kdeplot(test, ax=ax, color='k', linestyle='-', label='Rayleigh distribution')
+sns.kdeplot(np.concatenate(Hsig), ax=ax, color='blue', linestyle='-', label='H significant')
+sns.kdeplot(np.concatenate(Hmax), ax=ax, color='green', linestyle='-', label='H maximal')
+
 
 plt.xlabel('Wave height H', fontsize=FS)
 plt.ylabel('Probability density', fontsize=FS)
 
-plt.legend(fontsize=FS)
+plt.legend(fontsize=FS, loc='upper right')
 
 name = 'WaveHist.png'
 fig.savefig(name, dpi=100)
@@ -277,7 +284,8 @@ def plotCumSum(WTlist, t, name):
     N = len(WTlist)
     cmap = plt.get_cmap('viridis', N)
 
-    fig = plt.figure(figsize=(15,10))
+    #fig, ax = plt.figure(figsize=(15,10))
+    fig, ax = plt.subplots(figsize=(15,10))
     plt.xticks(fontsize=FS)
     plt.yticks(fontsize=FS)
     
@@ -298,7 +306,8 @@ def plotCumSum(WTlist, t, name):
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
       
-    cb = plt.colorbar(sm, ticks=np.linspace(minC, maxC, N))
+    #cb = plt.colorbar(sm, ticks=np.linspace(minC, maxC, N))
+    cb = fig.colorbar(sm, ax=ax, ticks=np.linspace(minC, maxC, N))
     cb.ax.tick_params(labelsize=FS)
     fig.savefig(name, dpi=100)
 
@@ -383,18 +392,18 @@ for t in date_list:
                     if Mode == 'Exten':
                     #Extension, Repowering and Decommissioning: Select here:
                     #Extension:
-                        eout[i] = np.random.uniform(minOut,maxOut,size=1) 
+                        eout[i] = np.random.uniform(minOut,maxOut) #size=1, same below
                         tdegPlot = tdeg
                     #Repowering:
                     elif Mode == 'Repow':
-                        eout[i] = np.random.uniform(minOutRe,maxOutRe,size=1) 
+                        eout[i] = np.random.uniform(minOutRe,maxOutRe) 
                         tdegPlot = tdeg
                     #Decommissioning:
                     else:
-                        eout[i] = np.random.uniform(minOutDe,maxOutDe,size=1) 
+                        eout[i] = np.random.uniform(minOutDe,maxOutDe) 
                         tdegPlot = tdegDe
                 else:
-                    eout[i] = np.random.uniform(minOut,maxOut,size=1) 
+                    eout[i] = np.random.uniform(minOut,maxOut) 
         if Broken[tt][i] == 1: #broken
             if TT[i] == 'Turbine':
                 eout[i] = 0
@@ -446,5 +455,5 @@ plt.ylabel('Energy [MW]', fontsize=FS)
 name = 'Energy.png'
 fig.savefig(name, dpi=100)
 
-AreaE = np.trapz(Energy)
+AreaE = np.trapezoid(Energy)
 print('Area: ', AreaE)
