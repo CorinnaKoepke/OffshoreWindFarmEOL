@@ -6,6 +6,9 @@
 //  Function:  Generates the plots for 'Testing Resilience Aspects of Operation 
 //             Options for Offshore Wind Farms beyond the End-of-Life' by 
 //             Corinna Köpke, Jennifer Mielniczek and Alexander Stolz 
+//  Citation:  Köpke, C.; Mielniczek, J.; Stolz, A. Testing Resilience Aspects 
+//             of Operation Options for Offshore Wind Farms beyond the End-of-Life. 
+//             Energies 2023, 16, 4771. https://doi.org/10.3390/en16124771
 //  Author:    Corinna Köpke
 //  Date:      June-2023, updated by C. Köpke March-2026
 //  Copyright: (c) Fraunhofer Institute for High-Speed-Dynamics EMI
