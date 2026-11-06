@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Offshore Wind Farm EOL — Interactive Resilience Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#243247; --border:#334155;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent2:#22c55e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);}
+  header{padding:20px 28px;background:linear-gradient(90deg,#0b1220,#111c33);
+         border-bottom:1px solid var(--border);}
+  header h1{margin:0 0 4px;font-size:22px;font-weight:600}
+  header p{margin:0;color:var(--muted);font-size:13px;max-width:1000px;line-height:1.5}
+  .wrap{display:grid;grid-template-columns:320px 1fr;align-items:start;}
+  .controls{position:sticky;top:0;max-height:100vh;overflow:auto;background:var(--panel);
+            border-right:1px solid var(--border);padding:18px 18px 40px;}
+  .controls h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+               margin:18px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px}
+  .controls h2:first-child{margin-top:0}
+  .ctrl{margin:10px 0}
+  .ctrl label{display:flex;justify-content:space-between;font-size:13px;color:var(--text);margin-bottom:4px}
+  .ctrl label .val{color:var(--accent);font-variant-numeric:tabular-nums;font-weight:600}
+  .ctrl input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+  .ctrl select,.ctrl input[type=number]{width:100%;padding:7px 9px;background:var(--panel2);
+     color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:13px}
+  .btnrow{display:flex;gap:8px;margin-top:14px}
+  button{flex:1;padding:9px 10px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+  .run{background:var(--accent);color:#04263a}
+  .reset{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+  .hint{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4}
+  .plots{padding:22px;display:grid;gap:20px;grid-template-columns:1fr;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 14px 8px;
+        box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .card h3{margin:2px 6px 6px;font-size:15px;font-weight:600}
+  .card .sub{margin:0 6px 6px;font-size:12px;color:var(--muted)}
+  .plot{width:100%;height:420px}
+  .plot.tall{height:480px}
+  .stat{margin:2px 6px 4px;font-size:12px;color:var(--accent2);font-variant-numeric:tabular-nums}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}.controls{position:static;max-height:none}.two{grid-template-columns:1fr}}
+  footer{padding:16px 28px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:10px}
+  .badge{display:inline-block;background:#0b1220;border:1px solid var(--border);border-radius:999px;
+         padding:2px 10px;margin-left:8px;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Offshore Wind Farm End-of-Life — Interactive Resilience Dashboard
+    <span class="badge" id="modeBadge">Mode: Decom</span>
+  </h1>
+  <p>Recreates the plots of <em>"Testing Resilience Aspects of Operation Options for Offshore Wind
+     Farms beyond the End-of-Life"</em> (Köpke, Mielniczek &amp; Stolz, Energies 2023, 16, 4771) as
+     interactive charts. Adjust any parameter and the whole model recomputes — waves, load changes,
+     degradation time, decommissioning window, turbine/OSS status and energy output.</p>
+</header>
+
+<div class="wrap">
+  <!-- ===================== CONTROLS ===================== -->
+  <aside class="controls">
+    <h2>Operation mode</h2>
+    <div class="ctrl">
+      <label>Mode</label>
+      <select id="mode">
+        <option value="Decom" selected>Decommissioning</option>
+        <option value="Exten">Extension</option>
+        <option value="Repow">Repowering</option>
+      </select>
+    </div>
+    <p class="hint">Decomissioning models a rebuild gap between end-of-life and <code>Rebuild</code>;
+       Extension/Repowering ramp the output power over time.</p>
+
+    <h2>Wave climate</h2>
+    <div class="ctrl"><label>Simulation length (years) <span class="val" id="v_years">60</span></label>
+      <input type="range" id="years" min="5" max="60" step="1" value="60"></div>
+    <div class="ctrl"><label>Severe-season Rayleigh σ (rs1) <span class="val" id="v_rs1">1.5</span></label>
+      <input type="range" id="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
+    <div class="ctrl"><label>Mild-season Rayleigh σ (rs2) <span class="val" id="v_rs2">0.7</span></label>
+      <input type="range" id="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
+    <div class="ctrl"><label>Minimum wave height H<sub>min</sub> <span class="val" id="v_hmin">8</span></label>
+      <input type="range" id="hmin" min="2" max="12" step="1" value="8"></div>
+    <div class="ctrl"><label>Severe months <span class="val" id="v_months">Nov–Mar</span></label>
+      <select id="months">
+        <option value="11,12,1,2,3" selected>Nov–Mar (default)</option>
+        <option value="11,12,1,2,3,4">Nov–Apr</option>
+        <option value="12,1,2">Dec–Feb</option>
+        <option value="">All months</option>
+      </select></div>
+
+    <h2>Load / structure limits</h2>
+    <div class="ctrl"><label>Existing: w<sub>min</sub> <span class="val" id="v_wmin">8</span></label>
+      <input type="range" id="wmin" min="4" max="14" step="1" value="8"></div>
+    <div class="ctrl"><label>Existing: w<sub>max</sub> <span class="val" id="v_wmax">17</span></label>
+      <input type="range" id="wmax" min="10" max="24" step="1" value="17"></div>
+    <div class="ctrl"><label>New: w<sub>min</sub> <span class="val" id="v_wminD">10</span></label>
+      <input type="range" id="wminD" min="4" max="14" step="1" value="10"></div>
+    <div class="ctrl"><label>New: w<sub>max</sub> <span class="val" id="v_wmaxD">19</span></label>
+      <input type="range" id="wmaxD" min="12" max="26" step="1" value="19"></div>
+
+    <h2>End-of-life &amp; decommissioning</h2>
+    <div class="ctrl"><label>End-of-life year <span class="val" id="v_eol">2040</span></label>
+      <input type="range" id="eol" min="2020" max="2045" step="1" value="2040"></div>
+    <div class="ctrl"><label>Decommissioning done (year) <span class="val" id="v_decom">2042</span></label>
+      <input type="range" id="decom" min="2030" max="2050" step="1" value="2042"></div>
+    <div class="ctrl"><label>Rebuild finished (year) <span class="val" id="v_rebuild">2050</span></label>
+      <input type="range" id="rebuild" min="2042" max="2060" step="1" value="2050"></div>
+
+    <h2>OSS network &amp; damage</h2>
+    <div class="ctrl"><label>Turbines per OSS <span class="val" id="v_turbo">60</span></label>
+      <input type="range" id="turbo" min="10" max="100" step="5" value="60"></div>
+    <div class="ctrl"><label>Wave height to damage &gt; (m) <span class="val" id="v_thr">15</span></label>
+      <input type="range" id="thr" min="5" max="25" step="1" value="15"></div>
+    <div class="ctrl"><label>Repair time (months) <span class="val" id="v_rep">2</span></label>
+      <input type="range" id="rep" min="1" max="12" step="1" value="2"></div>
+    <div class="ctrl"><label>Turbine output range (MW) <span class="val" id="v_pow">4–6</span></label>
+      <input type="range" id="powmax" min="5" max="15" step="1" value="6"></div>
+
+    <h2>Randomness</h2>
+    <div class="ctrl"><label>Seed <span class="val" id="v_seed">2023</span></label>
+      <input type="number" id="seed" value="2023" min="1" max="999999" step="1"></div>
+
+    <div class="btnrow">
+      <button class="reset" id="resetBtn">Reset</button>
+    </div>
+    <p class="hint">Recompute runs automatically on every change (debounced). Use a different seed to
+       explore other stochastic realisations. Turbine/OSS failure, status &amp; energy depend on mode
+       and the current time step, so recompute re-samples them.</p>
+  </aside>
+
+  <!-- ===================== PLOTS ===================== -->
+  <main class="plots">
+    <div class="card">
+      <h3>1 · Synthetic wave heights</h3>
+      <p class="sub">Maximal &amp; significant wave height over the simulation period (monthly samples).</p>
+      <div id="waveHeight" class="plot"></div>
+    </div>
+
+    <div class="card">
+      <h3>2 · Wave-height distribution</h3>
+      <p class="sub">Density of H<sub>sig</sub> and H<sub>max</sub> vs the reference Rayleigh distribution.</p>
+      <div id="waveHist" class="plot"></div>
+    </div>
+
+    <div class="card">
+      <h3>3 · Expected load (load changes per month)</h3>
+      <p class="sub">Sum of estimated load changes for all wave heights above H<sub>min</sub> in a given month.</p>
+      <div id="load" class="plot"></div>
+    </div>
+
+    <div class="card">
+      <h3>4 · Failure threshold (load changes ↔ wave height)</h3>
+      <p class="sub">Wave height at which the design load budget is exceeded for p = 0.1 / 0.5 (log-x).</p>
+      <div id="loadWaves" class="plot"></div>
+    </div>
+
+    <div class="card">
+      <h3>5 · Cumulative load changes (existing structures)</h3>
+      <p class="sub">Cumulative sum per discrete wave height, log-y. Dotted = end-of-life, solid = degradation time.</p>
+      <div id="cumTime" class="plot tall"></div>
+      <div class="stat" id="stat_cum"></div>
+    </div>
+
+    <div class="card">
+      <h3>6 · Cumulative load changes (decommissioning reset)</h3>
+      <p class="sub">Cumulative sum that resets to zero during the decommissioning window (decom → rebuild).</p>
+      <div id="cumTimeDecom" class="plot tall"></div>
+      <div class="stat" id="stat_cumde"></div>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>7 · Network status</h3>
+        <p class="sub">Fraction of turbines + OSS currently operational.</p>
+        <div id="status" class="plot"></div>
+      </div>
+      <div class="card">
+        <h3>8 · Energy output [MW]</h3>
+        <p class="sub">Total operational power, mode-dependent.</p>
+        <div id="energy" class="plot"></div>
+        <div class="stat" id="stat_energy"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  Adapted from <code>MainOffshoreWave.py</code> · Fraunhofer EMI · Köpke, Mielniczek &amp; Stolz (2023).
+  Stochastic model re-implemented in JavaScript with a seeded RNG; results are illustrative, not a direct
+  reproduction of any single published figure.
+</footer>
+
+<script>
+/* =====================================================================
+   Seeded RNG  (mulberry32)  + Rayleigh via inverse CDF
+   ===================================================================== */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* =====================================================================
+   Date helpers  (port of add_months)
+   ===================================================================== */
+function addMonths(d, m){
+  const total = d.getMonth() + 1 + m;             // month = sourcedate.month-1+months
+  let year = d.getFullYear() + Math.floor(total/12);
+  let month = total % 12;                          // 0-based
+  if(month < 0){ month += 12; year -= 1; }
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const day = Math.min(d.getDate(), daysInMonth);
+  return new Date(year, month, day);
+}
+function ymd(d){return d.getFullYear();}
+function fmt(d){
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function dateLabel(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+
+/* =====================================================================
+   Read parameters from the controls
+   ===================================================================== */
+function readParams(){
+  const val = id => document.getElementById(id).value;
+  const num = id => parseFloat(val(id));
+  const years = num('years');
+  const nummonths = years*12;
+  const monthsStr = val('months');
+  const severe = monthsStr ? monthsStr.split(',').map(Number) : [1,2,3,4,5,6,7,8,9,10,11,12];
+  return {
+    mode:        val('mode'),
+    years, nummonths,
+    rs1:num('rs1'), rs2:num('rs2'), hmin:num('hmin'), severe,
+    wmin:num('wmin'), wmax:num('wmax'), wminD:num('wminD'), wmaxD:num('wmaxD'),
+    eol:new Date(num('eol'),0,1),
+    decom:new Date(num('decom'),0,1),
+    rebuild:new Date(num('rebuild'),0,1),
+    turbo:num('turbo'), thr:num('thr'), rep:num('rep'), powmax:num('powmax'),
+    seed: Math.floor(num('seed')),
+  };
+}
+const loadChanges = 6*60*24*30;   // fixed in the original script
+
+/* =====================================================================
+   Core simulation  (faithful port of MainOffshoreWave.py)
+   ===================================================================== */
+function rayleighX(x, sigma){ return (x/(sigma*sigma))*Math.exp(-(x*x)/(2*sigma*sigma)); }
+function loadFailure(minH, maxH, xtest){
+  if(xtest === 0) return 10000;
+  let y = -0.5*Math.log(xtest) + maxH;
+  return y > minH ? y : minH;
+}
+
+function simulate(P){
+  const rng = mulberry32(P.seed);
+  const randU = () => rng();                                   // uniform [0,1)
+  const randRayleigh = scale => -scale*Math.log(1 - randU());  // inverse CDF
+  const randRange = (lo,hi) => lo + (hi-lo)*randU();
+
+  const base = new Date(2015,0,1);
+  const date_list = [];
+  for(let x=0;x<P.nummonths;x++) date_list.push(addMonths(base, x));
+  const n = date_list.length;
+
+  // ---- wave heights ----
+  const Hsig = new Array(n), Hmax = new Array(n);
+  const waveHeightNum = new Array(n), hNum = new Array(n);
+  for(let i=0;i<n;i++){
+    const rs = P.severe.includes(date_list[i].getMonth()+1) ? P.rs1 : P.rs2;
+    const hsig = randRayleigh(rs);
+    let plus = randRange(0, hsig*(0.07*(date_list[i].getFullYear()-2015)+3));
+    if(Math.abs(plus) > 20) plus = 20;
+    const hmax = hsig + Math.abs(plus);
+    Hsig[i]=hsig; Hmax[i]=hmax;
+
+    const whn=[], h=[];
+    for(let j=P.hmin; j<Math.floor(hmax); j++){
+      h.push(j);
+      const r = rayleighX(j, rs)*loadChanges;
+      whn.push(r>1 ? r : 1);
+    }
+    waveHeightNum[i]=whn; hNum[i]=h;
+  }
+  const load = waveHeightNum.map(w => w.length ? w.reduce((a,b)=>a+b,0) : 0);
+
+  // ---- cumulative sums (existing) and (decommission reset) ----
+  const maxLen = Math.max(...waveHeightNum.map(w=>w.length), 0);
+  const WaveTime = new Array(maxLen), WaveTimeCumSum = new Array(maxLen), WaveTimeCumSumDe = new Array(maxLen);
+  for(let i=0;i<maxLen;i++){
+    const temp=[], temp2=[], temp3=[], temp4=[];
+    let accDe = 0;
+    for(let t=0;t<n;t++){
+      if(waveHeightNum[t].length===0){ temp.push(0); }
+      else if(i < waveHeightNum[t].length){ temp.push(waveHeightNum[t][i]); }
+      if(date_list[t] > P.decom && date_list[t] <= P.rebuild){
+        accDe = 0;                       // temp4 reset -> start from zero
+        temp3.push(0);
+      } else {
+        accDe = (i < waveHeightNum[t].length) ? accDe + waveHeightNum[t][i] : accDe;
+        temp3.push(accDe);
+      }
+      temp2.push(temp.reduce((a,b)=>a+b,0));
+    }
+    WaveTime[i]=temp; WaveTimeCumSum[i]=temp2; WaveTimeCumSumDe[i]=temp3;
+  }
+
+  // ---- degradation time ----
+  // representative height per discrete level = value from the month with the tallest wave (max(hNum) in Python)
+  const maxHNum = hNum.reduce((best, arr)=>{
+    if(!arr.length) return best;
+    const last = arr[arr.length-1];
+    if(!best || last > best[best.length-1]) return arr;
+    return best;
+  }, []);
+
+  function degradationTime(WTlist, wmin, wmax){
+    const phigh=0.5, plow=0.1, prop=[];
+    for(let t=0;t<n;t++){
+      let exceed=false;
+      for(let dw=0;dw<WTlist.length;dw++){
+        if(dw < maxHNum.length && maxHNum[dw] > loadFailure(wmin,wmax, WTlist[dw][t])) { exceed=true; break; }
+      }
+      prop.push(exceed?phigh:plow);
+    }
+    let tdeg = prop.indexOf(0.5);
+    if(tdeg<0) tdeg = n-1;
+    return {tdeg, prop};
+  }
+
+  const ex  = degradationTime(WaveTimeCumSum,   P.wmin,  P.wmax);
+  const de  = degradationTime(WaveTimeCumSumDe, P.wminD, P.wmaxD);
+
+  // ---- OSS network, damage, status & energy ----
+  const turbo = P.turbo;
+  const TO = Array.from({length:3*turbo+3}, (_,i)=>i);
+  const TT = new Array(turbo*3).fill('Turbine');
+  TT.push('OSS1','OSS2','OSS3');
+  const OSS = {
+    OSS1:[...Array(turbo).keys()],
+    OSS2:Array.from({length:turbo},(_,k)=>turbo+k),
+    OSS3:Array.from({length:turbo},(_,k)=>2*turbo+k),
+  };
+  const counters = new Array(TO.length).fill(0);
+  const broken = new Array(TO.length).fill(0);
+  const Broken=[];
+  for(let t=0;t<n;t++){
+    let propUse;
+    if(P.mode==='Decom' && date_list[t] > P.rebuild) propUse = de.prop;
+    else propUse = ex.prop;
+    for(const i of TO){
+      counters[i] -= 1;
+      const small = randU();
+      if(small <= propUse[t] && Hmax[t] > P.thr && counters[i] < 0){
+        counters[i] = P.rep;   // repair time
+        broken[i] = 1;
+      }
+      if(counters[i] === 0) broken[i] = 0;
+    }
+    Broken.push(broken.slice());
+  }
+  const Status = Broken.map(i => 1 - i.reduce((a,b)=>a+b,0)/i.length);
+
+  const minOut=4, maxOut=6;
+  let minOutRe=4, maxOutRe=6, minOutDe=4, maxOutDe=6;
+  const eout = new Array(TO.length).fill(0);
+  const EOut=[];
+  for(let t=0;t<n;t++){
+    if(date_list[t] > P.eol){
+      minOutRe = Math.min(minOutRe+0.05,6);
+      maxOutRe = Math.min(maxOutRe+0.05,9);
+    }
+    if(date_list[t] > P.eol && date_list[t] <= P.rebuild){
+      minOutDe = Math.max(minOutDe-0.15,0);
+      maxOutDe = Math.max(maxOutDe-0.15,0);
+    }
+    if(date_list[t] > P.rebuild){
+      minOutDe = Math.min(minOutDe+0.15,7);
+      maxOutDe = Math.min(maxOutDe+0.15,10);
+    }
+    const tt=t;
+    for(const i of TO){
+      if(Broken[tt][i]===0){
+        if(TT[i]==='Turbine'){
+          if(i < turbo){
+            if(P.mode==='Exten')       eout[i]=randRange(minOut,maxOut);
+            else if(P.mode==='Repow')  eout[i]=randRange(minOutRe,maxOutRe);
+            else                       eout[i]=randRange(minOutDe,maxOutDe);
+          } else eout[i]=randRange(minOut,maxOut);
+        }
+      } else {
+        if(TT[i]==='Turbine') eout[i]=0;
+        else if(TT[i]==='OSS1') OSS.OSS1.forEach(k=>eout[k]=0);
+        else if(TT[i]==='OSS2') OSS.OSS2.forEach(k=>eout[k]=0);
+        else OSS.OSS3.forEach(k=>eout[k]=0);
+      }
+    }
+    EOut.push(eout.slice());
+  }
+  const Energy = EOut.map(i=>i.reduce((a,b)=>a+b,0));
+
+  const tdeg = (P.mode==='Decom') ? de.tdeg : ex.tdeg;
+  const tdegDe = de.tdeg, tdegEx = ex.tdeg;
+  return {date_list, Hsig, Hmax, load, hNum, waveHeightNum,
+          WaveTimeCumSum, WaveTimeCumSumDe, Status, Energy,
+          tdeg, tdegDe, tdegEx, ex, de, n, turbo,
+          minStatus:Math.min(...Status), maxStatus:Math.max(...Status),
+          minEnergy:Math.min(...Energy), maxEnergy:Math.max(...Energy)};
+}
+
+/* =====================================================================
+   Plotting
+   ===================================================================== */
+const FS = 14;
+const layoutBase = (title, xtitle, ytitle) => ({
+  paper_bgcolor:'#1e293b', plot_bgcolor:'#1e293b',
+  font:{color:'#e2e8f0', size:FS, family:'Segoe UI, sans-serif'},
+  margin:{l:70,r:24,t:16,b:60},
+  xaxis:{title:{text:xtitle,font:{size:FS}}, gridcolor:'#334155', zerolinecolor:'#475569'},
+  yaxis:{title:{text:ytitle,font:{size:FS}}, gridcolor:'#334155', zerolinecolor:'#475569'},
+  legend:{orientation:'h', y:1.12, x:0, bgcolor:'rgba(0,0,0,0)'},
+  showlegend:true,
+});
+const cfg = {displaylogo:false, responsive:true, modeBarButtonsToRemove:['lasso2d','select2d']};
+
+function plotWaves(S){
+  const d = S.date_list.map(dateLabel);
+  Plotly.react('waveHeight', [
+    {x:d, y:S.Hmax, mode:'lines', line:{color:'#f8fafc', width:1.2}, name:'H maximal'},
+    {x:d, y:S.Hsig, mode:'lines', line:{color:'#ef4444', width:1.2}, name:'H significant'},
+  ], layoutBase('','Time','Wave height H (m)'), cfg);
+}
+
+function std(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;
+  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)*(b-m),0)/arr.length);}
+function kde(data, xs){
+  const n=data.length, bw=1.06*std(data)*Math.pow(n,-0.2);
+  return xs.map(x=>{let s=0;for(let k=0;k<n;k++){const z=(x-data[k])/bw;s+=Math.exp(-0.5*z*z);}
+    return s/(n*bw*Math.sqrt(2*Math.PI));});
+}
+function densityHist(data, binStart, binEnd, binW){
+  const nb = Math.round((binEnd-binStart)/binW);
+  const counts = new Array(nb).fill(0);
+  const N = data.length;
+  for(const v of data){
+    let k = Math.floor((v-binStart)/binW);
+    if(k>=0 && k<nb) counts[k]++;
+  }
+  const total = N * binW;
+  const x=[], y=[];
+  for(let i=0;i<nb;i++){
+    x.push(binStart + (i+0.5)*binW);
+    y.push(counts[i]/total);
+  }
+  return {x, y};
+}
+function plotHist(S, P){
+  const xs=[]; for(let x=0;x<=22;x+=0.1) xs.push(x);
+  const sigma=(P.rs1+P.rs2)/2;
+  const rayleigh = xs.map(x=>(x/(sigma*sigma))*Math.exp(-(x*x)/(2*sigma*sigma)));
+  const hsigAll = S.Hsig.filter(v=>v>0), hmaxAll=S.Hmax.filter(v=>v>0);
+  const binW=0.25;
+  const hs = densityHist(hsigAll, 0, 22, binW);
+  const hm = densityHist(hmaxAll, 0, 22, binW);
+  const d=[
+    {x:hs.x, y:hs.y, type:'bar', name:'H significant', width:binW,
+     marker:{color:'rgba(96,165,250,0.35)'}},
+    {x:hm.x, y:hm.y, type:'bar', name:'H maximal', width:binW,
+     marker:{color:'rgba(74,222,128,0.35)'}},
+    {x:xs, y:rayleigh, mode:'lines', name:'Rayleigh distribution', line:{color:'#e2e8f0',width:2}},
+    {x:xs, y:kde(hsigAll,xs), mode:'lines', name:'H significant (KDE)', line:{color:'#3b82f6',width:2.5}},
+    {x:xs, y:kde(hmaxAll,xs), mode:'lines', name:'H maximal (KDE)', line:{color:'#22c55e',width:2.5}},
+  ];
+  const L=layoutBase('','Wave height H (m)','Probability density'); L.xaxis.range=[0,14];
+  Plotly.react('waveHist', d, L, cfg);
+}
+
+function plotLoad(S){
+  Plotly.react('load', [{x:S.date_list.map(dateLabel), y:S.load, mode:'lines',
+    line:{color:'#e2e8f0',width:1.2}, name:'Load changes'}],
+    layoutBase('','Time','Load changes'), cfg);
+}
+
+function plotLoadWaves(P){
+  const x=[]; for(let e=0;e<=10;e+=0.1) x.push(Math.pow(10,e));
+  const y = x.map(i=>loadFailure(P.wmin,P.wmax,i));
+  const yDe= x.map(i=>loadFailure(P.wminD,P.wmaxD,i));
+  const d=[
+    {x,y, mode:'lines', type:'logx', name:'Existing structures', line:{color:'#e2e8f0',width:2}},
+    {x,y:yDe, mode:'lines', type:'logx', name:'New structures', line:{color:'#ef4444',width:2}},
+  ];
+  const L=layoutBase('','Acceptable load changes','Wave height H (m)');
+  L.xaxis.type='log';
+  L.shapes=[
+    {type:'rect', xref:'paper', yref:'paper', x0:0.15, y0:0.15, x1:0.65, y1:0.65,
+     fillcolor:'rgba(148,163,184,0.12)', line:{color:'#64748b',width:1}},
+  ];
+  L.annotations=[
+    {x:0.65, y:0.65, xref:'paper', yref:'paper', text:'p = 0.5', showarrow:false,
+     font:{size:12}, bgcolor:'rgba(30,41,59,0.9)', bordercolor:'#64748b'},
+    {x:0.15, y:0.15, xref:'paper', yref:'paper', text:'p = 0.1', showarrow:false,
+     font:{size:12}, bgcolor:'rgba(30,41,59,0.9)', bordercolor:'#64748b'},
+  ];
+  Plotly.react('loadWaves', d, L, cfg);
+}
+
+function viridisColor(i,N){
+  const stops=[[0,[68,1,84]],[0.25,[59,82,139]],[0.5,[33,145,140]],[0.75,[94,201,98]],[1,[253,231,37]]];
+  const t=N>1?i/(N-1):0;
+  for(let k=0;k<stops.length-1;k++){
+    if(t>=stops[k][0]&&t<=stops[k+1][0]){
+      const f=(t-stops[k][0])/(stops[k+1][0]-stops[k][0]);
+      const c=stops[k][1].map((v,j)=>Math.round(v+f*(stops[k+1][1][j]-v)));
+      return `rgb(${c[0]},${c[1]},${c[2]})`;
+    }
+  }
+  return 'rgb(253,231,37)';
+}
+
+function plotStatus(S, P){
+  const d=[
+    {x:S.date_list.map(dateLabel), y:S.Status, mode:'lines', line:{color:'#e2e8f0',width:1.6}, name:'Status'},
+    {x:[dateLabel(S.eolRef),dateLabel(S.eolRef)], y:[S.minStatus,S.maxStatus], mode:'lines', line:{color:'#94a3b8',width:2}, name:'End-of-life'},
+    {x:[dateLabel(S.date_list[S.tdeg]),dateLabel(S.date_list[S.tdeg])], y:[S.minStatus,S.maxStatus], mode:'lines', line:{color:'#f8fafc',width:2}, name:'Degradation'},
+  ];
+  Plotly.react('status', d, layoutBase('','Time','Status'), cfg);
+}
+function plotEnergy(S, P){
+  const d=[
+    {x:S.date_list.map(dateLabel), y:S.Energy, mode:'lines', line:{color:'#e2e8f0',width:1.6}, name:'Energy [MW]'},
+    {x:[dateLabel(S.eolRef),dateLabel(S.eolRef)], y:[S.minEnergy,S.maxEnergy], mode:'lines', line:{color:'#94a3b8',width:2}, name:'End-of-life'},
+    {x:[dateLabel(S.date_list[S.tdeg]),dateLabel(S.date_list[S.tdeg])], y:[S.minEnergy,S.maxEnergy], mode:'lines', line:{color:'#f8fafc',width:2}, name:'Degradation'},
+  ];
+  Plotly.react('energy', d, layoutBase('','Time','Energy [MW]'), cfg);
+}
+
+/* =====================================================================
+   Orchestration
+   ===================================================================== */
+const DEFAULTS = {
+  mode:'Decom', years:60, rs1:1.5, rs2:0.7, hmin:8, months:'11,12,1,2,3',
+  wmin:8, wmax:17, wminD:10, wmaxD:19, eol:2040, decom:2042, rebuild:2050,
+  turbo:60, thr:15, rep:2, powmax:6, seed:2023
+};
+
+function syncLabels(){
+  const val=id=>document.getElementById(id).value;
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  set('v_years',val('years')); set('v_rs1',val('rs1')); set('v_rs2',val('rs2'));
+  set('v_hmin',val('hmin'));
+  set('v_wmin',val('wmin')); set('v_wmax',val('wmax'));
+  set('v_wminD',val('wminD')); set('v_wmaxD',val('wmaxD'));
+  set('v_eol',val('eol')); set('v_decom',val('decom')); set('v_rebuild',val('rebuild'));
+  set('v_turbo',val('turbo')); set('v_thr',val('thr')); set('v_rep',val('rep'));
+  set('v_pow','4–'+val('powmax')); set('v_seed',val('seed'));
+  const map={'11,12,1,2,3':'Nov–Mar','11,12,1,2,3,4':'Nov–Apr','12,1,2':'Dec–Feb','':'All months'};
+  set('v_months', map[val('months')]||'—');
+  document.getElementById('modeBadge').textContent='Mode: '+val('mode');
+}
+
+let S=null;
+function recompute(){
+  syncLabels();
+  const P=readParams();
+  if(P.rebuild <= P.decom) P.rebuild = P.decom+1;              // keep gap valid
+  S=simulate(P);
+  S.eolRef = P.eol; S.P = P;
+  S.minRef=Math.min(...S.Status); S.maxRef=Math.max(...S.Status);
+
+  plotWaves(S);
+  plotHist(S,P);
+  plotLoad(S);
+  plotLoadWaves(P);
+
+  const maxH = S.hNum.length ? Math.max(...S.hNum.map(a=>a.length)) : 1;
+  // cumulative: existing
+  {
+    const list=S.WaveTimeCumSum;
+    const minC=P.hmin;
+    cumPlot('cumTime', list, S, S.tdegEx, minC);
+    document.getElementById('stat_cum').textContent =
+      `Degradation time (existing): ${fmt(S.date_list[S.tdegEx])}`;
+  }
+  {
+    const list=S.WaveTimeCumSumDe;
+    const minC=P.hmin;
+    cumPlot('cumTimeDecom', list, S, S.tdegDe, minC);
+    document.getElementById('stat_cumde').textContent =
+      `Degradation time (decommissioning reset): ${fmt(S.date_list[S.tdegDe])}`;
+  }
+
+  plotStatus(S,P);
+  plotEnergy(S,P);
+  const areaE = S.Energy.reduce((a,b)=>a+b,0);
+  document.getElementById('stat_energy').textContent =
+    `Mode: ${P.mode} · Total operational months: ${S.n} · ∑Energy ≈ ${areaE.toLocaleString()} MW·month`;
+}
+
+function cumPlot(id, list, S, tdeg, minC){
+  const N=list.length;
+  const data = list.map((arr,i)=>({
+    x:S.date_list.map(dateLabel), y:arr, mode:'lines', type:'scatter',
+    line:{color:viridisColor(i,N), width:1.4}, name:'H='+minC+i,
+    hovertemplate:'H='+minC+i+'<br>cum. load=%{y:,.0f}<extra></extra>'
+  }));
+  const vals = list.map(a=>Math.max(...a)).filter(v=>v>0);
+  const eolL=dateLabel(S.eolRef), tL=dateLabel(S.date_list[tdeg]);
+  const L=layoutBase('','Time','Cumulative load changes');
+  L.shapes=[
+    {type:'line', xref:'x', yref:'paper', x0:tL, x1:tL, y0:0, y1:1, line:{color:'#e2e8f0',width:2}},
+    {type:'line', xref:'x', yref:'paper', x0:eolL, x1:eolL, y0:0, y1:1, line:{color:'#94a3b8',width:2,dash:'dot'}},
+  ];
+  L.colorscale='Viridis';
+  Plotly.react(id, data, L, cfg);
+}
+
+/* =====================================================================
+   Wiring
+   ===================================================================== */
+let deb;
+function onChange(){
+  clearTimeout(deb);
+  deb=setTimeout(recompute, 250);
+}
+document.querySelectorAll('.controls input, .controls select')
+  .forEach(el=>el.addEventListener('input', onChange));
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  const map={mode:'mode',years:'years',rs1:'rs1',rs2:'rs2',hmin:'hmin',months:'months',
+    wmin:'wmin',wmax:'wmax',wminD:'wminD',wmaxD:'wmaxD',eol:'eol',decom:'decom',rebuild:'rebuild',
+    turbo:'turbo',thr:'thr',rep:'rep',powmax:'powmax',seed:'seed'};
+  for(const k in DEFAULTS) document.getElementById(k).value=DEFAULTS[k];
+  recompute();
+});
+
+window.addEventListener('resize', ()=>{ if(S){ /* plots are responsive via Plotly cfg */ } });
+
+/* go */
+recompute();
+</script>
+</body>
+</html>
