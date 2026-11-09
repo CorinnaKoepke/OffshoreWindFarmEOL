@@ -81,6 +81,17 @@
     font-size:13.5px;font-weight:600;border:1px solid transparent}
   .btn-ghost{background:#fff;color:var(--ink);border-color:#cbd5e1}
 
+  /* per-parameter reset */
+  .pctl label .prst{margin-left:6px;background:none;border:none;cursor:pointer;font-size:12px;
+    color:var(--muted);padding:1px 4px;border-radius:4px;line-height:1;font-family:inherit}
+  .pctl label .prst:hover{color:var(--accent);background:#eef2ff}
+
+  /* per-section reset */
+  .params .ph .psec-rst{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--accent);
+    background:none;border:1px solid #bfdbfe;padding:2px 10px;border-radius:999px;cursor:pointer;
+    white-space:nowrap;font-family:'Segoe UI',system-ui,sans-serif}
+  .params .ph .psec-rst:hover{background:#eff6ff}
+
   .stat{font-family:'Segoe UI',system-ui,sans-serif;font-size:12.5px;color:#047857;margin:2px 6px 6px}
   .stat b{color:var(--ink)}
   footer{margin-top:40px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--border);
@@ -503,7 +514,7 @@ function simulate(P){
 const L=(xt,yt,title)=>({
   paper_bgcolor:'#fff',plot_bgcolor:'#fff',
   font:{color:'#1e293b',size:13,family:'Segoe UI, sans-serif'},
-  margin:{l:70,r:24,t:18,b:60},
+  margin:{l:70,r:24,t:58,b:60},
   xaxis:{title:{text:xt,font:{size:13}},gridcolor:'#eef2f7',zerolinecolor:'#cbd5e1'},
   yaxis:{title:{text:yt,font:{size:13}},gridcolor:'#eef2f7',zerolinecolor:'#cbd5e1'}
 });
@@ -613,8 +624,10 @@ function plotCum(id,cum,S,tdeg,P){const N=S.nCols,d=[];
     {type:'line',xref:'x',yref:'paper',x0:tL,x1:tL,y0:0,y1:1,line:{color:'#111',width:2}},
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#64748b',width:2,dash:'dot'}}];
   Lc.annotations=[
-    {x:tL,y:1,xref:'x',yref:'paper',text:'prob. failure of '+Math.round(P.phigh*100)+'%',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'},
-    {x:eolL,y:1,xref:'x',yref:'paper',text:'End of Life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'}];
+    // yref:'paper' -> y=1 is the figure top (incl. margins); 58px top margin, 420px figure.
+    // Two rows (0.976 / 0.919) so the labels can never collide when the lines are close.
+    {x:tL,y:0.976,xref:'x',yref:'paper',text:'prob. failure of '+Math.round(P.phigh*100)+'%',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
+    {x:eolL,y:0.919,xref:'x',yref:'paper',text:'End of Life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   Lc.yaxis.type='log';
   R(id,d,Lc);}
 
@@ -625,8 +638,8 @@ function plotStatus(S,P){const d=S.date.map(dateLabel);
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#16a34a',width:2}},
     {type:'line',xref:'x',yref:'paper',x0:degL,x1:degL,y0:0,y1:1,line:{color:'#ef4444',width:2}}];
   Ls.yaxis.range=[0,1];
-  Ls.annotations=[{x:eolL,y:1,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'},
-    {x:degL,y:1,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'}];
+  Ls.annotations=[{x:eolL,y:0.976,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
+    {x:degL,y:0.919,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   R('p_status',[{x:d,y:S.Status,mode:'lines',name:'Status',line:{color:'#111',width:1.6}}],Ls);}
 
 function plotEnergy(S,P){const d=S.date.map(dateLabel);
@@ -635,8 +648,8 @@ function plotEnergy(S,P){const d=S.date.map(dateLabel);
   Le.shapes=[
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#16a34a',width:2}},
     {type:'line',xref:'x',yref:'paper',x0:degL,x1:degL,y0:0,y1:1,line:{color:'#ef4444',width:2}}];
-  Le.annotations=[{x:eolL,y:1,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'},
-    {x:degL,y:1,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left'}];
+  Le.annotations=[{x:eolL,y:0.976,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
+    {x:degL,y:0.919,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   R('p_energy',[{x:d,y:S.Energy,mode:'lines',name:'Energy [MW]',line:{color:'#111',width:1.6}}],Le);}
 
 /* ============================================================= orchestrate */
@@ -674,6 +687,32 @@ document.getElementById('resetBtn').addEventListener('click',()=>{
   for(const k in DEFAULTS){const el=document.getElementById(k);if(el)el.value=DEFAULTS[k];}
   recompute();
 });
+
+/* ---- per-parameter and per-section reset buttons ---- */
+(function addResetButtons(){
+  const DEF=DEFAULTS;
+  const doReset=els=>{els.forEach(el=>{const k=el.dataset.key;if(DEF[k]!==undefined)el.value=DEF[k];});syncLabels();recompute();};
+
+  document.querySelectorAll('.pctl').forEach(pctl=>{
+    const label=pctl.querySelector('label'); if(!label) return;
+    const input=pctl.querySelector('input,select'); if(!input||!input.dataset.key) return;
+    const btn=document.createElement('button');
+    btn.className='prst'; btn.type='button';
+    btn.title='Reset to default'; btn.textContent='\u21BA';
+    btn.addEventListener('click',ev=>{ev.stopPropagation();doReset([input]);});
+    label.appendChild(btn);
+  });
+
+  document.querySelectorAll('.params').forEach(paramsEl=>{
+    const ph=paramsEl.querySelector('.ph'); if(!ph) return;
+    const inputs=[...paramsEl.querySelectorAll('input[data-key],select[data-key]')];
+    if(!inputs.length) return;
+    const btn=document.createElement('button');
+    btn.className='psec-rst'; btn.type='button'; btn.textContent='Reset section';
+    btn.addEventListener('click',()=>doReset(inputs));
+    ph.appendChild(btn);
+  });
+})();
 
 setupLegends();
 recompute();
