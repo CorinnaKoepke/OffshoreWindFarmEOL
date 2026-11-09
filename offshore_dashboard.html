@@ -68,13 +68,43 @@
   .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 26px}
   @media(max-width:640px){.pgrid{grid-template-columns:1fr}.eq{grid-template-columns:1fr}}
   .pctl{margin:8px 0}
-  .pctl label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  .pctl label{display:flex;justify-content:flex-start;align-items:baseline;gap:8px;
     font-family:'Segoe UI',system-ui,sans-serif;font-size:13.5px;color:#334155;margin-bottom:3px}
   .pctl label .val{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
   .pctl input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
   .pctl select,.pctl input[type=number]{width:100%;padding:7px 9px;background:#fff;color:var(--ink);
     border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif}
   .pctl .hint{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .pctl input[type=range]{display:block}
+  .rtooltip{position:fixed;transform:translateX(-50%);
+    background:var(--accent);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:11.5px;
+    font-weight:600;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;
+    padding:3px 8px;border-radius:6px;box-shadow:0 2px 8px rgba(37,99,235,.35);
+    opacity:0;pointer-events:none;transition:opacity .1s ease;z-index:50}
+  .rtooltip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:5px solid transparent;border-top-color:var(--accent)}
+  .rtooltip.show{opacity:1}
+  .raxis{position:relative;margin:4px 0 0;height:20px;font-family:'Segoe UI',system-ui,sans-serif;
+    color:var(--muted);pointer-events:none;user-select:none}
+  .raxis::before{content:"";position:absolute;top:4px;height:1px;background:#e2e8f0;
+    left:var(--line-left,0);right:var(--line-right,0)}
+  .raxis .rt{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;
+    align-items:center;line-height:1}
+  .raxis .tk{width:1px;height:8px;background:#cbd5e1;display:block}
+  .raxis .lbl{margin-top:2px;font-size:10.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  /* per-parameter info button + explanation */
+  .pctl label .pinfo{margin-left:2px;background:none;border:none;cursor:pointer;font-size:12px;
+    color:var(--muted);padding:1px 5px;border-radius:4px;line-height:1;font-family:'Segoe UI',system-ui,sans-serif;
+    vertical-align:middle}
+  .pctl label .pinfo:hover{color:var(--accent);background:#eef2ff}
+  .pctl label .pinfo.open{color:var(--accent);background:#dbeafe}
+  .pinfo-box{display:none;margin:4px 0 2px;padding:9px 11px;background:#fff;border:1px solid #dbeafe;
+    border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-family:'Segoe UI',system-ui,sans-serif;
+    font-size:12.5px;line-height:1.5;color:#334155;max-width:100%}
+  .pinfo-box.open{display:block}
+  .pinfo-box b{color:var(--ink)}
+  .pinfo-box code{background:var(--param-bg);padding:0 4px;border-radius:3px;font-size:12px}
 
   .btnrow{display:flex;gap:10px;margin:6px 4px 2px}
   button{font-family:'Segoe UI',system-ui,sans-serif;padding:9px 18px;border-radius:9px;cursor:pointer;
@@ -82,7 +112,7 @@
   .btn-ghost{background:#fff;color:var(--ink);border-color:#cbd5e1}
 
   /* per-parameter reset */
-  .pctl label .prst{margin-left:6px;background:none;border:none;cursor:pointer;font-size:12px;
+  .pctl label .prst{margin-left:2px;background:none;border:none;cursor:pointer;font-size:12px;
     color:var(--muted);padding:1px 4px;border-radius:4px;line-height:1;font-family:inherit}
   .pctl label .prst:hover{color:var(--accent);background:#eef2ff}
 
@@ -166,18 +196,18 @@
     <div class="figure" style="padding-bottom:6px">
       <div class="params" style="margin-top:2px">
         <div class="pgrid">
-          <div class="pctl"><label>Operation mode <span class="val" id="v_mode">Decom</span></label>
+          <div class="pctl"><label>Operation mode</label>
             <select id="mode" data-key="mode">
               <option value="Decom" selected>Decommissioning</option>
               <option value="Exten">Extension</option>
               <option value="Repow">Repowering</option>
             </select>
             <div class="hint">Decom &amp; Repow ramp the energy output after end-of-life; Extension keeps base output.</div></div>
-          <div class="pctl"><label>Base year <span class="val" id="v_baseYear">2015</span></label>
+          <div class="pctl"><label>Base year</label>
             <input type="number" id="baseYear" data-key="baseYear" min="1990" max="2015" value="2015" step="1"></div>
-          <div class="pctl"><label>End-of-life (year) <span class="val" id="v_eolYear">2040</span></label>
+          <div class="pctl"><label>End-of-life (year)</label>
             <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2040" step="1"></div>
-          <div class="pctl"><label>Simulation length (years) <span class="val" id="v_years">60</span></label>
+          <div class="pctl"><label>Simulation length (years)</label>
             <input type="range" id="years" data-key="years" min="10" max="60" step="5" value="60"></div>
           <div class="pctl"><label>Severe-weather months</label>
             <select id="severe" data-key="severe">
@@ -186,7 +216,7 @@
               <option value="12,1,2">Dec – Feb</option>
               <option value="">All months</option>
             </select></div>
-          <div class="pctl"><label>Random seed <span class="val" id="v_seed">0</span></label>
+          <div class="pctl"><label>Random seed</label>
             <input type="number" id="seed" data-key="seed" min="0" max="999999" value="0" step="1">
             <div class="hint">Change to explore other stochastic realisations.</div></div>
         </div>
@@ -208,15 +238,15 @@
     <div class="params">
       <div class="ph">Parameters — wave climate &amp; load</div>
       <div class="pgrid">
-        <div class="pctl"><label>Severe Rayleigh σ (rs1) <span class="val" id="v_rs1">1.5</span></label>
+        <div class="pctl"><label>Severe Rayleigh σ (rs1)</label>
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
-        <div class="pctl"><label>Normal Rayleigh σ (rs2) <span class="val" id="v_rs2">0.7</span></label>
+        <div class="pctl"><label>Normal Rayleigh σ (rs2)</label>
           <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
-        <div class="pctl"><label>Min. wave height H<sub>min</sub> (m) <span class="val" id="v_Hmin">8</span></label>
+        <div class="pctl"><label>Min. wave height H<sub>min</sub> (m)</label>
           <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
-        <div class="pctl"><label>Max. wave height cap (m) <span class="val" id="v_maxH">40</span></label>
+        <div class="pctl"><label>Max. wave height cap (m)</label>
           <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Load changes per month (×10³) <span class="val" id="v_loadK">3110</span></label>
+        <div class="pctl" style="grid-column:1 / -1"><label>Load changes per month (×10³)</label>
           <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110">
           <div class="hint">= 6·60·24·30 in the notebook. Scales the Eq.&nbsp;1 frequency (and therefore the load plot).</div></div>
       </div>
@@ -244,13 +274,13 @@
     <div class="params">
       <div class="ph">Parameters — fatigue limits (Eq. 3)</div>
       <div class="pgrid">
-        <div class="pctl"><label>Existing H<sub>min,fail</sub> (m) <span class="val" id="v_minH_f">8</span></label>
+        <div class="pctl"><label>Existing H<sub>min,fail</sub> (m)</label>
           <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="8"></div>
-        <div class="pctl"><label>Existing H<sub>rel,fail</sub> (m) <span class="val" id="v_maxH_f">17</span></label>
+        <div class="pctl"><label>Existing H<sub>rel,fail</sub> (m)</label>
           <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="17"></div>
-        <div class="pctl"><label>New H<sub>min,fail</sub> (m) <span class="val" id="v_minHDe_f">10</span></label>
+        <div class="pctl"><label>New H<sub>min,fail</sub> (m)</label>
           <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="10"></div>
-        <div class="pctl"><label>New H<sub>rel,fail</sub> (m) <span class="val" id="v_maxHDe_f">19</span></label>
+        <div class="pctl"><label>New H<sub>rel,fail</sub> (m)</label>
           <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="19"></div>
       </div>
     </div>
@@ -273,14 +303,14 @@
     <div class="params">
       <div class="ph">Parameters — degradation &amp; decommissioning window</div>
       <div class="pgrid">
-        <div class="pctl"><label>Decommissioning done (year) <span class="val" id="v_decomYear">2042</span></label>
+        <div class="pctl"><label>Decommissioning done (year)</label>
           <input type="number" id="decomYear" data-key="decomYear" min="2030" max="2055" value="2042" step="1"></div>
-        <div class="pctl"><label>Rebuild finished (year) <span class="val" id="v_rebuildYear">2050</span></label>
+        <div class="pctl"><label>Rebuild finished (year)</label>
           <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2050" step="1"></div>
-        <div class="pctl"><label>Failure prob. if limit exceeded (phigh) <span class="val" id="v_phigh">0.50</span></label>
+        <div class="pctl"><label>Failure prob. if limit exceeded (phigh)</label>
           <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5">
           <div class="hint">Defines the "probable failure" marker in the two cumulative plots.</div></div>
-        <div class="pctl"><label>Failure prob. if below limit (plow) <span class="val" id="v_plow">0.10</span></label>
+        <div class="pctl"><label>Failure prob. if below limit (plow)</label>
           <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
       </div>
     </div>
@@ -311,15 +341,15 @@
     <div class="params">
       <div class="ph">Parameters — network &amp; damage</div>
       <div class="pgrid">
-        <div class="pctl"><label>Number of OSS <span class="val" id="v_numOSS">3</span></label>
+        <div class="pctl"><label>Number of OSS</label>
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
-        <div class="pctl"><label>Turbines per OSS <span class="val" id="v_numT">60</span></label>
+        <div class="pctl"><label>Turbines per OSS</label>
           <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="60"></div>
-        <div class="pctl"><label>Min. output per turbine (MW) <span class="val" id="v_minOut">4</span></label>
+        <div class="pctl"><label>Min. output per turbine (MW)</label>
           <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="4"></div>
-        <div class="pctl"><label>Max. output per turbine (MW) <span class="val" id="v_maxOut">6</span></label>
+        <div class="pctl"><label>Max. output per turbine (MW)</label>
           <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="6"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Damage only when wave height &gt; (m) <span class="val" id="v_damage">15</span></label>
+        <div class="pctl" style="grid-column:1 / -1"><label>Damage only when wave height &gt; (m)</label>
           <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15">
           <div class="hint">Notebook filters months with H<sub>max</sub> &gt; 15 m before applying breakage.</div></div>
       </div>
@@ -687,6 +717,155 @@ document.getElementById('resetBtn').addEventListener('click',()=>{
   for(const k in DEFAULTS){const el=document.getElementById(k);if(el)el.value=DEFAULTS[k];}
   recompute();
 });
+
+/* ---- axis with min / mid / max ticks under every range slider ---- */
+(function addRangeAxes(){
+  const fmt=v=>{const x=+v;return Number.isInteger(x)?String(x):(+x.toFixed(2)).toString();};
+  // pick a "nice" tick step so we land on ~5-7 evenly spaced, round values
+  const niceStep=(range,target)=>{
+    const raw=range/target, pow=Math.pow(10,Math.floor(Math.log10(raw))), n=raw/pow;
+    const s=(n<1.5)?1:(n<3)?2:(n<7)?5:10; return s*pow;
+  };
+  document.querySelectorAll('input[type=range]').forEach(inp=>{
+    const min=+inp.min, max=+inp.max, step=niceStep(max-min,6);
+    const ticks=[];
+    for(let v=Math.ceil(min/step)*step; v<=max+1e-9; v+=step) ticks.push(+v.toFixed(6));
+    // add the true endpoints only if they aren't already represented / not cramped in
+    if(!ticks.length||Math.abs(ticks[0]-min)>step*0.5)ticks.unshift(min);
+    if(!ticks.length||Math.abs(ticks[ticks.length-1]-max)>step*0.5)ticks.push(max);
+    const axis=document.createElement('div'); axis.className='raxis';
+    ticks.forEach(v=>{
+      const rt=document.createElement('span'); rt.className='rt'; rt.dataset.v=v;
+      rt.innerHTML='<span class="tk"></span><span class="lbl">'+fmt(v)+'</span>';
+      axis.appendChild(rt);
+    });
+    inp.insertAdjacentElement('afterend',axis);
+    // position ticks to match the real thumb travel (thumb ≈ input height wide)
+    const layout=()=>{
+      const w=axis.getBoundingClientRect().width, halfThumb=inp.offsetHeight/2;
+      const lo=halfThumb, hi=w-halfThumb, span=(hi-lo)||1;
+      axis.style.setProperty('--line-left',lo+'px'); axis.style.setProperty('--line-right',lo+'px');
+      axis.querySelectorAll('.rt').forEach(t=>{
+        const v=+t.dataset.v;
+        t.style.left=(lo+(v-min)/(max-min)*span).toFixed(1)+'px';
+      });
+    };
+    layout();
+    window.addEventListener('resize',layout);
+  });
+})();
+
+/* ---- hover tooltip: value under the pointer on every range slider ---- */
+(function addRangeTooltip(){
+  const fmt=v=>{const x=+v;return Number.isInteger(x)?String(x):(+x.toFixed(2)).toString();};
+  const tip=document.createElement('div'); tip.className='rtooltip'; document.body.appendChild(tip);
+  document.querySelectorAll('input[type=range]').forEach(inp=>{
+    const axis=inp.nextElementSibling; // the .raxis we built, with .rt ticks
+    // tick reference points: [pixel x (absolute), value], in order
+    const pts=()=>[...axis.querySelectorAll('.rt')].map(t=>({
+      x:t.getBoundingClientRect().left + t.getBoundingClientRect().width/2,
+      v:+t.dataset.v
+    }));
+    const move=e=>{
+      const r=inp.getBoundingClientRect();
+      const x=e.clientX!=null?e.clientX:r.left+r.width/2;
+      const p=pts();
+      // snap to a nearby tick so the value matches the label exactly when on it
+      let nearest=p[0], d=Math.abs(x-p[0].x);
+      for(const q of p){ const dd=Math.abs(x-q.x); if(dd<d){d=dd;nearest=q;} }
+      let v = d<=8 ? nearest.v :
+              x<=p[0].x ? p[0].v :
+              x>=p[p.length-1].x ? p[p.length-1].v :
+              (function(){ for(let i=0;i<p.length-1;i++){ const a=p[i],b=p[i+1];
+                if(x>=a.x&&x<=b.x) return a.v+(b.v-a.v)*((x-a.x)/(b.x-a.x)); } return nearest.v; })();
+      tip.textContent=fmt(Math.round(v*100)/100);
+      tip.style.left=x+'px';
+      tip.style.top=Math.max(2, r.top - tip.offsetHeight - 10)+'px';
+      tip.classList.add('show');
+    };
+    inp.addEventListener('mousemove',move);
+    inp.addEventListener('mousedown',move);
+    inp.addEventListener('touchmove',e=>{if(e.touches[0])move(e.touches[0]);},{passive:true});
+    inp.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+    inp.addEventListener('mouseup',()=>{setTimeout(()=>tip.classList.remove('show'),120);});
+  });
+})();
+
+/* ---- per-parameter info button + detailed explanation ---- */
+const INFO_TEXT={
+  mode:"The end-of-life (EOL) strategy, one of the three concepts analysed in the paper. <b>Decommissioning</b> removes the plant and, in a later phase, builds newer structures, so output is ramped down then back up. <b>Extension</b> keeps the existing turbines running at their base output and only maintains safety. <b>Repowering</b> re-uses the foundations for larger, more efficient turbines, so the per-turbine output steps up after end-of-life (the paper moves from ~5 MW toward 7.5 MW). In this dashboard Decom &amp; Repower ramp the energy curve, while Extension holds the base output.",
+
+  baseYear:"The year the synthetic record starts (y<sub>base</sub> in the paper). It is the reference point of the 60-year dataset and, more importantly, the base year used in Eq.&nbsp;2 for the climate-change growth of the maximum wave height: the upper bound of the uniform draw is <code>Hsig + Hsig·0.07·(y − y_base + 3)</code>. Every month further from the base year therefore carries a higher chance of an extreme H<sub>max</sub>, representing increasing extremes under climate change.",
+
+  eolYear:"The year the permit period expires (~25 years after commissioning), treated by the paper as the disruptive event that forces an EOL decision. In the plots it is drawn as the vertical green 'End of Life' line and it marks when the mode-dependent energy ramp (decommission / repower) begins to change the per-turbine output.",
+
+  years:"Length of the simulated time series in years. Each year is split into 12 monthly steps, so a 60-year horizon yields 720 monthly samples of significant and maximum wave height. The paper deliberately models a 60-year span because the difficulty is predicting waves that far ahead; longer horizons accumulate more load changes and let the difference between the three EOL strategies become visible.",
+
+  severe:"Which calendar months are treated as the severe-weather season. The paper takes November, December, January, February and March as the high-σ months, and assigns those months the larger Rayleigh scale <code>rs1</code>. All other (normal) months use the smaller scale <code>rs2</code>. Selecting 'All months' makes every month use the severe scale; the narrower ranges make milder climates.",
+
+  seed:"Seed for the seeded (mulberry32) pseudo-random number generator. It is used for the Rayleigh draws, the uniform H<sub>max</sub> draw, the Monte-Carlo breakage of network units and the per-turbine output, so the same seed always reproduces the same stochastic realisation. The paper notes the results depend on this randomness and recommends repeated simulations; changing the seed explores different realisations.",
+
+  rs1:"Scale parameter σ of the Rayleigh distribution (Eq.&nbsp;1) used for the <b>severe</b> months. The paper states the scale varies between σ ≈ 0.7 and σ ≈ 1.5 depending on the season, with large σ in Nov–Mar. A larger σ pushes the significant-wave-height density to higher values, so severe months produce taller waves and therefore more load above H<sub>min</sub>.",
+
+  rs2:"Scale parameter σ of the Rayleigh distribution (Eq.&nbsp;1) used for the <b>normal</b> months — the milder end of the σ range the paper quotes (~0.7). It sets the typical significant wave height for the calm part of the year, so it mostly shapes the lower tail of the H<sub>sig</sub> and H<sub>max</sub> distributions.",
+
+  Hmin:"The minimum significant wave height that counts as a load on the steel structure. Below this the wave is too small to contribute meaningful cyclic loading, so Eq.&nbsp;1 is only evaluated for heights above H<sub>min</sub> and the cumulative sums are binned per integer height above it. The paper uses H<sub>min</sub> = 8 m and also uses it as the lower (flat) bound of the fatigue curve in Eq.&nbsp;3.",
+
+  maxH:"A hard cap applied to the maximum wave height in Eq.&nbsp;2: the uniform 'plus' draw is clamped so H<sub>max</sub> never exceeds this value. It keeps the 60-year synthetic record physically plausible and stops the climate-change growth term (0.07·Δyear) from producing implausibly tall waves in later decades.",
+
+  loadK:"The monthly total number of load changes N<sub>total</sub> (here in units of ×10³). It comes from the wave frequency ν ≈ 1/10 s discretised over a month (≈ 2.59·10⁵), and multiplies the Rayleigh density in Eq.&nbsp;4 (N<sub>H</sub> = f(H,σ)·N<sub>total</sub>) to turn a probability density into a count of waves at each height. It therefore sets the absolute level of the 'Load changes over time' curve and the rate at which cumulative load builds.",
+
+  minH_f:"H<sub>min</sub> for the <b>existing</b> structure's cyclic structural resistance curve (Eq.&nbsp;3): the flat lower bound of the fatigue limit below which the structure is assumed to survive any number of load changes. The paper uses H<sub>min</sub> = 8 m for the old structures. Raising it makes the old structure more robust against short, frequent waves.",
+
+  maxH_f:"H<sub>rel</sub> for the <b>existing</b> structure's fatigue curve (Eq.&nbsp;3): the intercept that fixes how many load changes the structure tolerates before the allowable wave height drops. The paper sets H<sub>rel</sub> = 17 m, the 100-year wave height the FINO-1 platform is designed to withstand once. A higher value lets the old structure endure more cumulative load before its failure probability jumps to <code>phigh</code>.",
+
+  minHDe_f:"H<sub>min</sub> of the cyclic structural resistance curve for the <b>new</b> structures built after decommissioning. Newer designs and higher steel classes shift the curve, so this bound is typically a little different from the existing structure's. It is the lower (flat) bound of the new structure's fatigue limit.",
+
+  maxHDe_f:"H<sub>rel</sub> of the fatigue curve for the <b>new</b> structures (Eq.&nbsp;3). Because the new build uses modern designs and steel classes to cope with climate-driven taller waves, this intercept sits higher than for the existing structures, giving the rebuilt farm a longer lifespan — which is why, in the paper, decommissioning yields the second-largest energy output.",
+
+  decomYear:"The year by which the old plant is fully decommissioned (removed). In the 'decommission &amp; rebuild' cumulative plot, load accumulation is reset to zero for the whole window between this date and the rebuild date, reflecting that the structure is absent and no longer accumulating fatigue.",
+
+  rebuildYear:"The year the new structures are finished and back in service. From this month the cumulative load for the rebuilt structures starts counting from zero again. The gap between decommissioning and rebuild is the downtime the paper assigns to decommissioning (~2 years) plus re-erection (~4 years), and it is the main reason the decommissioning option loses energy versus repowering.",
+
+  phigh:"The failure probability assigned to a month in which the accumulated load exceeds the structure's allowable value (its wave height crosses the Eq.&nbsp;3 curve). This is the 'probable failure' threshold: the first month that reaches <code>phigh</code> is drawn as the solid vertical marker in the cumulative plots. The paper uses p = 0.5 as the point where the structural resistance is actually exceeded.",
+
+  plow:"The baseline failure probability applied in months whose accumulated load stays below the structure's allowable limit. The paper keeps this low (p = 0.1) so that, after end-of-life, failures stay unlikely until the cumulative load genuinely grows beyond design. It also drives how often a unit breaks in the network chapter when no limit is exceeded.",
+
+  numOSS:"Number of offshore substation (OSS) platforms in the network model. Each OSS represents one wind farm cluster and is itself a unit that can break and need repair. Together with the turbines per OSS it defines the total number of units as <code>numOSS·numT + numOSS</code>.",
+
+  numT:"Number of turbines per offshore wind farm (OSS cluster). The paper uses 60 turbines per OWF in the simulation (a reduced figure of 10 is used only for the schematic in Figure 4). More turbines per cluster means more units that can break, but also more potential output when they are operational.",
+
+  minOut:"Lower bound of the per-turbine energy output range (MW) drawn uniformly for each operational turbine each month. The paper assumes an output between 4 and 6 MW per turbine for the base case. In decommission / repower mode this lower bound is itself ramped after end-of-life, so it also anchors the post-EOL output level.",
+
+  maxOut:"Upper bound of the per-turbine output range (MW). Paired with <code>minOut</code> it sets the spread of the uniform draw per turbine. The paper's repowering example raises the average output toward 7.5 MW by moving this bound up after end-of-life, and the decommissioning build toward 8.5 MW.",
+
+  damage:"The minimum maximum wave height (H<sub>max</sub>) above which a unit is allowed to break in the network simulation. In months where the wave height does not exceed this threshold no damage is applied at all. The paper filters the months with H<sub>max</sub> &gt; 15 m before applying the Monte-Carlo breakage probabilities, so this is the wave-height gate for damage."
+};
+
+(function addInfoButtons(){
+  document.querySelectorAll('.pctl').forEach(pctl=>{
+    const label=pctl.querySelector('label');
+    const input=pctl.querySelector('input,select');
+    if(!label||!input) return;
+    const key=input.dataset.key;
+    const text=INFO_TEXT[key];
+    if(!text) return;
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='pinfo'; btn.title='What does this parameter do?';
+    btn.setAttribute('aria-expanded','false'); btn.textContent='\u2139';
+    const box=document.createElement('div'); box.className='pinfo-box'; box.innerHTML=text;
+    btn.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const open=box.classList.toggle('open');
+      btn.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    const val=label.querySelector('.val');
+    if(val)label.insertBefore(btn,val);   // right after the name, before the value
+    else label.appendChild(btn);         // no value: right after the name text
+    pctl.insertBefore(box,input);
+  });
+})();
 
 /* ---- per-parameter and per-section reset buttons ---- */
 (function addResetButtons(){
