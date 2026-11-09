@@ -1,0 +1,531 @@
+
+
+===== PAGE 1 =====
+
+Citation: Köpke, C.; Mielniczek, J.;
+Stolz, A. Testing Resilience Aspects of
+Operation Options for Offshore Wind
+Farms beyond the End-of-Life.
+Energies 2023, 16, 4771. https://
+doi.org/10.3390/en16124771
+Academic Editors: Abbas Mehrad
+Kazemi Amiri, Alasdair McDonald
+and Rebecca Windemer
+Received: 12 May 2023
+Revised: 5 June 2023
+Accepted: 13 June 2023
+Published: 16 June 2023
+Copyright: © 2023 by the authors.
+Licensee MDPI, Basel, Switzerland.
+This article is an open access article
+distributed under the terms and
+conditions of the Creative Commons
+Attribution (CC BY) license (https://
+creativecommons.org/licenses/by/
+4.0/).
+energies
+Article
+Testing Resilience Aspects of Operation Options for Offshore
+Wind Farms beyond the End-of-Life
+Corinna Köpke 1,*
+, Jennifer Mielniczek 2 and Alexander Stolz 3
+1 Fraunhofer Institute for High-Speed Dynamics, Ernst-Mach-Institut, EMI, Am Klingelberg 1,
+79588 Efringen-Kirchen, Germany
+2 Independent Researcher, Hedwig-Augustin-Str. 27, 25348 Glückstadt, Germany; j.mielniczek@entrawind.com
+3 Department of Sustainable Systems Engineering, INATECH, Albert-Ludwigs-Universität Freiburg,
+Emmy-Noether-Straße 2, 79110 Freiburg im Breisgau, Germany; alexander.stolz@mail.inatech.uni-freiburg.de
+* Correspondence: corinna.koepke@emi.fraunhofer.de
+Abstract: An anticipated challenge for the offshore wind industry is the legally standardized decommissioning of offshore wind infrastructure after the expiration of the respective approval period. To
+meet the energy and climate targets set by, e.g., the German Federal Government, this challenge must
+be mastered in the context of sustainability. Potential concepts are (i) the deconstruction of offshore
+infrastructure without replacement, (ii) the continued operation of the plants, (iii) partially or even
+completely replacing them with newer, modernized plants (re-powering). Re-powering could also
+be a combination of existing infrastructures with other innovative technologies, such as hydrogen.
+In this work, the three concepts are analyzed along with their risks and additional factors, such as
+feasibility, cost-effectiveness, predictability of technological progress, and, planning security, are
+discussed. A quantitative risk and resilience analysis is conceptually demonstrated for the specific
+risk of extreme weather and wave conditions caused by climate change. Synthetic wave height data
+are generated and the corresponding load changes are applied to example offshore wind farms. The
+three end-of-life options are compared using resilience indicators that serve as exemplary measures
+for the energy output, which serves as the key performance indicator.
+Keywords: offshore wind; end-of-life; resilience management; climate change
+1. Introduction
+Most offshore wind turbines are bound by regulations to undergo dismantling and
+deconstruction at the end of their service life. Dismantling typically involves the removal of
+turbines, foundations, cabling, and other equipment. Deconstruction procedures can vary
+from turbine to turbine and depend on a number of factors, including the type of foundation,
+the depth of water, and local environmental conditions. Furthermore, deconstruction
+procedures must comply with local regulations and environmental requirements. Some
+of the deconstruction methods include cutting the turbines and foundations into pieces
+and removing the parts using ships and cranes. The SeeOff-project [ 1] has developed a
+potential approach that supports the development of deconstruction strategies. The pieces
+can then be transported to the shore and recycled or disposed of. Waste management is
+especially important for a sustainable offshore industry (see, e.g., [2,3]).
+It is important to note that the cost of dismantling is included in the overall cost of an
+offshore wind turbine to ensure that the turbine can be decommissioned at the end of its
+life and not cause unnecessary environmental impacts. Nevertheless, decommissioning
+wind turbines is not the only option. Often, end-of-life (EOL) options, along with their
+respective conditions, are already described in offshore wind farm (OWF) permits.
+For instance, the permit for the DolWin alpha converter platform, which was commissioned in 2015, contains the following conditions [4]: “The permit shall expire 25 years
+after commissioning of the converter platform and complete connection of the offshore
+Energies 2023, 16, 4771. https://doi.org/10.3390/en16124771 https://www.mdpi.com/journal/energies
+
+===== PAGE 2 =====
+
+Energies 2023, 16, 4771 2 of 12
+wind farms to the converter platform. An extension is possible in accordance with the law
+in force at the time of the requested entry into force of the extension, provided that this
+is applied for in good time, but at least two years before the expiry date, enclosing the
+necessary documents”. Consequently, the question arises as to which option would be the
+most beneficial, taking into account several key performance indicators.
+The quantitative comparison of EOL options is based on the resilience assessment
+of structures under various loads and extreme conditions. In the literature, extreme load
+conditions on steel structures for offshore wind, as well as, e.g., transmission towers [5],
+have been quantitatively analyzed, with a focus on fragility curves.
+In [6], fragility curves for offshore jacket structures were derived using Monte Carlo
+simulations for randomly sampled winds and waves. Wind loads on offshore wind turbine
+towers caused by cyclones were assessed via fragility curves in [7] to support probabilistic
+risk assessments. In [8], the behaviors of monopile foundations for turbines were predicted
+under extreme storm conditions using finite element simulations. Fragility curves were
+also suggested, considering the geotechnical aspects of the foundation.
+Multi-hazard approaches, such as those discussed in [ 9,10], consider wind, wave,
+and earthquake loads on offshore wind structures. Finite element methods enable the
+construction of fragility curves for single and combined loads. In [ 5], the impacts of
+extreme wind loads on the steel structures of transmission towers were analyzed for
+different corrosion levels. Fragility curves were suggested, which predict the failure
+probability based on the wind speed. Thus, for discrete levels of corrosion, specific failure
+curves were derived.
+Most research studies address the vulnerability and fragility of infrastructures concerning specific hazards, their intensities, and return periods. Fewer research results are
+available that also address post-recovery and fragility. In [11], a quantitative approach is
+used to evaluate the rapidity of community recovery, and the effects that dynamic policies
+can have on the recovery. The study focused on residential buildings affected by wind
+perils and introduced typical delay variables and repair fragility as factors influencing
+the recovery.
+In this work, a methodology is presented to quantify the resilience of different EOL
+options. To this end, synthetic wave data were generated by a suggested approach over
+long periods of time under varying conditions, such as climate change. Instead of fragility
+curves, cyclic structural resistance curves were constructed, which enable a continuous
+assessment of the cumulative load conditions. This approach enables the consideration of
+fatigue effects over years and decades and the employment of new structures over time, as
+changes and accumulations of loads only manifest after several years of operation.
+The remainder of this work is structured as follows: First, in Section 2, three EOL
+options are presented and discussed. In Section 3, a risk assessment (RA) is presented for
+an illustrative impact. Section 4 compares the resilience of the three EOL options. Finally,
+in Section 5, the work is concluded and an outlook is provided.
+2. End-of-Life Options
+The three main EOL options for OWF have been discussed in the literature, i.e., life
+extension, re-powering, and decommissioning (see, e.g., [12]). Here, the expiration of the
+permit period after 25 years is regarded as a disruptive event that needs to be addressed
+with appropriate measures, i.e., EOL options. In Figure 1, a short overview of the different
+measures/options is given. In this work, we analyze the energy outputs of these EOL
+options under synthetic weather conditions. The results are presented in Section 4.2.
+2.1. Decommissioning
+To enable the continuous modernization of capacities, complete decommissioning
+is one obvious option to achieve this. The problem with this scenario stems from the
+increased economic expenditure and the extended time period for the energetic non-use of
+areas to be built on. If necessary, the newly available area is put out to tender again, thus
+
+===== PAGE 3 =====
+
+Energies 2023, 16, 4771 3 of 12
+further extending the period of non-use. Thus, two sub-options are distinguished, i.e., no
+further usage of the area, and more realistically, the erection of new modern structures.
+Decommissioning is assumed in this work to take around 2 years and re-erection another
+4 years [13], with a break of several years in between.
+Figure 1. EOL options and sub-options for ’Decommissioning’ and ’Re-powering’.
+2.2. Extended Operation
+From an economic standpoint, the extended operation is advantageous in terms of
+time expenditure and resource balance, as it only requires the status quo to be maintained;
+only the safety of the facilities must be ensured according to factors such as wear, corrosion,
+fatigue, and strength. If the analysis is extended to include technical progress, the result
+is a heterogeneous resource balance. Assuming that the available area suitable for the
+construction of wind turbines is regarded as a finite resource, the use of the available area
+must be designed as efficiently as possible. Continuous technical progress serves as the
+benchmark for achieving efficient design. Thus, the modernization of existing capacity is a
+consistent core element in the expansion of offshore wind energy. No new technology is
+employed, but there is technical progress; thus, the OWFs under this EOL option may not
+remain competitive in the long term compared to new or re-powered OWFs.
+2.3. Re-Powering
+A compromise between the two strategies mentioned above can be achieved through
+partial decommissioning, also known as re-powering. In the context of partial dismantling, this development poses a challenge. Individual elements of OWFs are not suitable
+to support, e.g., higher dimensioned turbines or nacelles. For further consideration, a
+hypothetical assumption is made that technical progress is proportional to energy production, assuming that the dimensions of the turbines remain the same. Provided that this
+assumption is realistic, the modernization of individual elements can be justified from an
+energy perspective. The use of new technologies in partial dismantling must be examined
+in the context of re-powering.
+Another possibility for re-powering involves the potential utilization of old foundations and supporting structures to establish hydrogen production sites. Due to the
+fluctuating availability of offshore wind power, hydrogen serves as a good candidate for
+energy storage during periods of over-production. Green hydrogen might be used in several ways and contribute to overcoming electrical transmission losses [14]. The production
+of hydrogen via electrolysis is a well-studied process; however, electrolysis using seawater
+poses challenges, such as corrosion. A recent study by [15] proposed a promising approach
+to address the issues of offshore hydrogen production with seawater. Technical feasibility
+
+===== PAGE 4 =====
+
+Energies 2023, 16, 4771 4 of 12
+and economic aspects are important factors for this EOL option. In [ 16], a methodology
+is presented to assess the economic viability of offshore hydrogen projects, considering
+aspects such as the operational expenditure (OPEX) and capital expenditure (CAPEX). For
+an offshore wind farm example with integrated hydrogen production, the study derived
+conditions under which the production became profitable.
+3. Risk Assessment
+To assess the different strategies aimed at increasing the resilience of an offshore wind
+farm (OWF) after the regular operation phase, the assets involved need to be considered in
+detail. Thus, the OWF is divided into the following core elements:
+• Wind turbines (foundation, tower, hub, nacelle, equipment/devices, such as a generator, gearbox, brake, and grid connection).
+• Converter platform (foundation, topside, equipment/devices, such as generators,
+gas-insulated switchgear (GIS) systems, and auxiliary transformers).
+• Submarine cable systems (inter-array cables, export cables).
+• Substation.
+All elements must be tested to assess their suitability for use beyond the operational
+phase or their expected trouble-free service life, within the limits of their conditions and
+functionalities. Based on a scorecard approach (see [17]), modernization efforts are assessed
+and can be justified. The decisive factor for this consideration is, thus, technical progress,
+which is largely based on the needs of the market. In the decision-making process, wind
+farm operators are mainly guided by the current legal and economic conditions (minimum
+requirements) in order to use the areas they have acquired (usually through tendering
+procedures) as economically as possible.
+Unfortunately, this behavior has resulted in a continuous increase in the size of installed turbines. For example, there is an effort to design SF6-free GIS plants [18]. According
+to the current state of the art, this is possible but results in a larger plant volume. Here, it
+should be checked whether there is compatibility with the already existing and installed systems when replacing a GIS system with newer types. The assumption here is that this will
+lead to challenges in terms of steel construction, accessibility (hatches), and available space.
+The RA forms the basis for any decision-making process regarding EOL options. Here,
+it is generally understood that the OWFs being considered are located in the German
+exclusive economic zone (EEZ), and that German national and international laws apply
+(e.g., SOLAS/MARPOL). Note, the RA is performed without any additional assessment or
+studies, as only the methodology is demonstrated. The RA is divided into four categories:
+person, environment, asset, and organization. Here, the focus is on the asset category, with
+a particular focus on safety. The offshore substation (OSS), which includes a converter
+platform, plays a very central and vulnerable role within an OWF [ 17] and, thus, is the
+focus of the following RA.
+An example threat is considered to examine the three EOL options, specifically the
+increased wave heights caused by climate change. Figure 2 presents an example OSS with
+heights indicated by the different levels, such as cable and helicopter decks, for reference.
+The derived RAs are provided in Table 1 for current OWFs under the impact of climate
+change, following the procedures explained in detail in [ 17]. The severity level S and
+probability level P range between 1 (low) and 5 (high), respectively. The risk R is given as
+the product of S and P .
+Table 1. Risk assessment for the OSS.
+Source of
+Threat
+Threat
+Identification Risk System Consequence P S R
+Climate change
+Rising sea
+levels, increased
+wave heights
+stress on
+infrastructure OSS damage 4 3 12
+
+===== PAGE 5 =====
+
+Energies 2023, 16, 4771 5 of 12
+Figure 2. OSS schematic with heights of different levels indicated, adopted from [17].
+With a risk of ’12’, increased wave heights are threats that need to be addressed when
+deciding on EOL options. The probability is relatively high because the effects of climate
+change can be measured (see, e.g., [19]) and extreme weather conditions are more likely.
+The severity of the threat is average, especially assuming structural damage to unmanned
+OSS and turbines, without considering any major or catastrophic damage.
+Table 2 presents an assessment of the risks for the three EOL options under the
+assumption that several measures were taken to address the source of the ’climate change’
+threat. In the following, an approach is presented to assess the impacts of severe weather
+conditions on the three EOL options. Such quantitative studies improve the quality of the
+RA (see, e.g., [17]) and, thus, support decision-making.
+Table 2. Risk assessment for the three EOL options.
+Measure Implementation P S R
+Re-powering Consider climate change in the design 2 3 6
+Extension Increased inspection and maintenance 2 3 6
+Decommissioning Consider more severe weather caused by climate change 2 2 4
+4. Impact Simulation on Synthetic Wave Data
+To model the impact of climate change on offshore structures, the load changes resulting from waves on the structures need to be understood. To this end, a methodology is first
+presented to generate synthetic wave data.
+4.1. Wave Height Model
+Significant wave heights Hsig can be approximately predicted using a Rayleigh distribution (see, e.g., [20]). The corresponding probability density function for wave heights H
+is given as follows:
+f (H, σ) = H σ2 e−H2/(2σ2), H ≥ 0 (1)
+The scale of the Rayleigh distribution varies between σ = 0.7 and σ = 1.5, depending
+on the season. November, December, January, February, and March are assumed to be
+
+===== PAGE 6 =====
+
+Energies 2023, 16, 4771 6 of 12
+severe weather months with large σ. The maximum wave heights Hmax are modeled using
+a uniform distribution, where the lower boundary is l = Hsig. The methodology is based
+on data presented in [21]. The upper boundary u of the uniform distribution to estimate
+Hmax is defined as follows:
+u = Hsig + Hsig · 0.07 · (y − ybase + 3) (2)
+with y being the year of the prediction and ybase the year when the prediction starts, to
+represent the increase in extreme weather caused by climate change. Here, the difficulty lies
+in predicting wave heights over a large time span of 60 years. Further, in [19], it is observed
+that the significant wave height does not show a global increase over time, but rather the
+extremes do. Thus, the significant wave height was modeled by a Rayleigh distribution,
+and the maximum wave height had to be constructed on top of it, incorporating increasing
+values attributed to climate change. This is why no Weibull distribution was used to predict
+the extremes, which has been shown to outperform Rayleigh distributions in modeling
+extreme events (see, e.g., [22]).
+The wave frequency is assumed to be ν = 1/10 s, similar to what is given in [ 23].
+Using time discretization in months leads to a total amount of load changes due to the
+waves of Ntotal = 2.592 · 105 per month. However, not every wave contributes to the
+cumulative sum of significant load changes that impact the steel structures. To derive the
+load changes for specific wave heights that a structure is designed to withstand, a cyclic
+structural resistance curve is constructed based on the guidelines provided in [ 24]. The
+wave heights H, as functions of the number of load changes Nlc, are given as follows:
+H =
+{
+−0.5 · log (Nlc ) + Hrel if Nlc < 5 · 107
+Hmin otherwise
+(3)
+with Hmin = 8 m and Hrel = 17 m representing the 100-year wave height that the structure
+is designed to withstand once. The latter assumption is based on [25]. There, it is described
+that the FINO1 platform is designed to withstand waves of Hrel = 17 m.
+In the following, only waves with H > Hmin are considered. The number of occurrences of specific wave heights represents the corresponding load changes per month.
+The cumulative load, i.e., the number of occurrences NH per discrete wave height H, is
+approximated by
+NH = f (H, σ) · Ntotal (4)
+Based on the cumulative loads for each discrete wave height, the failure probability
+for the structure can be obtained from the cyclic structural resistance curve. Assuming that
+all the steel structures that are considered follow the same curve, it becomes possible to
+determine the year when the number of load changes exceeds the design threshold for
+the structures. For a variety of steel structures, different cyclic structural resistance curves
+would apply. Here, two types of steel structures are considered, i.e., old structures and
+new structures erected after decommissioning the old ones. If the load changes exceed the
+design specifications, larger failure probabilities p apply.
+Figure 3a presents the Rayleigh distribution to model Hsig and Hmax . The synthetic
+wave data for a period of 60 years, starting in 2015, are given in Figure 3b. The cyclic
+structural resistance curve, based on Equation (3), is presented in Figure 3c and the resulting
+discrete cumulative load changes per wave height are presented in Figure 3d, considering
+the resistance curve for existing structures. Based on the synthetic wave height data
+presented in Figure 3b, a rough prediction indicates that wave heights will begin to exceed
+the design specifications around the year 2050.
+
+===== PAGE 7 =====
+
+Energies 2023, 16, 4771 7 of 12
+(a) Wave height distribution.
+(b) Wave height time series.
+(c) Cyclic structural resistance curve.
+(d) Cumulative load changes.
+Figure 3. Rayleigh distribution with average σ = 1.1 (black dashed line) compared to the probability
+density functions for the significant wave height (black solid line) and the maximum wave height
+(gray solid line) (a) to generate synthetic significant and maximum wave heights (b). Wave heights are
+mapped on the cyclic structural resistance curve for two structure types (c) to estimate the cumulative
+load changes and the probability of failure p (d). The EOL (black dashed line) and the date when the
+number of acceptable load changes is exceeded (black solid line) are given.
+4.2. Infrastructure Impact Model
+The wave model and the cumulative load changes are now applied to example OWFs
+presented in Figure 4. In the considered model, the number of turbines is limited to 10 in
+Figure 4 for visualization purposes. However, in the simulations, 60 turbines are employed
+per OWF.
+Figure 4. Network model for 3 OWFs and 10 turbines each (blue from 1 to 10, green from 11 to 20,
+and red from 21 to 30, respectively), OSS (grey from 31 to 33), and the land connection (black, 34).
+For the 60 turbines per OWF, we assume an energy output between 4 and 6 MW per
+turbine. Based on the failure probabilities derived from the cumulative load changes and
+the cyclic structural resistance curve, a Monte Carlo simulation predicts potential failures of
+components of the OWF network. Thus, the failure probability after EOL remains low, with
+
+===== PAGE 8 =====
+
+Energies 2023, 16, 4771 8 of 12
+p = 0.1, while the cumulative loads gradually increase based on the synthetic wave data.
+Only once is the structural resistance exceeded, i.e., when the failure probability increased
+to p = 0.5 (see Figure 3c).
+The failures resulting from the synthetic weather conditions given in Figure 3b are
+presented in Figure 5a. The status indicates the normalized number of operational nodes in
+the network. This can be correlated with the energy output of the network of OWFs (see
+Figure 5b). The duration of all needed repairs is set to two months, based on the time discretization used for all simulations in this work, measured in months. This assumption may
+not hold, as repairs, particularly on an offshore OSS, might be expedited to reduce losses;
+still, replacing parts are often missing, and the weather impacts repairs. Figure 5 presents
+the results if all three OWFs considered in this work were to extend their operations.
+(a) Status over time.
+(b) Energy output over time.
+Figure 5. Extension: Based on the synthetic wave heights of Figure 3, the working components (a)
+and the produced energy (b) are estimated.
+In Figure 6, simulated cumulative load changes are presented, along with the energy
+output for the ’Re-powering’ EOL option applied to one of the three OWFs considered here.
+The existing steel structures are employed to host larger turbines with increased energy
+output, i.e., 7.5 MW per turbine, on average. The disadvantage here is that the cumulative
+loads still impact the structures in the same way as the ’Extension’ case.
+(a) Cumulative load changes.
+(b) Energy output for re-powering.
+Figure 6. Re-powering: Cumulative load changes ( a) and produced energy ( b). The EOL (black
+dashed line) and the date when the number of acceptable load changes is exceeded (black solid line)
+are given.
+Finally, in Figure 7a, the load changes are presented for the ’Decommissioning’ EOL
+option when the old structures are removed entirely and new foundations, steel structures,
+OSS, and turbines are erected for one of the OWFs, with an output of 8.5 MW per turbine,
+on average. Thus, the load changes are set to zero again when the new structures start
+operating. For these new structures, a specific cyclic structural resistance curve is applied,
+which takes into account new designs and steel classes (see Figure 3c). Figure 7b presents
+the expected energy output for this EOL option.
+
+===== PAGE 9 =====
+
+Energies 2023, 16, 4771 9 of 12
+(a) Cumulative load changes.
+(b) Energy output for decommissioning.
+Figure 7. Decommissioning: Cumulative load changes (a) and produced energy (b). The EOL (black
+dashed line) and the date when the number of acceptable load changes is exceeded (black solid line)
+are given.
+To compare the simulations of the three EOL options, a resilience indicator can be
+used, i.e., the area AE below the energy output curve:
+• Re-powering: AE = 686, 344.43 MW · months.
+• Decommissioning: AE = 638, 268.83 MW · months.
+• Extension: AE = 631, 140.50 MW · months.
+These numbers represent AE, corresponding to Figures 5b, 6b and 7b. As these
+numbers refer to only one simulation, the randomness in the weather is a contributing
+factor. Repeated simulations can improve the results and the interpretation.
+For the AE given here, the ’Re-powering’ EOL option leads to the largest energy
+output, which is based on the assumption that the latest technology will be utilized for the
+re-powering process, i.e., moving from an average of 5 MW to 7.5 MW per turbine. Still,
+the cyclic structural resistance curve is for existing structures.
+Under the assumption that decommissioning and rebuilding take a certain amount of
+time, the simulations for the ’Decommissioning’ option reveal the second-largest energy
+output. The newly erected structures follow the latest designs to cope with larger wave
+heights caused by climate change; thus, they have a longer lifespan than the structures
+used for the ’Re-powering’ option.
+The ’Extension’ option has the smallest energy output. The old structures have
+collected a large number of cumulative loads, resulting in a lower energy output compared
+to the other two options.
+Finally, we should note that the presented results are highly dependent on the predicted wave heights and cyclic structural resistance parameters. Hence, the results should
+not be understood as the determined results for a specific real-life scenario, but rather as
+exemplary results that showcase the capabilities of the concept.
+5. Conclusions
+Designing a resilient approach to address the challenges arising when the licensed
+operating life of an offshore wind farm expires after 25 years involves evaluating three
+options: extended operation, decommissioning, or re-powering. Therefore, a fundamental
+resilience assessment methodology is proposed and discussed in this paper. In order
+to achieve the largest possible resilience, an adaptive RA procedure is suitable, which
+involves dynamically and continuously redetermining and reevaluating the situation. In
+this exemplary study, the risk of climate change is investigated, and there are many other
+threats that impact the three options after EOL.
+For the specific threat of increased wave heights caused by climate change, an RA was
+presented. Based on these findings, a conceptional simulation approach is suggested to
+quantitatively assess the impacts of threats on OWFs under the three EOL options. Based
+on synthetically generated wave data, and considering increasing extremes caused by
+climate change, failure probabilities for the three EOL options were derived. To this end,
+
+===== PAGE 10 =====
+
+Energies 2023, 16, 4771 10 of 12
+cyclic structural resistance curves were constructed to map load changes caused by waves
+and failure probabilities. Based on the characteristics of each EOL option and the random
+synthetic waves, the energy outputs differ and vary as functions of time.
+The overall energy output was compared by estimating the area below each energy
+curve. It was found that the largest energy output was estimated for the ’Re-powering’
+option when new turbines were placed on old structures. This depended on the turbines
+and nacelles suitable for the old structures. The ’Decommissioning’ option had a lower
+energy output, as a certain downtime was considered between the decommissioning of the
+old structure and the erection of the new ones. For ’Extension’, which entailed extending
+the usage of older turbines, was not competitive with the other options that benefited from
+technological development.
+The simulations were based on various assumptions, which will need verification
+in the future. The generation of synthetic wave data could be improved by employing
+Weibull distributions, as presented in [11]. The suitability needs to be assessed for increased
+extremes caused by climate change. The energy output per turbine for the three EOL options
+was selected for demonstration purposes; it needs to be further investigated, as it will
+also depend on the conditions of the old foundations and structures. The cyclic structural
+resistance curves for old and new structures were also based on several assumptions, which
+need verification. Further, more simulations are needed to assess the overall energy output,
+as the uncertainty due to randomly generated synthetic wave data needs to be considered.
+However, the approach is very flexible and can consider verified user input. This could
+include structure specifics, adaptive cyclic structural resistance curves, maintenance cycles,
+the definition of other output functions, and the energy output to cover economic aspects
+of the three EOL options. A future step based on this work could involve conducting an
+economic comparison of the three EOL options, considering wind data, energy output, and
+operation and maintenance costs, similar to the approach described in [16].
+Finally, the adaptive RA process used to determine the best option for an offshore
+wind farm at the end of its operational life must also consider factors other than risk. These
+include the state and development of technology, the political situation, the market economy,
+and many other factors. These factors can influence decision-making and, therefore, must
+be included in the evaluation to make a comprehensive decision.
+Author Contributions: Conceptualization, C.K., J.M. and A.S.; formal analysis, C.K.; methodology,
+C.K., J.M. and A.S.; software, C.K.; writing—original draft preparation, C.K. and J.M.; writing—
+review and editing, A.S.; visualization, C.K. All authors have read and agreed to the published
+version of the manuscript.
+Funding: This research received no external funding.
+Institutional Review Board Statement: Not applicable.
+Informed Consent Statement: Not applicable.
+Data Availability Statement: The code to reproduce the Figures presented in this work is publicly
+available at https://github.com/CorinnaKoepke/OffshoreWindFarmEOL (accessed on 1 May 2023).
+Acknowledgments: The authors would like to express their gratitude to Irina Lucke and Detlef
+Herzog from Omexom Renewable Energies Offshore GmbH for providing valuable data and figures
+that supported this work. Moreover, the authors extend their thanks to the reviewers for their
+insightful comments, which played a crucial role in enhancing the quality of this manuscript.
+Conflicts of Interest: The authors declare no conflict of interest.
+Abbreviations
+The following abbreviations are used in this manuscript:
+CAPEX capital expenditure
+EEZ exclusive economic zone
+EOL end-of-life
+
+===== PAGE 11 =====
+
+Energies 2023, 16, 4771 11 of 12
+GIS gas-insulated switchgear
+OPEX operational expenditure
+OSS offshore substation
+OWF offshore wind farm
+RA risk assessment
+References
+1. SeeOff. Strategieentwicklung zum Effizienten Rückbau von Offshore-Windparks. 2023. Available online: https://www.seeoff.de/
+(accessed on 1 May 2023).
+2. Paulsen, E.B.; Enevoldsen, P . A multidisciplinary review of recycling methods for end-of-life wind turbine blades. Energies 2021,
+14, 4247. [CrossRef]
+3. Mello, G.; Ferreira Dias, M.; Robaina, M. Evaluation of the environmental impacts related to the wind farms end-of-life. Energy
+Rep. 2022, 8, 35–40. [CrossRef]
+4. BSH. Genehmigungsbescheid Dolwin Alpha. 2023. Available online: https://www.bsh.de/DE/THEMEN/Offshore/_Anlagen/
+Downloads/Genehmigungsbescheid/Netzanbindungen_Konverter/Genehmigungsbescheid_DolWin_1_DolWin_alpha.pdf?
+__blob=publicationFile (accessed on 1 May 2023).
+5. Li, Q.; Jia, H.; Qiu, Q.; Lu, Y.; Zhang, J.; Mao, J.; Fan, W.; Huang, M. Typhoon-Induced Fragility Analysis of Transmission Tower
+in Ningbo Area Considering the Effect of Long-Term Corrosion. Appl. Sci. 2022, 12, 4774. [CrossRef]
+6. Wei, K.; Arwade, S.; Myers, A.; Hallowell, S.; Hajjar, J.; Hines, E. Performance levels and fragility for offshore wind turbine
+support structures during extreme events. In Proceedings of the Structures Congress 2015, Portland, OR, USA, 23–25 April 2015;
+pp. 1891–1902.
+7. Jaimes, M.A.; García-Soto, A.D.; Martín del Campo, J.O.; Pozos-Estrada, A. Probabilistic risk assessment on wind turbine towers
+subjected to cyclone-induced wind loads. Wind Energy 2020, 23, 528–546. [CrossRef]
+8. Charlton, T.; Rouainia, M. Geotechnical fragility analysis of monopile foundations for offshore wind turbines in extreme storms.
+Renew. Energy 2022, 182, 1126–1140. [CrossRef]
+9. Mo, R.; Kang, H.; Li, M.; Zhao, X. Seismic Fragility Analysis of Monopile Offshore Wind Turbines under Different Operational
+Conditions. Energies 2017, 10, 1037. [CrossRef]
+10. Zhang, Z.; De Risi, R.; Sextos, A. Multi-hazard fragility assessment of monopile offshore wind turbines under earthquake, wind
+and wave loads. Earthq. Eng. Struct. Dyn. 2023, 52, 2658–2681. [CrossRef]
+11. Wang, W.L.; van de Lindt, J.W. Quantitative modeling of residential building disaster recovery and effects of pre- and post-event
+policies. Int. J. Disaster Risk Reduct. 2021, 59, 102259. [CrossRef]
+12. Martinez Luengo, M.; Kolios, A. Failure mode identification and end of life scenarios of offshore wind turbines: A review.
+Energies 2015, 8, 8339–8354. [CrossRef]
+13. Iberdrola. Construction of an Offshore Wind Farm. 2023. Available Online: https://www.iberdrola.com/about-us/our-activity/
+offshore-wind-energy/offshore-wind-park-construction (accessed on 1 May 2023).
+14. Calado, G.; Castro, R. Hydrogen Production from Offshore Wind Parks: Current Situation and Future Perspectives. Appl. Sci.
+2021, 11, 5561. [CrossRef]
+15. Xie, H.; Zhao, Z.; Liu, T.; Wu, Y.; Lan, C.; Jiang, W.; Zhu, L.; Wang, Y.; Yang, D.; Shao, Z. A membrane-based seawater electrolyser
+for hydrogen generation. Nature 2022, 612, 673–678. [CrossRef] [PubMed]
+16. Dinh, V .N.; Leahy, P .; McKeogh, E.; Murphy, J.; Cummins, V . Development of a viability assessment model for hydrogen
+production from dedicated offshore wind farms. Int. J. Hydrogen Energy 2021, 46, 24620–24631. [CrossRef]
+17. Köpke, C.; Mielniczek, J.; Roller, C.; Lange, K.; Torres, F.S.; Stolz, A. Resilience management processes in the offshore wind
+industry: schematization and application to an export-cable attack. Environ. Syst. Decis. 2023, 43, 161–177. [CrossRef]
+18. Amprion. Gasisolierte Schaltanlagen (GIS). 2023. Available online: https://www.amprion.net/%C3%9Cbertragungsnetz/
+Technologie/Umspannanlage/Gasisolierte-Schaltanlagen.html (accessed on 1 May 2023).
+19. Young, I.R.; Ribal, A. Multiplatform evaluation of global trends in wind speed and wave height. Science 2019, 364, 548–552.
+[CrossRef] [PubMed]
+20. Kvingedal, B.; Bruserud, K.; Nygaard, E. Individual wave height and wave crest distributions based on field measurements from
+the northern North Sea. Ocean. Dyn. 2018, 68, 1727–1738. [CrossRef]
+21. FINO project. Betrieb und Erweiterung der FINO-Datenbank, Fortsetzung der Meteorologischen Messungen an FINO1,
+Fortsetzung des Ozeanographischen Messbetriebes FINO1, FINO2 und FINO3. 2022. Available online: https://www.bsh.de/
+DE/THEMEN/Forschung_und_Entwicklung/Abgeschlossene-Projekte/_Anlagen/Downloads/nachhaltige-meeresnutzung/
+FINO_Abschlussbericht_Phase_5.pdf;jsessionid=F24AF49916B31D32FDFD932FE464B608.live21324?__blob=publicationFile&
+v=2 (accessed on 11 May 2023).
+22. Shariff, A.A.; Hafezi, M.H. Modelling significant wave height data of North Sea: Rayleigh vs weibull distribution. In Applied
+Mechanics and Materials; Trans Tech Publications Ltd.: Stafa-Zurich, Switzerland, 2012; Volume 157, pp. 652–657.
+23. Bozzi, S.; Miquel, A.M.; Antonini, A.; Passoni, G.; Archetti, R. Modeling of a point absorber for energy conversion in Italian seas.
+Energies 2013, 6, 3033–3051. [CrossRef]
+
+===== PAGE 12 =====
+
+Energies 2023, 16, 4771 12 of 12
+24. DIN EN 1993-1-9:2005 + AC:2009 ; Eurocode 3: Design of steel structures—Part 1–9: Fatigue. Deutsches Institut für Normung e.V .,
+German Institute for Standardization: Berlin, Germany, 2009; German version EN.
+25. FINO1. FINO1: Wellen-und Strömungsverhältnisse. 2023. Available online: https://www.fino1.de/de/standort/wellen-
+stroemung.html (accessed on 11 May 2023).
+Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual
+author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to
+people or property resulting from any ideas, methods, instructions or products referred to in the content.
