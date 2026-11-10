@@ -15,6 +15,37 @@
   body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.55;}
   .page{max-width:1000px;margin:0 auto;padding:28px 20px 80px;}
 
+  /* ---------- info side panel (Key terms + Functions) ---------- */
+  .panel-toggle{position:fixed;top:18px;right:18px;z-index:60;display:inline-flex;align-items:center;gap:7px;
+    padding:9px 15px;background:var(--accent);color:#fff;border:none;border-radius:999px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(37,99,235,.38);font-family:'Segoe UI',system-ui,sans-serif;font-size:13.5px;font-weight:600}
+  .panel-toggle:hover{background:#1d4ed8}
+  .panel-toggle .ico{font-size:15px;line-height:1}
+  .panel-backdrop{position:fixed;inset:0;z-index:55;background:rgba(15,23,42,.34);opacity:0;
+    pointer-events:none;transition:opacity .22s ease}
+  .panel-backdrop.open{opacity:1;pointer-events:auto}
+  .side-panel{position:fixed;top:0;right:0;height:100vh;width:min(392px,92vw);z-index:65;
+    background:var(--card);border-left:1px solid var(--border);box-shadow:-10px 0 40px rgba(15,23,42,.16);
+    transform:translateX(103%);transition:transform .26s ease;display:flex;flex-direction:column}
+  .side-panel.open{transform:none}
+  .sp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;
+    border-bottom:1px solid var(--border)}
+  .sp-title{font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;font-weight:700;color:var(--ink)}
+  .sp-close{border:none;background:#f1f5f9;color:#334155;width:30px;height:30px;border-radius:8px;
+    cursor:pointer;font-size:16px;line-height:1}
+  .sp-close:hover{background:#e2e8f0}
+  .sp-body{flex:1 1 auto;overflow-y:auto;padding:6px 16px 22px}
+  .sp-section{margin-top:18px}
+  .sp-section h3{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 11px;display:flex;align-items:center;gap:8px}
+  .sp-section h3::before{content:"";width:14px;height:2px;background:var(--accent);border-radius:2px}
+  .sp-section .sp-lede{font-size:13.5px;color:#475569;margin:0 0 12px;line-height:1.5}
+  .sp-section .sp-lede code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
+  .gitem.sp{grid-template-columns:1fr;gap:4px;padding:11px 13px}
+  .gitem.sp .gt{font-size:13.5px}
+  .eq.sp{grid-template-columns:1fr;gap:8px;padding:13px 15px}
+  .eq.sp .tag{margin-bottom:2px}
+
   header.intro{background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:26px 30px;box-shadow:0 4px 18px rgba(15,23,42,.05);}
   header.intro h1{margin:0 0 10px;font-size:26px;font-weight:700;line-height:1.25}
@@ -154,6 +185,74 @@
 </style>
 </head>
 <body>
+<button class="panel-toggle" id="panelToggle" type="button" aria-expanded="false" aria-controls="sidePanel" aria-label="Open information panel">
+  <span class="ico">ℹ</span><span class="lbl">Info</span>
+</button>
+<div class="panel-backdrop" id="panelBackdrop"></div>
+
+<aside class="side-panel" id="sidePanel" aria-hidden="true" aria-label="Reference: key terms and functions">
+  <div class="sp-head">
+    <span class="sp-title">Reference</span>
+    <button class="sp-close" id="panelClose" type="button" aria-label="Close panel">✕</button>
+  </div>
+  <div class="sp-body">
+    <section class="sp-section">
+      <h3>Key terms</h3>
+      <div class="gloss">
+        <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
+        <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
+        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves (taller months) means more load changes, which is what fatigues the steel.</span></div>
+        <div class="gitem sp"><span class="gt">cumulative load</span><span class="gd">The running total of load changes, summed month by month over the decades. It only goes up — that accumulation is what eventually exceeds the design limit.</span></div>
+        <div class="gitem sp"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still tolerate. As load changes grow, the tolerable height drops. It is the "structural resistance curve".</span></div>
+        <div class="gitem sp"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The failure probability used in a month <b>after</b> the limit is exceeded (high) versus <b>before</b> (low). The first month to reach <code>phigh</code> is the "probable failure" date.</span></div>
+        <div class="gitem sp"><span class="gt"><code>Status</code></span><span class="gd">The fraction of network units (turbines + platforms) that are currently working. 1.0 = everything up, 0 = all down.</span></div>
+        <div class="gitem sp"><span class="gt">resilience / <code>AE</code></span><span class="gd">The paper's headline number: the area under the energy-output curve over the whole horizon (MW·month). Bigger = the option delivers more energy over time.</span></div>
+      </div>
+    </section>
+
+    <section class="sp-section">
+      <h3>Functions</h3>
+      <p class="sp-lede">Four building blocks defined before any data is generated. They implement the
+        equations from the paper (Rayleigh wave statistics and Eurocode&nbsp;3 fatigue) and the repair rule.</p>
+      <div class="equations">
+        <div class="eq sp">
+          <div class="tag">Eq. 1</div>
+          <div class="body">
+            <div class="formula">f(x; σ) = (x / σ²) · e^( −x² / 2σ² )</div>
+            <div class="desc">Rayleigh distribution (significant wave height → frequency). Multiplied by the
+              monthly load-change count to estimate how many times a given height <code>x</code> hits the structure.</div>
+          </div>
+        </div>
+        <div class="eq sp">
+          <div class="tag">Eq. 2</div>
+          <div class="body">
+            <div class="formula">H<sub>max</sub> = H<sub>sig</sub> + | plus | ,&nbsp;&nbsp; plus = U( 0 , H<sub>sig</sub> · (0.07·Δyear + 3) )</div>
+            <div class="desc">Maximum wave height for a month from its significant wave height and the years since the base year,
+              capped at <code>maxH</code>.</div>
+          </div>
+        </div>
+        <div class="eq sp">
+          <div class="tag">Eq. 3</div>
+          <div class="body">
+            <div class="formula">H<sub>fail</sub>(N) = max( −½·ln(N) + H<sub>rel</sub> , H<sub>min</sub> )</div>
+            <div class="desc">Fatigue limit (DIN EN 1993-1-9 / Eurocode 3): the wave height a structure can still endure for a given
+              number of load changes <code>N</code>.</div>
+          </div>
+        </div>
+        <div class="eq sp">
+          <div class="tag">Repair</div>
+          <div class="body">
+            <div class="formula">month&nbsp;[t, t+1, t+2] → [ broken, broken, working ]</div>
+            <div class="desc">If a unit breaks in month <code>t</code>, it stays offline for 2 months, then is back online.
+              This 3-month pattern (0 = down, 1 = up) means repair windows never overlap and a unit cannot re-break in the
+              month it is being repaired.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</aside>
+
 <div class="page">
 
   <!-- ============ CHAPTER 0 · Requirements ============ -->
@@ -182,17 +281,14 @@
     <div class="block">
       <div class="bhead">Structure</div>
       <div class="pipeline">
-        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Functions</b> — the four maths building blocks (wave statistics and the fatigue limit) that everything else uses.</span></div>
-        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Set parameters</b> — the global setup: which EOL mode, the time window, the severe season, and the random seed.</span></div>
-        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
-        <div class="pipe"><span class="pn">4</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
-        <div class="pipe"><span class="pn">5</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Set parameters</b> — the global setup: which EOL mode, the time window, the severe season, and the random seed.</span></div>
+        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
+        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
+        <div class="pipe"><span class="pn">4</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
       </div>
     </div>
 
-    <div class="block">
-      <div class="bhead">Key terms</div>
-      <div class="gloss">
+    <!--
         <div class="gitem"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
         <div class="gitem"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
         <div class="gitem"><span class="gt"><code>load change</code></span><span class="gd">One wave hitting the steel structure. More waves (taller months) means more load changes, which is what fatigues the steel.</span></div>
@@ -202,14 +298,16 @@
         <div class="gitem"><span class="gt"><code>Status</code></span><span class="gd">The fraction of network units (turbines + platforms) that are currently working. 1.0 = everything up, 0 = all down.</span></div>
         <div class="gitem"><span class="gt">resilience / <code>AE</code></span><span class="gd">The paper's headline number: the area under the energy-output curve over the whole horizon (MW·month). Bigger = the option delivers more energy over time.</span></div>
       </div>
-    </div>
+    </div>-->
 
     <p class="note">Every figure below is recomputed live from the adjustable parameters shown with each chapter.
       Drag a slider and watch the whole downstream chain update. Legends sit to the side and scroll, so every
-      trace label stays visible. All randomness is seeded for reproducibility.</p>
+      trace label stays visible. All randomness is seeded for reproducibility. Key terms and the core functions
+      live in the Info panel (top-right).</p>
   </header>
 
-  <!-- ============ CHAPTER 1 · Functions ============ -->
+  <!-- ============ CHAPTER 1 · Functions (moved to Info panel) ============ -->
+  <!--
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">1</span><h2>Functions</h2></div>
     <p class="chap-desc">Four building blocks are defined before any data is generated. They implement the
@@ -250,10 +348,11 @@
       </div>
     </div>
   </section>
+  -->
 
   <!-- ============ CHAPTER 2 · Set parameters ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">2</span><h2>Set parameters</h2></div>
+    <div class="chap-head"><span class="chap-num">1</span><h2>Set parameters</h2></div>
     <p class="chap-desc">Global setup that every later chapter reads: the end-of-life strategy, the time window,
       the severe-weather season and the random seed.</p>
     <div class="figure" style="padding-bottom:6px">
@@ -292,7 +391,7 @@
 
   <!-- ============ CHAPTER 3 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">3</span><h2>Generate wave heights data and estimate the expected load</h2></div>
+    <div class="chap-head"><span class="chap-num">2</span><h2>Generate wave heights data and estimate the expected load</h2></div>
     <p class="chap-desc">First we invent a realistic 60-year sea state and ask "how hard does it work the steel?".
       Each month gets a significant wave height <code>Hsig</code> (typical, from a Rayleigh distribution) and a taller
       maximum height <code>Hmax</code> (the extreme, grown over the years via Eq.&nbsp;2 to model climate change). We then
@@ -363,7 +462,7 @@
 
   <!-- ============ CHAPTER 4 · Cumulative sum ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">4</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
+    <div class="chap-head"><span class="chap-num">3</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
     <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total, summed per
       discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
       the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3 allows, that month's
@@ -405,7 +504,7 @@
 
   <!-- ============ CHAPTER 5 · OSS network ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">5</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
+    <div class="chap-head"><span class="chap-num">4</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
     <p class="chap-desc">This is where the abstract probabilities become a running power plant. A flat network of
       <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built (the turbine clusters plus their substation platforms,
       each of which can also break). In any month whose waves clear the <code>damage</code> threshold, every unit is allowed to
@@ -971,6 +1070,26 @@ const INFO_TEXT={
 
 setupLegends();
 recompute();
+
+/* ---- info side panel: toggle, close, keyboard, backdrop ---- */
+(function infoPanel(){
+  const panel   = document.getElementById('sidePanel');
+  const toggle  = document.getElementById('panelToggle');
+  const closeBtn= document.getElementById('panelClose');
+  const backdrop= document.getElementById('panelBackdrop');
+  if(!panel||!toggle) return;
+  function setPanel(open){
+    panel.classList.toggle('open',open);
+    backdrop.classList.toggle('open',open);
+    toggle.setAttribute('aria-expanded', open?'true':'false');
+    panel.setAttribute('aria-hidden', open?'false':'true');
+    if(open) panel.scrollTop=0;
+  }
+  toggle.addEventListener('click',()=>setPanel(!panel.classList.contains('open')));
+  closeBtn.addEventListener('click',()=>setPanel(false));
+  backdrop.addEventListener('click',()=>setPanel(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')setPanel(false);});
+})();
 </script>
 </body>
 </html>
