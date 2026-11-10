@@ -24,6 +24,31 @@
   header.intro .cite b{color:var(--ink)}
   header.intro .note{font-size:12.5px;color:var(--muted);margin-top:10px}
 
+  /* background / pipeline / glossary helpers for the intro */
+  header.intro .block{margin-top:18px}
+  header.intro .block .bhead{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;
+    font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  header.intro .block .bhead::before{content:"";width:14px;height:2px;background:var(--accent);border-radius:2px}
+  header.intro .btext{font-size:14.5px;color:#334155;margin:0 0 8px;max-width:840px}
+  header.intro .btext b{color:var(--ink)}
+  .pipeline{display:grid;gap:8px;counter-reset:pipe}
+  .pipe{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--border);
+    border-radius:10px;padding:10px 12px}
+  .pipe .pn{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:700;display:flex;
+    align-items:center;justify-content:center;margin-top:1px}
+  .pipe .pt{font-size:13.5px;color:#334155}
+  .pipe .pt b{color:var(--ink)}
+  .pipe .pt code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
+  .gloss{display:grid;gap:7px}
+  .gitem{font-size:13.5px;color:#334155;display:grid;grid-template-columns:210px 1fr;gap:10px;
+    background:#fff;border:1px solid var(--border);border-radius:9px;padding:8px 12px}
+  .gitem .gt{font-weight:700;color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px}
+  .gitem .gt code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;font-weight:600}
+  .gitem .gd{color:#475569}
+  @media(max-width:640px){.gitem{grid-template-columns:1fr}}
+
   .chapter{margin-top:34px}
   .chap-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
   .chap-num{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:700;
@@ -134,14 +159,51 @@
   <!-- ============ CHAPTER 0 · Requirements ============ -->
   <header class="intro">
     <h1>Testing Resilience Aspects of Operation Options for Offshore Wind Farms beyond the End-of-Life</h1>
-    <p class="sub">Interactive reproduction of the educational notebook
-      <code>offshore_python_uebung_full_version.ipynb</code> — wave-driven fatigue, structural
-      degradation and network resilience for the three end-of-life strategies.</p>
-    <div class="cite">
-      <b>Citation:</b> Köpke, C.; Mielniczek, J.; Stolz, A. <em>Testing Resilience Aspects of
+    <p class="sub">Interactive reproduction of the original code written for Köpke, C.; Mielniczek, J.; Stolz, A. <em>Testing Resilience Aspects of
       Operation Options for Offshore Wind Farms beyond the End-of-Life.</em> Energies 2023, 16, 4771.
-      https://doi.org/10.3390/en16124771 · Code reworked for educational purposes by Tobias Rinnert.
+      https://doi.org/10.3390/en16124771. Features wave-driven fatigue, structural
+      degradation and network resilience for the three end-of-life strategies.</p>
+
+
+    <div class="block">
+      <div class="bhead">Introduction</div>
+      <p class="btext">An offshore wind farm is licensed for about <b>25 years</b>. When that permit expires
+        (the <b>end-of-life, EOL</b>), the operator must pick a strategy. The paper compares the three standard
+        options — this dashboard lets you reproduce its results and see how they change:</p>
+      <p class="btext">
+        <b>Decommissioning</b> — remove the old plant and later build new, modern structures (downtime in between).
+        <b>Extension</b> — keep the existing turbines running and just maintain their safety.
+        <b>Repowering</b> — keep the old foundations but install bigger, more efficient turbines on top.
+      </p>
+      <p class="btext">The risk the paper quantifies is <b>rising wave heights caused by climate change</b>,
+        because taller waves fatigue the steel structures over decades. </p>
     </div>
+
+    <div class="block">
+      <div class="bhead">Structure</div>
+      <div class="pipeline">
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Functions</b> — the four maths building blocks (wave statistics and the fatigue limit) that everything else uses.</span></div>
+        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Set parameters</b> — the global setup: which EOL mode, the time window, the severe season, and the random seed.</span></div>
+        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
+        <div class="pipe"><span class="pn">4</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
+        <div class="pipe"><span class="pn">5</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="bhead">Key terms</div>
+      <div class="gloss">
+        <div class="gitem"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
+        <div class="gitem"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
+        <div class="gitem"><span class="gt"><code>load change</code></span><span class="gd">One wave hitting the steel structure. More waves (taller months) means more load changes, which is what fatigues the steel.</span></div>
+        <div class="gitem"><span class="gt"><code>cumulative load</code></span><span class="gd">The running total of load changes, summed month by month over the decades. It only goes up — that accumulation is what eventually exceeds the design limit.</span></div>
+        <div class="gitem"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still tolerate. As load changes grow, the tolerable height drops. It is the "structural resistance curve".</span></div>
+        <div class="gitem"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The failure probability used in a month <b>after</b> the limit is exceeded (high) versus <b>before</b> (low). The first month to reach <code>phigh</code> is the "probable failure" date.</span></div>
+        <div class="gitem"><span class="gt"><code>Status</code></span><span class="gd">The fraction of network units (turbines + platforms) that are currently working. 1.0 = everything up, 0 = all down.</span></div>
+        <div class="gitem"><span class="gt">resilience / <code>AE</code></span><span class="gd">The paper's headline number: the area under the energy-output curve over the whole horizon (MW·month). Bigger = the option delivers more energy over time.</span></div>
+      </div>
+    </div>
+
     <p class="note">Every figure below is recomputed live from the adjustable parameters shown with each chapter.
       Drag a slider and watch the whole downstream chain update. Legends sit to the side and scroll, so every
       trace label stays visible. All randomness is seeded for reproducibility.</p>
@@ -180,9 +242,10 @@
       <div class="eq">
         <div class="tag">Repair</div>
         <div class="body">
-          <div class="formula">broken: [ 0 , 0 , 1 ]</div>
-          <div class="desc">After a unit breaks it stays offline for 2 months, then works again for at least one month
-            before it can break again (non-overlapping repair windows).</div>
+          <div class="formula">month&nbsp;[t, t+1, t+2] → [ broken, broken, working ]</div>
+          <div class="desc">If a unit breaks in month <code>t</code>, it stays offline for 2 months, then is back online.
+            This 3-month pattern (0 = down, 1 = up) means repair windows never overlap and a unit cannot re-break in the
+            month it is being repaired.</div>
         </div>
       </div>
     </div>
@@ -230,9 +293,12 @@
   <!-- ============ CHAPTER 3 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">3</span><h2>Generate wave heights data and estimate the expected load</h2></div>
-    <p class="chap-desc">A 60-year monthly dataset is synthesised: significant wave heights <code>Hsig</code> from a Rayleigh
-      distribution, maximum heights <code>Hmax</code> via Eq.&nbsp;2, and the number of load changes per month via Eq.&nbsp;1.
-      The four figures visualise this dataset.</p>
+    <p class="chap-desc">First we invent a realistic 60-year sea state and ask "how hard does it work the steel?".
+      Each month gets a significant wave height <code>Hsig</code> (typical, from a Rayleigh distribution) and a taller
+      maximum height <code>Hmax</code> (the extreme, grown over the years via Eq.&nbsp;2 to model climate change). We then
+      count how many load changes — waves above <code>Hmin</code> — each month contributes (Eq.&nbsp;1), and plot all of it.
+      The last figure compares the <b>fatigue limits</b> of the old structures versus the new build, i.e. how many load
+      changes each can survive at a given wave height. Everything downstream is driven by these numbers.</p>
 
     <!-- parameters for the wave/load plots -->
     <div class="params">
@@ -248,7 +314,10 @@
           <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
         <div class="pctl" style="grid-column:1 / -1"><label>Load changes per month (×10³)</label>
           <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110">
-          <div class="hint">= 6·60·24·30 in the notebook. Scales the Eq.&nbsp;1 frequency (and therefore the load plot).</div></div>
+          <div class="hint">Total number of waves a month is assumed to hit the structure. It multiplies the Eq.&nbsp;1 wave
+            frequency, so it sets the height of the "load changes over time" curve and how fast cumulative load (Ch.&nbsp;4)
+            builds up — a larger value means the structure reaches probable failure earlier. (The paper derives ≈ 2.6×10⁵
+            per month from a ~10&nbsp;s wave period.)</div></div>
       </div>
     </div>
 
@@ -295,9 +364,13 @@
   <!-- ============ CHAPTER 4 · Cumulative sum ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">4</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
-    <p class="chap-desc">Load changes accumulate per discrete wave height. When a height exceeds what Eq.&nbsp;3 allows for that
-      accumulated load, the failure probability for that month jumps to <code>phigh</code> (else <code>plow</code>). The left figure
-      keeps the structure in continuous use; the right figure decommissions it (load accumulation resets to zero) and rebuilds.</p>
+    <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total, summed per
+      discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
+      the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3 allows, that month's
+      failure probability jumps from <code>plow</code> to <code>phigh</code> — that first month is the solid "probable failure"
+      line. <b>Left:</b> the structure is kept in continuous use, so the load only ever grows. <b>Right:</b> the structure is
+      decommissioned (the running total is reset to zero during the downtime) and rebuilt stronger, so the failure is pushed
+      further out — the core reason the decommissioning option survives longer.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
@@ -333,9 +406,14 @@
   <!-- ============ CHAPTER 5 · OSS network ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">5</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
-    <p class="chap-desc">A flat network of <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built. In months with waves larger
-      than the damage threshold each unit breaks with probability <code>prop</code>/<code>propDe</code>, then follows the repair rule.
-      Status is the fraction of working units; energy is their total MW output, ramped according to the chosen mode.</p>
+    <p class="chap-desc">This is where the abstract probabilities become a running power plant. A flat network of
+      <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built (the turbine clusters plus their substation platforms,
+      each of which can also break). In any month whose waves clear the <code>damage</code> threshold, every unit is allowed to
+      fail with the probability computed in Chapter&nbsp;4; a broken unit then stays offline for 2 months (the repair rule)
+      before it can run again. <b>Status</b> (top) is simply the fraction of units still working, so dips show outages.
+      <b>Energy output</b> (bottom) is the total MW of working units — in Decommissioning and Repowering modes the per-turbine
+      output is ramped down then back up (or stepped up) around end-of-life, which is why the curve changes shape there.
+      The area under that energy curve is the paper's headline resilience number.</p>
 
     <!-- parameters for the OSS/energy chapter -->
     <div class="params">
@@ -370,9 +448,7 @@
   </section>
 
   <footer>
-    Interactive adaptation of <code>MainOffshoreWave.py</code> / <code>offshore_python_uebung_full_version.ipynb</code> ·
-    Fraunhofer EMI · Köpke, Mielniczek &amp; Stolz (2023), reworked by T. Rinnert. Stochastic model re-implemented in JavaScript
-    with a seeded RNG; results are illustrative.
+    Fraunhofer EMI · Köpke, Mielniczek &amp; Stolz (2023), reworked by T. Rinnert. Results are illustrative.
   </footer>
 </div>
 
@@ -813,11 +889,11 @@ const INFO_TEXT={
 
   maxH:"A hard cap applied to the maximum wave height in Eq.&nbsp;2: the uniform 'plus' draw is clamped so H<sub>max</sub> never exceeds this value. It keeps the 60-year synthetic record physically plausible and stops the climate-change growth term (0.07·Δyear) from producing implausibly tall waves in later decades.",
 
-  loadK:"The monthly total number of load changes N<sub>total</sub> (here in units of ×10³). It comes from the wave frequency ν ≈ 1/10 s discretised over a month (≈ 2.59·10⁵), and multiplies the Rayleigh density in Eq.&nbsp;4 (N<sub>H</sub> = f(H,σ)·N<sub>total</sub>) to turn a probability density into a count of waves at each height. It therefore sets the absolute level of the 'Load changes over time' curve and the rate at which cumulative load builds.",
+  loadK:"The total number of waves assumed to hit the structure in a month (here in units of ×10³). It turns the Rayleigh wave-height density of Eq.&nbsp;1 into an actual <b>count</b> of waves at each height (count = density × this value). It therefore sets the absolute level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;4 builds up — a larger value means the structure reaches its 'probable failure' date earlier. (The paper derives ≈ 2.6×10⁵ per month from a ~10&nbsp;s wave period.)",
 
   minH_f:"H<sub>min</sub> for the <b>existing</b> structure's cyclic structural resistance curve (Eq.&nbsp;3): the flat lower bound of the fatigue limit below which the structure is assumed to survive any number of load changes. The paper uses H<sub>min</sub> = 8 m for the old structures. Raising it makes the old structure more robust against short, frequent waves.",
 
-  maxH_f:"H<sub>rel</sub> for the <b>existing</b> structure's fatigue curve (Eq.&nbsp;3): the intercept that fixes how many load changes the structure tolerates before the allowable wave height drops. The paper sets H<sub>rel</sub> = 17 m, the 100-year wave height the FINO-1 platform is designed to withstand once. A higher value lets the old structure endure more cumulative load before its failure probability jumps to <code>phigh</code>.",
+  maxH_f:"H<sub>rel</sub> for the <b>existing</b> structure's fatigue curve (Eq.&nbsp;3): the intercept that fixes how many load changes the structure tolerates before the allowable wave height drops. Think of it as the 'new-build' strength of the old plant: the paper sets H<sub>rel</sub> = 17 m, matching the ~100-year (once-in-a-century) wave height the reference platform is designed to survive. A higher value means the old structure can endure more cumulative load before its failure probability jumps to <code>phigh</code>; a lower value makes it age faster.",
 
   minHDe_f:"H<sub>min</sub> of the cyclic structural resistance curve for the <b>new</b> structures built after decommissioning. Newer designs and higher steel classes shift the curve, so this bound is typically a little different from the existing structure's. It is the lower (flat) bound of the new structure's fatigue limit.",
 
