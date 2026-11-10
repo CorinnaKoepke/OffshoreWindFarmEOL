@@ -36,9 +36,18 @@
   .sp-close:hover{background:#e2e8f0}
   .sp-body{flex:1 1 auto;overflow-y:auto;padding:6px 16px 22px}
   .sp-section{margin-top:18px}
-  .sp-section h3{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--accent);margin:0 0 11px;display:flex;align-items:center;gap:8px}
-  .sp-section h3::before{content:"";width:14px;height:2px;background:var(--accent);border-radius:2px}
+  .sp-sec-head{width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;
+    padding:3px 0;margin:0;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--accent);text-align:left}
+  .sp-sec-head:hover{color:#1d4ed8}
+  .sp-sec-head::before{content:"";width:14px;height:2px;background:currentColor;border-radius:2px}
+  .sp-sec-chev{margin-left:auto;flex:0 0 auto;width:14px;height:14px;position:relative;transition:transform .24s ease}
+  .sp-sec-chev::before{content:"";position:absolute;left:50%;top:52%;width:6px;height:6px;
+    border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translate(-50%,-50%) rotate(45deg)}
+  .sp-section:not([data-sp-open="true"]) .sp-sec-chev{transform:rotate(-90deg)}
+  .sp-section-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
+  .sp-section:not([data-sp-open="true"]) .sp-section-body{grid-template-rows:0fr}
+  .sp-inner{min-height:0;overflow:hidden;padding-top:11px}
   .sp-section .sp-lede{font-size:13.5px;color:#475569;margin:0 0 12px;line-height:1.5}
   .sp-section .sp-lede code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
   .gitem.sp{grid-template-columns:1fr;gap:4px;padding:11px 13px}
@@ -196,8 +205,11 @@
     <button class="sp-close" id="panelClose" type="button" aria-label="Close panel">✕</button>
   </div>
   <div class="sp-body">
-    <section class="sp-section">
-      <h3>Key terms</h3>
+    <section class="sp-section" data-sp="keyterms" data-sp-open="true">
+      <button class="sp-sec-head" type="button" aria-expanded="true" aria-controls="spBodyKey">
+        <span>Key terms</span><span class="sp-sec-chev" aria-hidden="true"></span>
+      </button>
+      <div class="sp-section-body" id="spBodyKey"><div class="sp-inner">
       <div class="gloss">
         <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
         <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
@@ -208,10 +220,14 @@
         <div class="gitem sp"><span class="gt"><code>Status</code></span><span class="gd">The fraction of network units (turbines + platforms) that are currently working. 1.0 = everything up, 0 = all down.</span></div>
         <div class="gitem sp"><span class="gt">resilience / <code>AE</code></span><span class="gd">The paper's headline number: the area under the energy-output curve over the whole horizon (MW·month). Bigger = the option delivers more energy over time.</span></div>
       </div>
+      </div></div>
     </section>
 
-    <section class="sp-section">
-      <h3>Functions</h3>
+    <section class="sp-section" data-sp="functions" data-sp-open="true">
+      <button class="sp-sec-head" type="button" aria-expanded="true" aria-controls="spBodyFun">
+        <span>Functions</span><span class="sp-sec-chev" aria-hidden="true"></span>
+      </button>
+      <div class="sp-section-body" id="spBodyFun"><div class="sp-inner">
       <p class="sp-lede">Four building blocks defined before any data is generated. They implement the
         equations from the paper (Rayleigh wave statistics and Eurocode&nbsp;3 fatigue) and the repair rule.</p>
       <div class="equations">
@@ -249,6 +265,7 @@
           </div>
         </div>
       </div>
+      </div></div>
     </section>
   </div>
 </aside>
@@ -1089,6 +1106,28 @@ recompute();
   closeBtn.addEventListener('click',()=>setPanel(false));
   backdrop.addEventListener('click',()=>setPanel(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')setPanel(false);});
+})();
+
+/* ---- info panel: collapsible sub-sections (Key terms / Functions) ---- */
+(function spSubsections(){
+  const KEY='offshoreDashboard.spSubs';
+  let saved={}; try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){saved={};}
+  document.querySelectorAll('#sidePanel .sp-section').forEach(sec=>{
+    const key=sec.dataset.sp;
+    const head=sec.querySelector('.sp-sec-head');
+    if(!head) return;
+    const apply=open=>{
+      sec.setAttribute('data-sp-open',open?'true':'false');
+      head.setAttribute('aria-expanded',open?'true':'false');
+    };
+    if(key && key in saved) apply(saved[key]);          // restore last state
+    else apply(true);                                   // default: open
+    head.addEventListener('click',()=>{
+      const nowOpen=sec.getAttribute('data-sp-open')!=='true';
+      apply(nowOpen);
+      if(key){saved[key]=nowOpen;try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}}
+    });
+  });
 })();
 </script>
 </body>
