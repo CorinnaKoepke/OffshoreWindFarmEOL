@@ -240,14 +240,14 @@
       </button>
       <div class="sp-section-body" id="spBodyKey"><div class="sp-inner">
       <div class="gloss">
-        <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
-        <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
-        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves means more load changes, which is what fatigues the steel.</span></div>
-        <div class="gitem sp"><span class="gt">cumulative load</span><span class="gd">The running total of load changes, summed month by month over the decades. It only goes up — that accumulation is what eventually exceeds the design limit.</span></div>
-        <div class="gitem sp"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still tolerate. As load changes grow, the tolerable height drops. It is the "structural resistance curve".</span></div>
-        <div class="gitem sp"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The failure probability used in a month <b>after</b> the limit is exceeded (high) versus <b>before</b> (low). The first month to reach <code>phigh</code> is the "probable failure" date.</span></div>
-        <div class="gitem sp"><span class="gt"><code>Status</code></span><span class="gd">The fraction of network units (turbines + platforms) that are currently working. 1.0 = everything up, 0 = all down.</span></div>
-        <div class="gitem sp"><span class="gt">resilience / <code>AE</code></span><span class="gd">The paper's headline number: the area under the energy-output curve over the whole horizon (MW·month). Bigger = the option delivers more energy over time.</span></div>
+        <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The usual wave height of a month — a typical size for the sea in that period.</span></div>
+        <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest single wave of the month. These extreme waves cause the damage, and they get larger over the years (climate change).</span></div>
+        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves mean more load changes, which is what wears the steel out over time (fatigue).</span></div>
+        <div class="gitem sp"><span class="gt">cumulative load</span><span class="gd">The running total of load changes, added up month by month. It only ever goes up — and that total is what finally exceeds the structure's limit.</span></div>
+        <div class="gitem sp"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still take. As load changes grow, this tolerable height gets lower.</span></div>
+        <div class="gitem sp"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The chance of a unit breaking: <b>higher</b> once the structure's limit is exceeded (<code>phigh</code>), <b>lower</b> while it is still safe (<code>plow</code>). The first month it reaches <code>phigh</code> is the "probable failure" date.</span></div>
+        <div class="gitem sp"><span class="gt"><code>Status</code></span><span class="gd">The share of units (turbines + platforms) that are working right now. 1.0 = everything up, 0 = all down.</span></div>
+        <div class="gitem sp"><span class="gt">resilience / <code>AE</code></span><span class="gd">The main result number: the total energy delivered over the whole period (the area under the energy curve, in MW·month). A larger value means the option delivers more energy.</span></div>
       </div>
       </div></div>
     </section>
@@ -257,40 +257,28 @@
         <span>Functions</span><span class="sp-sec-chev" aria-hidden="true"></span>
       </button>
       <div class="sp-section-body" id="spBodyFun"><div class="sp-inner">
-      <p class="sp-lede">Four building blocks defined before any data is generated. They implement the
-        equations from the paper (Rayleigh wave statistics and Eurocode&nbsp;3 fatigue) and the repair rule.</p>
+      <p class="sp-lede">Three core rules, used before any data is generated. They follow the equations from the paper
+        (wave statistics and Eurocode&nbsp;3 fatigue).</p>
       <div class="equations">
         <div class="eq sp">
           <div class="tag">Eq. 1</div>
           <div class="body">
             <div class="formula">f(x; σ) = (x / σ²) · e^( −x² / 2σ² )</div>
-            <div class="desc">Rayleigh distribution (significant wave height → frequency). Multiplied by the
-              monthly load-change count to estimate how many times a given height <code>x</code> hits the structure.</div>
+            <div class="desc">Describes how common each wave height is. Multiply it by the number of waves in a month to find how often a given height <code>x</code> hits the structure.</div>
           </div>
         </div>
         <div class="eq sp">
           <div class="tag">Eq. 2</div>
           <div class="body">
             <div class="formula">H<sub>max</sub> = H<sub>sig</sub> + | U( 0 , H<sub>sig</sub> · (0.07·Δyear + 3) ) |</div>
-            <div class="desc">Maximum wave height for a month from its significant wave height and the years since the base year,
-              capped at <code>maxH</code>.</div>
+            <div class="desc">Gives a month's maximum wave height <code>Hmax</code> from its significant wave height <code>Hsig</code>. The extra amount grows with the years since the base year (climate change), and is capped at <code>maxH</code>.</div>
           </div>
         </div>
         <div class="eq sp">
           <div class="tag">Eq. 3</div>
           <div class="body">
             <div class="formula">H<sub>fail</sub>(N) = max( −½·ln(N) + H<sub>rel</sub> , H<sub>min</sub> )</div>
-            <div class="desc">Fatigue limit (DIN EN 1993-1-9 / Eurocode 3): the wave height a structure can still endure for a given
-              number of load changes <code>N</code>.</div>
-          </div>
-        </div>
-        <div class="eq sp">
-          <div class="tag">Repair</div>
-          <div class="body">
-            <div class="formula">month&nbsp;[t, t+1, t+2] → [ broken, broken, working ]</div>
-            <div class="desc">If a unit breaks in month <code>t</code>, it stays offline for 2 months, then is back online.
-              This 3-month pattern (0 = down, 1 = up) means repair windows never overlap and a unit cannot re-break in the
-              month it is being repaired.</div>
+            <div class="desc">The fatigue limit (Eurocode 3): after <code>N</code> load changes, the tallest wave the structure can still take.</div>
           </div>
         </div>
       </div>
@@ -316,23 +304,21 @@
         (the <b>end-of-life, EOL</b>), the operator must pick a strategy. The paper compares the three standard
         options — this dashboard lets you reproduce its results and see how they change:</p>
       <p class="btext">
-        <b>Decommissioning</b> — remove the old plant and later build a new, modern structures (downtime in between).<br>
-        <b>Extension</b> — keep the existing turbines running and just maintain their safety.<br>
-        <b>Repowering</b> — keep the old foundations but install bigger, more efficient turbines on top.
+        <b>Decommissioning</b> — take the old plant down and, later, build a new, modern one (there is downtime in between).<br>
+        <b>Extension</b> — keep the current turbines running and simply maintain their safety.<br>
+        <b>Repowering</b> — keep the old foundations but put bigger, more efficient turbines on top.
       </p>
-      <p class="btext">The risk the paper quantifies is <b>rising wave heights caused by climate change</b>,
-        because taller waves fatigue the steel structures over decades. </p>
-      <p class="btext">The simulation starts in <b>2015</b> and runs for <b>60 years</b> (720 monthly steps), with all
-        randomness seeded (seed&nbsp;=&nbsp;0) so the results reproduce exactly. Both values are fixed here and not
-        adjustable — they are the reference window of the paper.</p>
+      <p class="btext">The risk the paper measures is <b>taller waves caused by climate change</b>,
+        because taller waves wear out (fatigue) the steel structures over decades.</p>
+      <p class="btext">The simulation starts in <b>2015</b> and runs for <b>60 years</b> (720 months). All randomness uses a fixed seed (seed&nbsp;=&nbsp;0), so the results are always reproduced exactly. Both values are fixed here and not adjustable — they are the reference period of the paper.</p>
     </div>
 
     <div class="block">
       <div class="bhead">Structure</div>
       <div class="pipeline">
-        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
-        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
-        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b> — build a 60-year record of waves, count how many load changes each month puts on the steel, and show the <b>fatigue limit</b> (how much load a structure can survive).</span></div>
+        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Cumulative load</b> — add the load up month by month and find <b>when</b> the structure reaches its "probable failure" point.</span></div>
+        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Network &amp; energy</b> — turn those failure chances into turbine outages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
       </div>
     </div>
 
@@ -348,9 +334,9 @@
       </div>
     </div>-->
 
-    <p class="note">Drag any slider and every figure updates live — the whole downstream chain recomputes. Legends
-      sit to the side and scroll, so every trace label stays visible. All randomness is seeded for reproducibility.
-      Key terms and the core functions live in the Info panel (top-right).</p>
+    <p class="note">Drag any slider and every figure updates live — the whole chain is recomputed. Legends sit to the side
+      and scroll, so every curve label stays visible. All randomness uses a fixed seed, so results are reproducible.
+      Key terms and the core rules are in the Info panel (top-right).</p>
   </header>
 
   <!-- ============ CHAPTER 1 · Functions (moved to Info panel) ============ -->
@@ -404,24 +390,24 @@
 
   <!-- ============ CHAPTER 2 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">1</span><h2>Generate the wave record and estimate the monthly load</h2></div>
-    <p class="chap-desc">First we invent a realistic 60-year sea state.
-      Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (typical, from a Rayleigh distribution) and a taller
-      maximum height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, grown over the years via Eq.&nbsp;2 to model climate change). We then
-      count how many load changes<button class="tinfo" type="button" data-key="loadchange" title="What is a load change?">i</button> — waves above <code>Hmin</code> — each month contributes (Eq.&nbsp;1), and plot all of it.
-      The last figure compares the <b>fatigue limits</b> of the old structures versus the new build, i.e. how many load
-      changes each can survive at a given wave height. Everything downstream is driven by these numbers.</p>
+    <div class="chap-head"><span class="chap-num">1</span><h2>Build the wave record and estimate the monthly load</h2></div>
+    <p class="chap-desc">First we create a realistic 60-year sea record.
+      Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (the usual wave size) and a taller
+      maximum wave height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, which grows over the years to model climate change). From that we
+      count how many waves hit the structure (load changes<button class="tinfo" type="button" data-key="loadchange" title="What is a load change?">i</button>) each month, only counting waves higher than <code>Hmin</code>, and plot it all.
+      The last figure compares the <b>fatigue limits</b> of the old structures versus the new build — that is, how many load
+      changes each can survive at a given wave height. These numbers drive everything that follows.</p>
 
     <div class="concepts">
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">Rayleigh wave-frequency distribution</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">How common each wave height is</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">f(x; σ) = (x / σ²) · e^( −x² / 2σ² )</div>
-        <p class="c-desc">Gives the frequency of a significant wave height <code>x</code>. Multiplied by the monthly load-change count, it estimates how many times a given height hits the structure.</p>
+        <p class="c-desc">Shows how often a wave of height <code>x</code> occurs. Multiplied by the number of waves in a month, it estimates how many times a given height hits the structure.</p>
       </div>
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">Maximum wave height from significant height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">From typical height to maximum height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">Hmax = Hsig + | U( 0 , Hsig · (0.07·Δyear + 3) ) |</div>
-        <p class="c-desc">Turns a month's <code>Hsig</code> into its taller <code>Hmax</code>, adding a random increment that grows with the years since the base year (climate trend), capped at <code>maxH</code>.</p>
+        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years since the base year (the climate trend), and is capped at <code>maxH</code>.</p>
       </div>
     </div>
 
@@ -429,7 +415,7 @@
     <div class="params">
       <div class="ph">Parameters — wave climate &amp; load</div>
       <div class="pgrid">
-        <div class="pctl"><label>Severe-weather months <span style="font-size:11px;color:var(--muted);font-weight:600">(global)</span></label>
+        <div class="pctl"><label>Stormy months <span style="font-size:11px;color:var(--muted);font-weight:600">(applies to all plots)</span></label>
           <select id="severe" data-key="severe">
             <option value="1,2,3,11,12" selected>Jan, Feb, Mar, Nov, Dec (default)</option>
             <option value="11,12,1,2,3,4">Nov – Apr</option>
@@ -437,24 +423,24 @@
             <option value="">All months</option>
           </select>
         </div>
-        <div class="pctl"><label>Severe Rayleigh σ (rs1)</label>
+        <div class="pctl"><label>Stormy-month wave size (rs1, m)</label>
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
-        <div class="pctl"><label>Normal Rayleigh σ (rs2)</label>
+        <div class="pctl"><label>Calm-month wave size (rs2, m)</label>
           <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
-        <div class="pctl"><label>Max. wave height cap (m)</label>
+        <div class="pctl"><label>Maximum wave height cap (m)</label>
           <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle">Wave height distributions</div>
-      <div class="figsub">Densities of H<sub>sig</sub> and H<sub>max</sub> against the reference Rayleigh distribution.</div>
+      <div class="figsub">How common each wave height is for the typical and the maximum height, next to the reference curve.</div>
       <div id="p_dist" class="plot"></div>
     </div>
 
     <div class="figure">
       <div class="figtitle">Wave heights over time</div>
-      <div class="figsub">Maximal and significant wave height for every month.</div>
+      <div class="figsub">The maximum and the typical wave height for every month.</div>
       <div id="p_waveTime" class="plot"></div>
     </div>
 
@@ -462,61 +448,61 @@
     <div class="params">
       <div class="ph">Parameters — load</div>
       <div class="pgrid">
-        <div class="pctl"><label>Load changes per month (×10³)</label>
+        <div class="pctl"><label>Waves per month (×10³)</label>
           <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110"></div>
-        <div class="pctl"><label>Min. wave height H<sub>min</sub> (m)</label>
+        <div class="pctl"><label>Smallest wave that counts, H<sub>min</sub> (m)</label>
           <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle">Load changes over time</div>
-      <div class="figsub">Estimated number of waves impacting the structure per month (wave heights above H<sub>min</sub>).</div>
+      <div class="figsub">Estimated number of waves hitting the structure per month (waves above H<sub>min</sub>).</div>
       <div id="p_load" class="plot"></div>
     </div>
 
     <div class="concept">
-      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit (structural resistance curve)</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
       <div class="c-formula">Hfail(N) = max( −½·ln(N) + Hrel , Hmin )</div>
-      <p class="c-desc">DIN EN 1993-1-9 / Eurocode 3: the tallest wave a structure can still endure after <code>N</code> load changes. As <code>N</code> grows the tolerable height drops — the plot below draws this curve for the existing vs. new structure.</p>
+      <p class="c-desc">(Eurocode 3) After <code>N</code> load changes, the tallest wave a structure can still take. As <code>N</code> grows this limit gets lower — the plot below draws this curve for the old and the new structure.</p>
     </div>
 
     <!-- parameters for the fatigue plot -->
     <div class="params">
-      <div class="ph">Parameters — fatigue limits (Eq. 3)</div>
+      <div class="ph">Parameters — fatigue limit (Eq. 3)</div>
       <div class="pgrid">
-        <div class="pctl"><label>Existing H<sub>min,fail</sub> (m)</label>
+        <div class="pctl"><label>Old structure: smallest wave that counts (m)</label>
           <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="8"></div>
-        <div class="pctl"><label>Existing H<sub>rel,fail</sub> (m)</label>
+        <div class="pctl"><label>Old structure: strength (m)</label>
           <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="17"></div>
-        <div class="pctl"><label>New H<sub>min,fail</sub> (m)</label>
+        <div class="pctl"><label>New structure: smallest wave that counts (m)</label>
           <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="10"></div>
-        <div class="pctl"><label>New H<sub>rel,fail</sub> (m)</label>
+        <div class="pctl"><label>New structure: strength (m)</label>
           <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="19"></div>
       </div>
     </div>
 
     <div class="figure">
-      <div class="figtitle">Wave height H vs. acceptable number of load changes</div>
-      <div class="figsub">Eq.&nbsp;3 fatigue limit for existing vs. new structures (log-x). Shaded box spans the p&nbsp;=&nbsp;0.1 / 0.5 failure range.</div>
+      <div class="figtitle">Wave height vs. how many load changes the structure can survive</div>
+      <div class="figsub">Eq.&nbsp;3 fatigue limit for the old and the new structure (x-axis is logarithmic). The shaded box spans the p&nbsp;=&nbsp;0.1 / 0.5 failure range.</div>
       <div id="p_failure" class="plot"></div>
     </div>
   </section>
 
   <!-- ============ CHAPTER 2 · Cumulative sum ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">2</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
-    <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, summed per
-      discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
-      the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button> allows, that month's
-      failure probability jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button> — that first month is the solid "probable failure"
+    <div class="chap-head"><span class="chap-num">2</span><h2>Add up the load changes over time</h2></div>
+    <p class="chap-desc">Load changes do not disappear — they <b>build up</b>. It is that running total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, added up
+      month by month, that wears out the steel. Each curve here is one wave-height band: the higher the band, the rarer and
+      more damaging the waves. The moment a band's total crosses the limit set by Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button>, that month's
+      chance of breaking jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button> — that first month is the solid "probable failure"
       line. Which curve you see depends on the <b>operation mode</b> above: keep the structure running and the load only ever
-      grows; decommission it and the running total resets to zero during the downtime, with a stronger rebuild — pushing the
-      probable-failure date further out, which is why decommissioning survives longer.</p>
+      grows; decommission it and the running total resets to zero during the downtime, then the rebuild is stronger — pushing
+      the probable-failure date further out. That is why decommissioning survives longer.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
-      <div class="ph">Parameters — operation mode &amp; decommissioning window</div>
+      <div class="ph">Parameters — Cumulative load changes</div>
       <div class="pgrid">
         <div class="pctl"><label>Operation mode</label>
           <select id="mode" data-key="mode">
@@ -524,15 +510,15 @@
             <option value="Keep">Extension / Repowering (keep running)</option>
           </select>
           <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
-            The full choice (Decom vs Extension vs Repower) is made in the network chapter below — the two fields stay in sync.
+            The full choice (Decommissioning vs Extension vs Repowering) is made in the network chapter below — these two fields stay in sync.
           </div></div>
-        <div class="pctl"><label>End-of-life (year)</label>
+        <div class="pctl"><label>End-of-life year</label>
           <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2040" step="1"></div>
-        <div class="pctl"><label>Decommissioning done (year)</label>
+        <div class="pctl"><label>Year decommissioning is finished</label>
           <input type="number" id="decomYear" data-key="decomYear" min="2030" max="2055" value="2042" step="1"></div>
-        <div class="pctl"><label>Rebuild finished (year)</label>
+        <div class="pctl"><label>Year the rebuild is finished</label>
           <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2050" step="1"></div>
-        <div class="pctl"><label>Failure prob. if limit exceeded (phigh)</label>
+        <div class="pctl"><label>Chance of breaking once the limit is passed (phigh)</label>
           <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
       </div>
     </div>
@@ -547,23 +533,15 @@
 
   <!-- ============ CHAPTER 3 · OSS network ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">3</span><h2>Build the offshore substation (OSS) network, simulate damage and plot performance</h2></div>
-    <p class="chap-desc">This is where the abstract probabilities become a running power plant. A flat network of
-      <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built (the turbine clusters plus their substation platforms,
-      each of which can also break). In any month whose waves clear the <code>damage</code> threshold, every unit is allowed to
-      fail with the probability computed in Chapter&nbsp;2; a broken unit then stays offline for 2 months (the repair rule)
-      before it can run again. <b>Status</b><button class="tinfo" type="button" data-key="status" title="What is Status?">i</button> (top) is simply the fraction of units still working, so dips show outages.
-      <b>Energy output</b> (bottom) is the total MW of working units — in Decommissioning and Repowering modes the per-turbine
-      output is ramped down then back up (or stepped up) around end-of-life, which is why the curve changes shape there.
-      The area under that energy curve is the paper's headline resilience<button class="tinfo" type="button" data-key="resilience" title="What is resilience / AE?">i</button> number.</p>
-
-    <div class="concepts">
-      <div class="concept">
-        <div class="c-top"><span class="c-tag">Rule</span><span class="c-name">Repair rule (3-month pattern)</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
-        <div class="c-formula">month [t, t+1, t+2] → [ broken, broken, working ]</div>
-        <p class="c-desc">If a unit breaks in month <code>t</code> it stays offline for 2 months, then returns. The fixed pattern means repair windows never overlap and a unit cannot re-break while being repaired.</p>
-      </div>
-    </div>
+    <div class="chap-head"><span class="chap-num">3</span><h2>Build the substation network, simulate damage and show the results</h2></div>
+    <p class="chap-desc">Here the chances from Chapter&nbsp;2 become a working power plant. We build a network of
+      <code>numOSS · numTurbinesPerOSS + numOSS</code> units — the turbine clusters plus their substation platforms, and each
+      of these can also break. In any month whose waves pass the <code>damage</code> threshold, every unit is allowed to
+      break with the chance computed in Chapter&nbsp;2; a broken unit then stays offline for 2 months (the repair rule)
+      before it works again. <b>Status</b><button class="tinfo" type="button" data-key="status" title="What is Status?">i</button> (top) is simply the share of units still working, so dips show outages.
+      <b>Energy output</b> (bottom) is the total power (MW) of the working units — in Decommissioning and Repowering modes the
+      per-turbine output is lowered then raised again (or stepped up) around end-of-life, which is why the curve changes shape there.
+      The area under that energy curve is the paper's main resilience<button class="tinfo" type="button" data-key="resilience" title="What is resilience / AE?">i</button> number.</p>
 
     <!-- parameters for the OSS/energy chapter -->
     <div class="params">
@@ -575,22 +553,22 @@
             <option value="Keep">Extension / Repowering (keep running)</option>
           </select>
           <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
-            The full choice (Decom vs Extension vs Repower) is made above the energy plot — the mode fields stay in sync.
+            The full choice (Decommissioning vs Extension vs Repowering) is made above the energy plot — these fields stay in sync.
           </div></div>
-        <div class="pctl"><label>Number of OSS</label>
+        <div class="pctl"><label>Number of substations</label>
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
-        <div class="pctl"><label>Turbines per OSS</label>
+        <div class="pctl"><label>Turbines per substation</label>
           <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="60"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Failure prob. if below limit (plow)</label>
+        <div class="pctl" style="grid-column:1 / -1"><label>Chance of breaking while below the limit (plow)</label>
           <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Break units only when H<sub>max</sub> exceeds (m)</label>
+        <div class="pctl" style="grid-column:1 / -1"><label>Only break units when H<sub>max</sub> is above (m)</label>
           <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle">Status over time</div>
-      <div class="figsub">Fraction of units operational. Green line = end-of-life, red line = probable-failure month.</div>
+      <div class="figsub">Share of units working. Green line = end-of-life, red line = probable-failure month.</div>
       <div id="p_status" class="plot"></div>
     </div>
 
@@ -605,18 +583,18 @@
             <option value="Repow">Repowering</option>
           </select>
           <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
-            Full choice of the three EOL strategies — kept in sync with the mode fields in the cumulative and network chapters.
+            Full choice of the three end-of-life strategies — kept in sync with the mode fields in the cumulative and network chapters.
           </div></div>
-        <div class="pctl"><label>Min. output per turbine (MW)</label>
+        <div class="pctl"><label>Minimum output per turbine (MW)</label>
           <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="4"></div>
-        <div class="pctl"><label>Max. output per turbine (MW)</label>
+        <div class="pctl"><label>Maximum output per turbine (MW)</label>
           <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="6"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle">Energy output [MW]</div>
-      <div class="figsub">Total operational power, mode-dependent. The area under the curve is the cumulative energy yield.</div>
+      <div class="figsub">Total power from the working units, depending on the mode. The area under the curve is the total energy delivered.</div>
       <div id="p_energy" class="plot"></div>
       <div class="stat" id="stat_energy"></div>
     </div>
@@ -854,33 +832,33 @@ function densHist(d,bs,be,bw){const nb=Math.round((be-bs)/bw),c=new Array(nb).fi
 
 function plotWaveTime(S){const d=S.date.map(dateLabel);
   R('p_waveTime',[
-    {x:d,y:S.Hmax,mode:'lines',name:'H maximal',line:{color:'#111',width:1.2}},
-    {x:d,y:S.Hsig,mode:'lines',name:'H significant',line:{color:'#ef4444',width:1.2}}
-  ],L('Time','Wave height H (m)','Wave heights over time'));}
+    {x:d,y:S.Hmax,mode:'lines',name:'Maximum wave height',line:{color:'#111',width:1.2}},
+    {x:d,y:S.Hsig,mode:'lines',name:'Typical wave height',line:{color:'#ef4444',width:1.2}}
+  ],L('Time','Wave height (m)','Wave heights over time'));}
 
 function plotDist(S,P){const xs=[];for(let x=0;x<=15;x+=0.1)xs.push(x);
   const sigma=(P.rs1+P.rs2)/2;
   const ray=xs.map(x=>(x/(sigma*sigma))*Math.exp(-(x*x)/(2*sigma*sigma)));
   const hs=S.Hsig.filter(v=>v>0),hm=S.Hmax.filter(v=>v>0);
   const h1=densHist(hs,0,15,0.25),h2=densHist(hm,0,15,0.25);
-  const base=L('Wave height H (m)','Probability density','Wave height distributions');
+  const base=L('Wave height (m)','How often it occurs','Wave height distributions');
   base.xaxis.range=[0,15];
   R('p_dist',[
-    {x:h1.x,y:h1.y,type:'bar',name:'H significant',width:0.25,marker:{color:'rgba(100,116,139,0.28)'}},
-    {x:h2.x,y:h2.y,type:'bar',name:'H maximal',width:0.25,marker:{color:'rgba(100,116,139,0.18)'}},
-    {x:xs,y:ray,mode:'lines',name:'Rayleigh distribution',line:{color:'#111',width:2,dash:'dot'}},
-    {x:xs,y:kde(hs,xs),mode:'lines',name:'H significant (KDE)',line:{color:'#2563eb',width:2.4}},
-    {x:xs,y:kde(hm,xs),mode:'lines',name:'H maximal (KDE)',line:{color:'#16a34a',width:2.4}}
+    {x:h1.x,y:h1.y,type:'bar',name:'Typical wave height',width:0.25,marker:{color:'rgba(100,116,139,0.28)'}},
+    {x:h2.x,y:h2.y,type:'bar',name:'Maximum wave height',width:0.25,marker:{color:'rgba(100,116,139,0.18)'}},
+    {x:xs,y:ray,mode:'lines',name:'Reference curve (Rayleigh)',line:{color:'#111',width:2,dash:'dot'}},
+    {x:xs,y:kde(hs,xs),mode:'lines',name:'Typical (smoothed)',line:{color:'#2563eb',width:2.4}},
+    {x:xs,y:kde(hm,xs),mode:'lines',name:'Maximum (smoothed)',line:{color:'#16a34a',width:2.4}}
   ],base);}
 
 function plotLoad(S){const d=S.date.map(dateLabel);
-  R('p_load',[{x:d,y:S.load,mode:'lines',name:'Load',line:{color:'#111',width:1.4}}],
-    Object.assign(L('Time','Load changes','Load changes over time'),{showgrid:true}));}
+  R('p_load',[{x:d,y:S.load,mode:'lines',name:'Load changes',line:{color:'#111',width:1.4}}],
+    Object.assign(L('Time','Load changes per month','Load changes over time'),{showgrid:true}));}
 
 function plotFailure(P){const x=[];for(let e=0;e<=10;e+=0.1)x.push(Math.pow(10,e));
   const y=x.map(i=>waveFail(P.minH_f,P.maxH_f,i));
   const yD=x.map(i=>waveFail(P.minHDe_f,P.maxHDe_f,i));
-  const Lf=L('Acceptable number of load changes','Wave height H (m)','Wave height H vs. acceptable load changes');
+  const Lf=L('How many load changes the structure can survive','Wave height (m)','Wave height vs. how many load changes the structure can survive');
   Lf.xaxis.type='log';
   Lf.shapes=[{type:'rect',xref:'paper',yref:'paper',x0:.15,y0:.15,x1:.65,y1:.65,
     fillcolor:'rgba(148,163,184,0.10)',line:{color:'#94a3b8',width:1}}];
@@ -907,13 +885,13 @@ function plotCum(id,cum,S,tdeg,P){const N=S.nCols,d=[];
   for(let k=0;k<=steps;k++){const t=k/steps;yL.push(yMin*Math.pow(yMax/yMin,t));xL.push(tL);}
   d.push({x:xL,y:yL,mode:'lines',type:'scatter',
     line:{color:'#111',width:2},
-    hovertemplate:'Fatigue limit (Eq.&nbsp;3)<br>First month the cumulative load crosses the Eq.&nbsp;3 structural limit<extra></extra>'});
+    hovertemplate:'Fatigue limit (Eq.&nbsp;3)<br>First month the cumulative load passes the structural limit<extra></extra>'});
   const Lc=L('Time','Cumulative load changes','');
   Lc.shapes=[
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#64748b',width:2,dash:'dot'}}];
   Lc.annotations=[
     {x:tL,y:0.976,xref:'x',yref:'paper',text:'fatigue limit (Eq.\u00a03)',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
-    {x:eolL,y:0.919,xref:'x',yref:'paper',text:'End of Life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
+    {x:eolL,y:0.919,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   Lc.yaxis.type='log';
   R(id,d,Lc);}
 
@@ -925,7 +903,7 @@ function plotStatus(S,P){const d=S.date.map(dateLabel);
     {type:'line',xref:'x',yref:'paper',x0:degL,x1:degL,y0:0,y1:1,line:{color:'#ef4444',width:2}}];
   Ls.yaxis.range=[0,1];
   Ls.annotations=[{x:eolL,y:0.976,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
-    {x:degL,y:0.919,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
+    {x:degL,y:0.919,xref:'x',yref:'paper',text:'probable failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   R('p_status',[{x:d,y:S.Status,mode:'lines',name:'Status',line:{color:'#111',width:1.6}}],Ls);}
 
 function plotEnergy(S,P){const d=S.date.map(dateLabel);
@@ -935,7 +913,7 @@ function plotEnergy(S,P){const d=S.date.map(dateLabel);
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#16a34a',width:2}},
     {type:'line',xref:'x',yref:'paper',x0:degL,x1:degL,y0:0,y1:1,line:{color:'#ef4444',width:2}}];
   Le.annotations=[{x:eolL,y:0.976,xref:'x',yref:'paper',text:'end of life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
-    {x:degL,y:0.919,xref:'x',yref:'paper',text:'prob. failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
+    {x:degL,y:0.919,xref:'x',yref:'paper',text:'probable failure',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   R('p_energy',[{x:d,y:S.Energy,mode:'lines',name:'Energy [MW]',line:{color:'#111',width:1.6}}],Le);}
 
 /* ============================================================= orchestrate */
@@ -956,14 +934,14 @@ function recompute(){
   document.getElementById('cum_title').textContent=
     useRebuild?'Cumulative load changes — decommissioned & rebuilt':'Cumulative load changes — structure stays in use';
   document.getElementById('cum_sub').innerHTML=
-    useRebuild?'Accumulation is zeroed between decommissioning and rebuild, then restarts from zero. Hover the solid line for the fatigue limit (Eq.\u00a03).'
+    useRebuild?'The load total resets to zero between decommissioning and rebuild, then starts counting again from zero. Hover the solid line for the fatigue limit (Eq.\u00a03).'
               :'Each curve is one wave-height band (H = H<sub>min</sub> + band). Hover the solid vertical line for the fatigue limit (Eq.\u00a03).';
   document.getElementById('stat_cum').innerHTML=
-    `Fatigue limit (Eq.\u00a03) first crossed (${useRebuild?'decommission &amp; rebuild':'existing structure'}): <b>${fmt(S.date[useRebuild?S.tdegDe:S.tdeg])}</b>`;
+    `Fatigue limit (Eq.\u00a03) first passed (${useRebuild?'decommission &amp; rebuild':'existing structure'}): <b>${fmt(S.date[useRebuild?S.tdegDe:S.tdeg])}</b>`;
   plotStatus(S,P);
   plotEnergy(S,P);
   document.getElementById('stat_energy').innerHTML=
-    `Mode: <b>${P.mode}</b> · ${S.number_units} units · ∑ energy ≈ <b>${Math.round(S.AreaE).toLocaleString()}</b> MW·month`;
+    `Mode: <b>${P.mode}</b> · ${S.number_units} units · total energy ≈ <b>${Math.round(S.AreaE).toLocaleString()}</b> MW·month`;
 }
 
 let deb;
@@ -1050,53 +1028,53 @@ const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'1,2,3,1
 
 /* ---- per-parameter info button + detailed explanation ---- */
 const INFO_TEXT={
-  mode:"The end-of-life (EOL) strategy, one of the three concepts analysed in the paper. <b>Decommissioning</b> removes the plant and, in a later phase, builds newer structures, so output is ramped down then back up. <b>Extension</b> keeps the existing turbines running at their base output and only maintains safety. <b>Repowering</b> re-uses the foundations for larger, more efficient turbines, so the per-turbine output steps up after end-of-life (the paper moves from ~5 MW toward 7.5 MW). In this dashboard Decom &amp; Repower ramp the energy curve, while Extension holds the base output.",
+  mode:"The end-of-life strategy, one of the three options in the paper. <b>Decommissioning</b> takes the plant down and later builds a new, modern one, so the output goes down and then back up. <b>Extension</b> keeps the current turbines running at their normal output and just maintains their safety. <b>Repowering</b> keeps the foundations and puts bigger, more efficient turbines on them, so each turbine's output steps up after end-of-life (the paper moves from ~5 MW toward 7.5 MW). In this dashboard, Decommissioning and Repowering change the energy curve, while Extension keeps the normal output.",
 
-  baseYear:"The year the synthetic record starts (y<sub>base</sub> in the paper). It is the reference point of the 60-year dataset and, more importantly, the base year used in Eq.&nbsp;2 for the climate-change growth of the maximum wave height: the upper bound of the uniform draw is <code>Hsig + Hsig·0.07·(y − y_base + 3)</code>. Every month further from the base year therefore carries a higher chance of an extreme H<sub>max</sub>, representing increasing extremes under climate change.",
+  baseYear:"The year the simulated record starts. It is the reference point of the 60-year dataset and, importantly, the starting year used in Eq.&nbsp;2 for how the maximum wave height grows with climate change: the extra amount added to <code>Hsig</code> is <code>Hsig · (0.07 · years since base year + 3)</code>. So the further a month is from the base year, the more likely it is to have an extreme maximum wave — this represents increasing extremes under climate change.",
 
-  eolYear:"The year the permit period expires (~25 years after commissioning), treated by the paper as the disruptive event that forces an EOL decision. In the plots it is drawn as the vertical green 'End of Life' line and it marks when the mode-dependent energy ramp (decommission / repower) begins to change the per-turbine output.",
+  eolYear:"The year the 25-year operating permit expires. The paper treats this as the moment that forces an end-of-life decision. In the plots it is the vertical green 'End of Life' line, and it marks where the energy curve starts to change (in Decommissioning and Repowering).",
 
-  years:"Length of the simulated time series in years. Each year is split into 12 monthly steps, so a 60-year horizon yields 720 monthly samples of significant and maximum wave height. The paper deliberately models a 60-year span because the difficulty is predicting waves that far ahead; longer horizons accumulate more load changes and let the difference between the three EOL strategies become visible.",
+  years:"How many years the simulation runs. Each year is split into 12 months, so 60 years gives 720 monthly samples of wave height. The paper looks 60 years ahead on purpose, because predicting waves that far ahead is the hard part; over that span the three end-of-life strategies clearly behave differently.",
 
-  severe:"Which calendar months are treated as the severe-weather season. The paper takes November, December, January, February and March as the high-σ months, and assigns those months the larger Rayleigh scale <code>rs1</code>. All other (normal) months use the smaller scale <code>rs2</code>. Selecting 'All months' makes every month use the severe scale; the narrower ranges make milder climates.",
+  severe:"Which months count as the stormy season. The paper takes Nov, Dec, Jan, Feb and Mar as the rough months and gives them the larger wave size <code>rs1</code>. All other (calm) months use the smaller size <code>rs2</code>. Choosing 'All months' makes every month stormy; the shorter lists make a calmer climate.",
 
-  seed:"Seed for the seeded (mulberry32) pseudo-random number generator. It is used for the Rayleigh draws, the uniform H<sub>max</sub> draw, the Monte-Carlo breakage of network units and the per-turbine output, so the same seed always reproduces the same stochastic realisation. The paper notes the results depend on this randomness and recommends repeated simulations; changing the seed explores different realisations.",
+  seed:"The number that controls the random generator. It sets the wave heights, the maximum-wave draws, which units break, and each turbine's output, so the same seed always gives the exact same result. The paper notes the results depend on this randomness and suggests running many times; changing the seed gives a different set of results.",
 
-  rs1:"Scale parameter σ of the Rayleigh distribution (Eq.&nbsp;1) used for the <b>severe</b> months. The paper states the scale varies between σ ≈ 0.7 and σ ≈ 1.5 depending on the season, with large σ in Nov–Mar. A larger σ pushes the significant-wave-height density to higher values, so severe months produce taller waves and therefore more load above H<sub>min</sub>.",
+  rs1:"The wave size used for the <b>stormy</b> months. The paper says this value ranges from about 0.7 to 1.5 depending on the season, being larger in Nov–Mar. A bigger value means stormy months produce taller waves, so more load above <code>Hmin</code>.",
 
-  rs2:"Scale parameter σ of the Rayleigh distribution (Eq.&nbsp;1) used for the <b>normal</b> months — the milder end of the σ range the paper quotes (~0.7). It sets the typical significant wave height for the calm part of the year, so it mostly shapes the lower tail of the H<sub>sig</sub> and H<sub>max</sub> distributions.",
+  rs2:"The wave size used for the <b>calm</b> months — the milder end of the range the paper quotes (about 0.7). It sets the typical wave height for the calmer part of the year, so it mainly shapes the smaller waves in the distributions.",
 
-  Hmin:"The minimum significant wave height that counts as a load on the steel structure. Below this the wave is too small to contribute meaningful cyclic loading, so Eq.&nbsp;1 is only evaluated for heights above H<sub>min</sub> and the cumulative sums are binned per integer height above it. The paper uses H<sub>min</sub> = 8 m and also uses it as the lower (flat) bound of the fatigue curve in Eq.&nbsp;3.",
+  Hmin:"The smallest wave that counts as a load on the steel. Below this, a wave is too small to really wear the structure, so only waves above <code>Hmin</code> are counted. The paper uses <code>Hmin</code> = 8 m, and also uses it as the lowest (flat) part of the fatigue curve in Eq.&nbsp;3.",
 
-  maxH:"A hard cap applied to the maximum wave height in Eq.&nbsp;2: the uniform 'plus' draw is clamped so H<sub>max</sub> never exceeds this value. It keeps the 60-year synthetic record physically plausible and stops the climate-change growth term (0.07·Δyear) from producing implausibly tall waves in later decades.",
+  maxH:"A hard cap on the maximum wave height in Eq.&nbsp;2: the added amount is limited so <code>Hmax</code> never goes above this value. This keeps the 60-year record realistic and stops the climate-change growth from producing unrealistically tall waves in later decades.",
 
-  loadK:"The total number of waves assumed to hit the structure in a month (here in units of ×10³). It turns the Rayleigh wave-height density of Eq.&nbsp;1 into an actual <b>count</b> of waves at each height (count = density × this value). It therefore sets the absolute level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up — a larger value means the structure reaches its 'probable failure' date earlier. (The paper derives ≈ 2.6×10⁵ per month from a ~10&nbsp;s wave period.)",
+  loadK:"The total number of waves assumed to hit the structure in a month (shown in units of ×10³). It turns the wave-height curve of Eq.&nbsp;1 into a real <b>count</b> of waves at each height (count = curve value × this number). It sets the level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up — a bigger value means the structure reaches its 'probable failure' date sooner. (The paper works out about 260,000 per month from a ~10-second wave period.)",
 
-  minH_f:"H<sub>min</sub> for the <b>existing</b> structure's cyclic structural resistance curve (Eq.&nbsp;3): the flat lower bound of the fatigue limit below which the structure is assumed to survive any number of load changes. The paper uses H<sub>min</sub> = 8 m for the old structures. Raising it makes the old structure more robust against short, frequent waves.",
+  minH_f:"The smallest wave that counts for the <b>old</b> structure's fatigue curve (Eq.&nbsp;3). Below this height the structure is assumed to survive any number of load changes. The paper uses 8 m for the old structures. Raising it makes the old structure more tolerant of small, frequent waves.",
 
-  maxH_f:"H<sub>rel</sub> for the <b>existing</b> structure's fatigue curve (Eq.&nbsp;3): the intercept that fixes how many load changes the structure tolerates before the allowable wave height drops. Think of it as the 'new-build' strength of the old plant: the paper sets H<sub>rel</sub> = 17 m, matching the ~100-year (once-in-a-century) wave height the reference platform is designed to survive. A higher value means the old structure can endure more cumulative load before its failure probability jumps to <code>phigh</code>; a lower value makes it age faster.",
+  maxH_f:"The strength value for the <b>old</b> structure's fatigue curve (Eq.&nbsp;3): it sets how many load changes the structure can take before the allowable wave height drops. Think of it as how strong the old plant was built — the paper sets 17 m, matching a wave it was designed to survive once in a century. A higher value means the old structure lasts longer before its breakage chance jumps to <code>phigh</code>; a lower value makes it wear out faster.",
 
-  minHDe_f:"H<sub>min</sub> of the cyclic structural resistance curve for the <b>new</b> structures built after decommissioning. Newer designs and higher steel classes shift the curve, so this bound is typically a little different from the existing structure's. It is the lower (flat) bound of the new structure's fatigue limit.",
+  minHDe_f:"The smallest wave that counts for the <b>new</b> structures built after decommissioning. Newer designs and stronger steel shift the curve, so this is usually a little different from the old structure's. It is the lowest (flat) part of the new structure's fatigue limit.",
 
-  maxHDe_f:"H<sub>rel</sub> of the fatigue curve for the <b>new</b> structures (Eq.&nbsp;3). Because the new build uses modern designs and steel classes to cope with climate-driven taller waves, this intercept sits higher than for the existing structures, giving the rebuilt farm a longer lifespan — which is why, in the paper, decommissioning yields the second-largest energy output.",
+  maxHDe_f:"The strength value for the <b>new</b> structures (Eq.&nbsp;3). Because the new build uses modern designs and stronger steel to handle taller waves, this value is higher than for the old structures, so the rebuilt farm lasts longer — which is why, in the paper, decommissioning gives the second-largest energy output.",
 
-  decomYear:"The year by which the old plant is fully decommissioned (removed). In the 'decommission &amp; rebuild' cumulative plot, load accumulation is reset to zero for the whole window between this date and the rebuild date, reflecting that the structure is absent and no longer accumulating fatigue.",
+  decomYear:"The year the old plant is fully taken down. In the 'decommission &amp; rebuild' cumulative plot, the load total is reset to zero across the whole gap between this date and the rebuild date, because the structure is gone and no longer wears out.",
 
-  rebuildYear:"The year the new structures are finished and back in service. From this month the cumulative load for the rebuilt structures starts counting from zero again. The gap between decommissioning and rebuild is the downtime the paper assigns to decommissioning (~2 years) plus re-erection (~4 years), and it is the main reason the decommissioning option loses energy versus repowering.",
+  rebuildYear:"The year the new structures are finished and back in service. From that month, the cumulative load for the rebuilt farm starts counting from zero again. The gap between decommissioning and rebuild is the downtime for taking the old plant down (~2 years) plus building the new one (~4 years) — the main reason decommissioning loses energy compared with repowering.",
 
-  phigh:"The failure probability the model assigns to a month <b>after</b> the accumulated load has crossed the structure's Eq.&nbsp;3 limit — it drives how often units break in the network chapter (Chapter&nbsp;3) from that point on. Note the solid vertical line in the cumulative plot is <b>NOT</b> set by this value: it marks the first month the cumulative load exceeds the structural limit (the moment the model switches from <code>plow</code> to <code>phigh</code>), so moving this slider changes only the probability used from that month onward, not where the line sits. The paper uses p = 0.5 as the point where the structural resistance is actually exceeded.",
+  phigh:"The chance of breaking that the model uses in a month <b>after</b> the cumulative load has passed the structure's Eq.&nbsp;3 limit — it controls how often units break in Chapter&nbsp;3 from that point on. Note: the solid vertical line in the cumulative plot is <b>not</b> set by this value. That line marks the first month the cumulative load passes the structural limit (the moment the model switches from <code>plow</code> to <code>phigh</code>), so moving this slider only changes the probability used from that month on — it does not move the line. The paper uses 0.5 as the level where the structure's strength is truly exceeded.",
 
-  plow:"The baseline failure probability applied in months whose accumulated load stays below the structure's allowable limit. The paper keeps this low (p = 0.1) so that, after end-of-life, failures stay unlikely until the cumulative load genuinely grows beyond design. It also drives how often a unit breaks in the network chapter when no limit is exceeded.",
+  plow:"The baseline chance of breaking used in months where the cumulative load stays below the structure's limit. The paper keeps this low (0.1) so that failures stay unlikely after end-of-life until the load really grows beyond design. It also sets how often a unit breaks in Chapter&nbsp;3 when no limit is exceeded.",
 
-  numOSS:"Number of offshore substation (OSS) platforms in the network model. Each OSS represents one wind farm cluster and is itself a unit that can break and need repair. Together with the turbines per OSS it defines the total number of units as <code>numOSS·numT + numOSS</code>.",
+  numOSS:"The number of offshore substation platforms in the network. Each one stands for one wind-farm cluster and is itself a unit that can break and need repair. Together with the turbines per substation, it sets the total number of units: <code>numOSS·numT + numOSS</code>.",
 
-  numT:"Number of turbines per offshore wind farm (OSS cluster). The paper uses 60 turbines per OWF in the simulation (a reduced figure of 10 is used only for the schematic in Figure 4). More turbines per cluster means more units that can break, but also more potential output when they are operational.",
+  numT:"The number of turbines per wind-farm cluster. The paper uses 60 turbines per cluster in the simulation (it uses only 10 in one schematic figure). More turbines per cluster means more units that can break, but also more power when they are working.",
 
-  minOut:"Lower bound of the per-turbine energy output range (MW) drawn uniformly for each operational turbine each month. The paper assumes an output between 4 and 6 MW per turbine for the base case. In decommission / repower mode this lower bound is itself ramped after end-of-life, so it also anchors the post-EOL output level.",
+  minOut:"The lower end of the output range per turbine (MW), drawn randomly each month for each working turbine. The paper uses 4–6 MW per turbine for the base case. In Decommissioning and Repowering this lower end is itself changed after end-of-life, so it also sets the new output level.",
 
-  maxOut:"Upper bound of the per-turbine output range (MW). Paired with <code>minOut</code> it sets the spread of the uniform draw per turbine. The paper's repowering example raises the average output toward 7.5 MW by moving this bound up after end-of-life, and the decommissioning build toward 8.5 MW.",
+  maxOut:"The upper end of the output range per turbine (MW). Together with <code>minOut</code> it sets how much the per-turbine output varies. The paper's repowering example raises the average output toward 7.5 MW by moving this value up after end-of-life, and the decommissioning build toward 8.5 MW.",
 
-  damage:"The minimum maximum wave height (H<sub>max</sub>) above which a unit is allowed to break in the network simulation. In months where the wave height does not exceed this threshold no damage is applied at all. The paper filters the months with H<sub>max</sub> &gt; 15 m before applying the Monte-Carlo breakage probabilities, so this is the wave-height gate for damage."
+  damage:"The maximum wave height (H<sub>max</sub>) that a wave must exceed for a unit to be allowed to break. In months where the waves stay below this threshold, no damage happens at all. The paper only applies breakage in months where H<sub>max</sub> is above 15 m, so this is the gate that decides when damage can occur."
 };
 
 (function addInfoButtons(){
