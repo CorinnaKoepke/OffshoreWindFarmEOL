@@ -436,9 +436,6 @@
             <option value="12,1,2">Dec – Feb</option>
             <option value="">All months</option>
           </select>
-          <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
-            Global — also affects the load, cumulative, network and energy chapters.
-          </div>
         </div>
         <div class="pctl"><label>Severe Rayleigh σ (rs1)</label>
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
@@ -537,14 +534,12 @@
           <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2050" step="1"></div>
         <div class="pctl"><label>Failure prob. if limit exceeded (phigh)</label>
           <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
-        <div class="pctl"><label>Failure prob. if below limit (plow)</label>
-          <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle" id="cum_title">Cumulative load changes — structure stays in use</div>
-      <div class="figsub" id="cum_sub">Solid line = first month where failure probability reaches <code>phigh</code>; dotted = end-of-life.</div>
+      <div class="figsub" id="cum_sub">Each curve is one wave-height band (H = H<sub>min</sub> + band). Hover the solid vertical line for the fatigue limit (Eq.&nbsp;3).</div>
       <div id="p_cum" class="plot"></div>
       <div class="stat" id="stat_cum"></div>
     </div>
@@ -586,6 +581,8 @@
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
         <div class="pctl"><label>Turbines per OSS</label>
           <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="60"></div>
+        <div class="pctl" style="grid-column:1 / -1"><label>Failure prob. if below limit (plow)</label>
+          <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
         <div class="pctl" style="grid-column:1 / -1"><label>Break units only when H<sub>max</sub> exceeds (m)</label>
           <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
       </div>
@@ -900,14 +897,22 @@ function plotCum(id,cum,S,tdeg,P){const N=S.nCols,d=[];
     line:{color:viridis(c,N),width:1.5},name:'H='+(P.Hmin+c),
     hovertemplate:'H='+(P.Hmin+c)+'<br>cum. load=%{y:,.0f}<extra></extra>'});
   const eolL=dateLabel(P.eol),tL=dateLabel(S.date[tdeg]);
+  // solid "probable failure" line as a data trace so it gets the standard hover tooltip.
+  // Sampled densely along the full height (log scale) so the line always has a point
+  // near the cursor and wins the nearest-point hover over the H= curves.
+  let yMin=Infinity,yMax=-Infinity;
+  for(const r of cum)for(const v of r){if(v>yMax)yMax=v;if(v<yMin)yMin=v;}
+  if(!(yMin>0))yMin=1; if(yMax<=yMin)yMax=yMin*10;
+  const yL=[],xL=[];const steps=48;
+  for(let k=0;k<=steps;k++){const t=k/steps;yL.push(yMin*Math.pow(yMax/yMin,t));xL.push(tL);}
+  d.push({x:xL,y:yL,mode:'lines',type:'scatter',
+    line:{color:'#111',width:2},
+    hovertemplate:'Fatigue limit (Eq.&nbsp;3)<br>First month the cumulative load crosses the Eq.&nbsp;3 structural limit<extra></extra>'});
   const Lc=L('Time','Cumulative load changes','');
   Lc.shapes=[
-    {type:'line',xref:'x',yref:'paper',x0:tL,x1:tL,y0:0,y1:1,line:{color:'#111',width:2}},
     {type:'line',xref:'x',yref:'paper',x0:eolL,x1:eolL,y0:0,y1:1,line:{color:'#64748b',width:2,dash:'dot'}}];
   Lc.annotations=[
-    // yref:'paper' -> y=1 is the figure top (incl. margins); 58px top margin, 420px figure.
-    // Two rows (0.976 / 0.919) so the labels can never collide when the lines are close.
-    {x:tL,y:0.976,xref:'x',yref:'paper',text:'prob. failure of '+Math.round(P.phigh*100)+'%',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
+    {x:tL,y:0.976,xref:'x',yref:'paper',text:'fatigue limit (Eq.\u00a03)',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4},
     {x:eolL,y:0.919,xref:'x',yref:'paper',text:'End of Life',showarrow:false,font:{size:12},bgcolor:'#fff',align:'left',dx:4}];
   Lc.yaxis.type='log';
   R(id,d,Lc);}
@@ -951,10 +956,10 @@ function recompute(){
   document.getElementById('cum_title').textContent=
     useRebuild?'Cumulative load changes — decommissioned & rebuilt':'Cumulative load changes — structure stays in use';
   document.getElementById('cum_sub').innerHTML=
-    useRebuild?'Accumulation is zeroed between the decommissioning and rebuild dates, then restarts from zero.'
-              :'Solid line = first month where failure probability reaches <code>phigh</code>; dotted = end-of-life.';
+    useRebuild?'Accumulation is zeroed between decommissioning and rebuild, then restarts from zero. Hover the solid line for the fatigue limit (Eq.\u00a03).'
+              :'Each curve is one wave-height band (H = H<sub>min</sub> + band). Hover the solid vertical line for the fatigue limit (Eq.\u00a03).';
   document.getElementById('stat_cum').innerHTML=
-    `First month at <b>${Math.round(P.phigh*100)}%</b> failure probability (${useRebuild?'decommission &amp; rebuild':'existing structure'}): <b>${fmt(S.date[useRebuild?S.tdegDe:S.tdeg])}</b>`;
+    `Fatigue limit (Eq.\u00a03) first crossed (${useRebuild?'decommission &amp; rebuild':'existing structure'}): <b>${fmt(S.date[useRebuild?S.tdegDe:S.tdeg])}</b>`;
   plotStatus(S,P);
   plotEnergy(S,P);
   document.getElementById('stat_energy').innerHTML=
@@ -1079,7 +1084,7 @@ const INFO_TEXT={
 
   rebuildYear:"The year the new structures are finished and back in service. From this month the cumulative load for the rebuilt structures starts counting from zero again. The gap between decommissioning and rebuild is the downtime the paper assigns to decommissioning (~2 years) plus re-erection (~4 years), and it is the main reason the decommissioning option loses energy versus repowering.",
 
-  phigh:"The failure probability assigned to a month in which the accumulated load exceeds the structure's allowable value (its wave height crosses the Eq.&nbsp;3 curve). This is the 'probable failure' threshold: the first month that reaches <code>phigh</code> is drawn as the solid vertical marker in the cumulative plots. The paper uses p = 0.5 as the point where the structural resistance is actually exceeded.",
+  phigh:"The failure probability the model assigns to a month <b>after</b> the accumulated load has crossed the structure's Eq.&nbsp;3 limit — it drives how often units break in the network chapter (Chapter&nbsp;3) from that point on. Note the solid vertical line in the cumulative plot is <b>NOT</b> set by this value: it marks the first month the cumulative load exceeds the structural limit (the moment the model switches from <code>plow</code> to <code>phigh</code>), so moving this slider changes only the probability used from that month onward, not where the line sits. The paper uses p = 0.5 as the point where the structural resistance is actually exceeded.",
 
   plow:"The baseline failure probability applied in months whose accumulated load stays below the structure's allowable limit. The paper keeps this low (p = 0.1) so that, after end-of-life, failures stay unlikely until the cumulative load genuinely grows beyond design. It also drives how often a unit breaks in the network chapter when no limit is exceeded.",
 
