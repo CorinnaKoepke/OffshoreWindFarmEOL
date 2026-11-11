@@ -322,15 +322,17 @@
       </p>
       <p class="btext">The risk the paper quantifies is <b>rising wave heights caused by climate change</b>,
         because taller waves fatigue the steel structures over decades. </p>
+      <p class="btext">The simulation starts in <b>2015</b> and runs for <b>60 years</b> (720 monthly steps), with all
+        randomness seeded (seed&nbsp;=&nbsp;0) so the results reproduce exactly. Both values are fixed here and not
+        adjustable — they are the reference window of the paper.</p>
     </div>
 
     <div class="block">
       <div class="bhead">Structure</div>
       <div class="pipeline">
-        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Set parameters</b> — the global setup: which EOL mode, the time window, the severe season, and the random seed.</span></div>
-        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
-        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
-        <div class="pipe"><span class="pn">4</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b> — generate a 60-year wave record, count how many load changes each month puts on the steel, and draw the <b>fatigue curve</b> that says how much load a structure can survive.</span></div>
+        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Cumulative load</b> — add the load up over the decades and find <b>when</b> the structure's failure probability jumps to the "probable failure" level.</span></div>
+        <div class="pipe"><span class="pn">3</span><span class="pt"><b>Network &amp; energy</b> — turn those failure probabilities into turbine breakages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
       </div>
     </div>
 
@@ -396,38 +398,14 @@
   </section>
   -->
 
-  <!-- ============ CHAPTER 2 · Set parameters ============ -->
-  <section class="chapter">
-    <div class="chap-head"><span class="chap-num">1</span><h2>Set parameters</h2></div>
-    <p class="chap-desc">Global setup that every later chapter reads: the time window, the severe-weather season and the random seed.</p>
-    <div class="figure" style="padding-bottom:6px">
-      <div class="params" style="margin-top:2px">
-        <div class="pgrid">
-          <div class="pctl"><label>Base year</label>
-            <input type="number" id="baseYear" data-key="baseYear" min="1990" max="2015" value="2015" step="1"></div>
-          <div class="pctl"><label>Simulation length (years)</label>
-            <input type="range" id="years" data-key="years" min="10" max="60" step="5" value="60"></div>
-          <div class="pctl"><label>Severe-weather months</label>
-            <select id="severe" data-key="severe">
-              <option value="1,2,3,11,12" selected>Jan, Feb, Mar, Nov, Dec (default)</option>
-              <option value="11,12,1,2,3,4">Nov – Apr</option>
-              <option value="12,1,2">Dec – Feb</option>
-              <option value="">All months</option>
-            </select></div>
-          <div class="pctl"><label>Random seed</label>
-            <input type="number" id="seed" data-key="seed" min="0" max="999999" value="0" step="1">
-            <div class="hint">Change to explore other stochastic realisations.</div></div>
-        </div>
-        <div class="btnrow" style="margin-top:10px">
-          <button class="btn-ghost" id="resetBtn">Reset to notebook defaults</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Hidden global inputs: base year, sim length, random seed (fixed; stated in intro) -->
+  <input type="hidden" id="baseYear" data-key="baseYear" value="2015">
+  <input type="hidden" id="years" data-key="years" value="60">
+  <input type="hidden" id="seed" data-key="seed" value="0">
 
-  <!-- ============ CHAPTER 3 · Generate wave heights & Plot data ============ -->
+  <!-- ============ CHAPTER 2 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">2</span><h2>Generate wave heights data and estimate the expected load</h2></div>
+    <div class="chap-head"><span class="chap-num">1</span><h2>Generate wave heights data and estimate the expected load</h2></div>
     <p class="chap-desc">First we invent a realistic 60-year sea state.
       Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (typical, from a Rayleigh distribution) and a taller
       maximum height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, grown over the years via Eq.&nbsp;2 to model climate change). We then
@@ -452,6 +430,17 @@
     <div class="params">
       <div class="ph">Parameters — wave climate &amp; load</div>
       <div class="pgrid">
+        <div class="pctl"><label>Severe-weather months <span style="font-size:11px;color:var(--muted);font-weight:600">(global)</span></label>
+          <select id="severe" data-key="severe">
+            <option value="1,2,3,11,12" selected>Jan, Feb, Mar, Nov, Dec (default)</option>
+            <option value="11,12,1,2,3,4">Nov – Apr</option>
+            <option value="12,1,2">Dec – Feb</option>
+            <option value="">All months</option>
+          </select>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
+            Global — also affects the load, cumulative, network and energy chapters.
+          </div>
+        </div>
         <div class="pctl"><label>Severe Rayleigh σ (rs1)</label>
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
         <div class="pctl"><label>Normal Rayleigh σ (rs2)</label>
@@ -460,12 +449,6 @@
           <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
         <div class="pctl"><label>Max. wave height cap (m)</label>
           <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Load changes per month (×10³)</label>
-          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110">
-          <div class="hint">Total number of waves a month is assumed to hit the structure. It multiplies the Eq.&nbsp;1 wave
-            frequency, so it sets the height of the "load changes over time" curve and how fast cumulative load (Ch.&nbsp;4)
-            builds up — a larger value means the structure reaches probable failure earlier. (The paper derives ≈ 2.6×10⁵
-            per month from a ~10&nbsp;s wave period.)</div></div>
       </div>
     </div>
 
@@ -485,6 +468,15 @@
       <div class="figtitle">Load changes over time</div>
       <div class="figsub">Estimated number of waves impacting the structure per month (wave heights above H<sub>min</sub>).</div>
       <div id="p_load" class="plot"></div>
+    </div>
+
+    <!-- parameter for the load plot, shown after it -->
+    <div class="params">
+      <div class="ph">Parameters — load</div>
+      <div class="pgrid">
+        <div class="pctl"><label>Load changes per month (×10³)</label>
+          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110"></div>
+      </div>
     </div>
 
     <div class="concept">
@@ -517,7 +509,7 @@
 
   <!-- ============ CHAPTER 4 · Cumulative sum ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">3</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
+    <div class="chap-head"><span class="chap-num">2</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
     <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, summed per
       discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
       the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button> allows, that month's
@@ -535,8 +527,7 @@
             <option value="Decom" selected>Decommissioning</option>
             <option value="Exten">Extension</option>
             <option value="Repow">Repowering</option>
-          </select>
-          <div class="hint">Decom &amp; Repow ramp the energy output after end-of-life; Extension keeps base output.</div></div>
+          </select></div>
         <div class="pctl"><label>End-of-life (year)</label>
           <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2040" step="1"></div>
         <div class="pctl"><label>Decommissioning done (year)</label>
@@ -544,8 +535,7 @@
         <div class="pctl"><label>Rebuild finished (year)</label>
           <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2050" step="1"></div>
         <div class="pctl"><label>Failure prob. if limit exceeded (phigh)</label>
-          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5">
-          <div class="hint">Defines the "probable failure" marker in the two cumulative plots.</div></div>
+          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
         <div class="pctl"><label>Failure prob. if below limit (plow)</label>
           <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
       </div>
@@ -561,7 +551,7 @@
 
   <!-- ============ CHAPTER 5 · OSS network ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">4</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
+    <div class="chap-head"><span class="chap-num">3</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
     <p class="chap-desc">This is where the abstract probabilities become a running power plant. A flat network of
       <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built (the turbine clusters plus their substation platforms,
       each of which can also break). In any month whose waves clear the <code>damage</code> threshold, every unit is allowed to
@@ -592,8 +582,7 @@
         <div class="pctl"><label>Max. output per turbine (MW)</label>
           <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="6"></div>
         <div class="pctl" style="grid-column:1 / -1"><label>Damage only when wave height &gt; (m)</label>
-          <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15">
-          <div class="hint">Notebook filters months with H<sub>max</sub> &gt; 15 m before applying breakage.</div></div>
+          <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
       </div>
     </div>
 
@@ -665,8 +654,7 @@ function syncLabels(){
   const g=id=>document.getElementById(id), set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   const modeName={Decom:'Decom',Exten:'Exten',Repow:'Repow'};
   set('v_mode',modeName[g('mode').value]);
-  set('v_baseYear',g('baseYear').value); set('v_eolYear',g('eolYear').value);
-  set('v_years',g('years').value); set('v_seed',g('seed').value);
+  set('v_eolYear',g('eolYear').value);
   set('v_rs1',g('rs1').value); set('v_rs2',g('rs2').value);
   set('v_Hmin',g('Hmin').value); set('v_maxH',g('maxH').value);
   set('v_loadK',g('loadK').value);
@@ -958,10 +946,6 @@ document.querySelectorAll('[data-key]').forEach(el=>{
 const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'1,2,3,11,12',seed:0,
   rs1:1.5,rs2:0.7,Hmin:8,maxH:40,loadK:3110,minH_f:8,maxH_f:17,minHDe_f:10,maxHDe_f:19,
   decomYear:2042,rebuildYear:2050,phigh:0.5,plow:0.1,numOSS:3,numT:60,minOut:4,maxOut:6,damage:15};
-document.getElementById('resetBtn').addEventListener('click',()=>{
-  for(const k in DEFAULTS){const el=document.getElementById(k);if(el)el.value=DEFAULTS[k];}
-  recompute();
-});
 
 /* ---- axis with min / mid / max ticks under every range slider ---- */
 (function addRangeAxes(){
@@ -1119,6 +1103,7 @@ const INFO_TEXT={
 
   document.querySelectorAll('.pctl').forEach(pctl=>{
     const label=pctl.querySelector('label'); if(!label) return;
+    if(pctl.classList.contains('pctl-fixed')) return; // fixed, non-editable values: no reset
     const input=pctl.querySelector('input,select'); if(!input||!input.dataset.key) return;
     const btn=document.createElement('button');
     btn.className='prst'; btn.type='button';
