@@ -480,15 +480,15 @@
     </div>
 
     <div class="figure">
-      <div class="figtitle">Wave heights over time</div>
-      <div class="figsub">Maximal and significant wave height for every month.</div>
-      <div id="p_waveTime" class="plot"></div>
-    </div>
-
-    <div class="figure">
       <div class="figtitle">Wave height distributions</div>
       <div class="figsub">Densities of H<sub>sig</sub> and H<sub>max</sub> against the reference Rayleigh distribution.</div>
       <div id="p_dist" class="plot"></div>
+    </div>
+
+    <div class="figure">
+      <div class="figtitle">Wave heights over time</div>
+      <div class="figsub">Maximal and significant wave height for every month.</div>
+      <div id="p_waveTime" class="plot"></div>
     </div>
 
     <div class="figure">
@@ -530,7 +530,7 @@
     <div class="chap-head"><span class="chap-num">3</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
     <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, summed per
       discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
-      the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3 allows, that month's
+      the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button> allows, that month's
       failure probability jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button> — that first month is the solid "probable failure"
       line. <b>Left:</b> the structure is kept in continuous use, so the load only ever grows. <b>Right:</b> the structure is
       decommissioned (the running total is reset to zero during the downtime) and rebuilt stronger, so the failure is pushed
