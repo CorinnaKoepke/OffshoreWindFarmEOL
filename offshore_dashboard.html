@@ -525,9 +525,11 @@
         <div class="pctl"><label>Operation mode</label>
           <select id="mode" data-key="mode">
             <option value="Decom" selected>Decommissioning</option>
-            <option value="Exten">Extension</option>
-            <option value="Repow">Repowering</option>
-          </select></div>
+            <option value="Keep">Extension / Repowering (keep running)</option>
+          </select>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
+            The full choice (Decom vs Extension vs Repower) is made in the network chapter below — the two fields stay in sync.
+          </div></div>
         <div class="pctl"><label>End-of-life (year)</label>
           <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2040" step="1"></div>
         <div class="pctl"><label>Decommissioning done (year)</label>
@@ -573,6 +575,14 @@
     <div class="params">
       <div class="ph">Parameters — network &amp; damage</div>
       <div class="pgrid">
+        <div class="pctl" style="grid-column:1 / -1"><label>Operation mode</label>
+          <select id="eolMode" data-key="eolMode">
+            <option value="Decom" selected>Decommissioning</option>
+            <option value="Keep">Extension / Repowering (keep running)</option>
+          </select>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
+            The full choice (Decom vs Extension vs Repower) is made above the energy plot — the mode fields stay in sync.
+          </div></div>
         <div class="pctl"><label>Number of OSS</label>
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
         <div class="pctl"><label>Turbines per OSS</label>
@@ -592,6 +602,15 @@
     <div class="params">
       <div class="ph">Parameters — energy output</div>
       <div class="pgrid">
+        <div class="pctl" style="grid-column:1 / -1"><label>Operation mode</label>
+          <select id="energyMode" data-key="energyMode">
+            <option value="Decom" selected>Decommissioning</option>
+            <option value="Exten">Extension</option>
+            <option value="Repow">Repowering</option>
+          </select>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:4px">
+            Full choice of the three EOL strategies — kept in sync with the mode fields in the cumulative and network chapters.
+          </div></div>
         <div class="pctl"><label>Min. output per turbine (MW)</label>
           <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="4"></div>
         <div class="pctl"><label>Max. output per turbine (MW)</label>
@@ -648,7 +667,7 @@ function readParams(){
   const severeStr=g('severe').value;
   const severe=severeStr?severeStr.split(',').map(Number):[1,2,3,4,5,6,7,8,9,10,11,12];
   return {
-    mode:g('mode').value, baseYear:n('baseYear'), eol:localTS(n('eolYear'),1,1),
+    mode:g('energyMode').value, baseYear:n('baseYear'), eol:localTS(n('eolYear'),1,1),
     years:n('years'), severe, seed:Math.floor(n('seed')),
     rs1:n('rs1'), rs2:n('rs2'), Hmin:n('Hmin'), maxH:n('maxH'), loadChanges:n('loadK')*1000,
     minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:n('minHDe_f'), maxHDe_f:n('maxHDe_f'),
@@ -659,8 +678,6 @@ function readParams(){
 }
 function syncLabels(){
   const g=id=>document.getElementById(id), set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  const modeName={Decom:'Decom',Exten:'Exten',Repow:'Repow'};
-  set('v_mode',modeName[g('mode').value]);
   set('v_eolYear',g('eolYear').value);
   set('v_rs1',g('rs1').value); set('v_rs2',g('rs2').value);
   set('v_Hmin',g('Hmin').value); set('v_maxH',g('maxH').value);
@@ -1112,6 +1129,7 @@ const INFO_TEXT={
     const label=pctl.querySelector('label'); if(!label) return;
     if(pctl.classList.contains('pctl-fixed')) return; // fixed, non-editable values: no reset
     const input=pctl.querySelector('input,select'); if(!input||!input.dataset.key) return;
+    if(input.id==='mode'||input.id==='eolMode'||input.id==='energyMode') return; // synced group: reset via section
     const btn=document.createElement('button');
     btn.className='prst'; btn.type='button';
     btn.title='Reset to default'; btn.textContent='\u21BA';
@@ -1119,15 +1137,53 @@ const INFO_TEXT={
     label.appendChild(btn);
   });
 
+  const MODE_IDS=['mode','eolMode','energyMode'];
   document.querySelectorAll('.params').forEach(paramsEl=>{
     const ph=paramsEl.querySelector('.ph'); if(!ph) return;
-    const inputs=[...paramsEl.querySelectorAll('input[data-key],select[data-key]')];
-    if(!inputs.length) return;
+    const allInputs=[...paramsEl.querySelectorAll('input[data-key],select[data-key]')];
+    const inputs=allInputs.filter(el=>!MODE_IDS.includes(el.id));
+    const hasMode=allInputs.some(el=>MODE_IDS.includes(el.id));
+    if(!inputs.length&&!hasMode) return;
     const btn=document.createElement('button');
     btn.className='psec-rst'; btn.type='button'; btn.textContent='Reset section';
-    btn.addEventListener('click',()=>doReset(inputs));
+    btn.addEventListener('click',()=>{
+      if(hasMode){
+        // reset the whole synced mode group to its default before the other inputs
+        MODE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)el.value='Decom';});
+      }
+      doReset(inputs);
+    });
     ph.appendChild(btn);
   });
+})();
+
+/* ---- sync the mode group: two 2-option fields (cumulative + network) <-> one 3-option field (energy) ---- */
+(function syncModeGroup(){
+  const two=[document.getElementById('mode'),document.getElementById('eolMode')].filter(Boolean);
+  const three=document.getElementById('energyMode');
+  if(!three||two.length!==2) return;
+  let syncing=false;
+  const to2=v=>(v==='Decom')?'Decom':'Keep';
+  const apply=new3=>{
+    three.value=new3;
+    two.forEach(s=>s.value=to2(new3));
+    recompute();
+  };
+  const onChange=src=>{
+    if(syncing) return; syncing=true;
+    let new3;
+    if(src===three){
+      new3=three.value;
+    }else if(src.value==='Decom'){
+      new3='Decom';
+    }else{
+      // a 2-option field set to 'Keep': keep the specific Exten/Repow if already chosen, else default to Exten
+      new3=(three.value==='Exten'||three.value==='Repow')?three.value:'Exten';
+    }
+    apply(new3);
+    syncing=false;
+  };
+  [three,...two].forEach(s=>s.addEventListener('change',()=>onChange(s)));
 })();
 
 setupLegends();
