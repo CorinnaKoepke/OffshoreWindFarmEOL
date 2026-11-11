@@ -128,6 +128,11 @@
     font-family:'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:600}
   .ref-badge:hover{background:#dbeafe}
   .ref-badge .rb-ico{font-size:13px;line-height:1}
+  /* small "i" button after an equation name: opens the Info panel on Functions */
+  .c-info{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin:0 0 0 8px;
+    padding:0;border:none;cursor:pointer;border-radius:50%;background:#eef2ff;color:var(--accent);vertical-align:middle;
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;font-weight:700;line-height:1}
+  .c-info:hover{background:#dbeafe;color:var(--accent)}
 
   .figure{background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:16px 16px 10px;margin:16px 0;box-shadow:0 3px 12px rgba(15,23,42,.04)}
@@ -237,7 +242,7 @@
       <div class="gloss">
         <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
         <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
-        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves (taller months) means more load changes, which is what fatigues the steel.</span></div>
+        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves means more load changes, which is what fatigues the steel.</span></div>
         <div class="gitem sp"><span class="gt">cumulative load</span><span class="gd">The running total of load changes, summed month by month over the decades. It only goes up — that accumulation is what eventually exceeds the design limit.</span></div>
         <div class="gitem sp"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still tolerate. As load changes grow, the tolerable height drops. It is the "structural resistance curve".</span></div>
         <div class="gitem sp"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The failure probability used in a month <b>after</b> the limit is exceeded (high) versus <b>before</b> (low). The first month to reach <code>phigh</code> is the "probable failure" date.</span></div>
@@ -266,7 +271,7 @@
         <div class="eq sp">
           <div class="tag">Eq. 2</div>
           <div class="body">
-            <div class="formula">H<sub>max</sub> = H<sub>sig</sub> + | plus | ,&nbsp;&nbsp; plus = U( 0 , H<sub>sig</sub> · (0.07·Δyear + 3) )</div>
+            <div class="formula">H<sub>max</sub> = H<sub>sig</sub> + | U( 0 , H<sub>sig</sub> · (0.07·Δyear + 3) ) |</div>
             <div class="desc">Maximum wave height for a month from its significant wave height and the years since the base year,
               capped at <code>maxH</code>.</div>
           </div>
@@ -311,8 +316,8 @@
         (the <b>end-of-life, EOL</b>), the operator must pick a strategy. The paper compares the three standard
         options — this dashboard lets you reproduce its results and see how they change:</p>
       <p class="btext">
-        <b>Decommissioning</b> — remove the old plant and later build new, modern structures (downtime in between).
-        <b>Extension</b> — keep the existing turbines running and just maintain their safety.
+        <b>Decommissioning</b> — remove the old plant and later build a new, modern structures (downtime in between).<br>
+        <b>Extension</b> — keep the existing turbines running and just maintain their safety.<br>
         <b>Repowering</b> — keep the old foundations but install bigger, more efficient turbines on top.
       </p>
       <p class="btext">The risk the paper quantifies is <b>rising wave heights caused by climate change</b>,
@@ -332,7 +337,7 @@
     <!--
         <div class="gitem"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The "typical" wave height of a month (roughly the mean of the larger waves). Used to model the everyday sea state.</span></div>
         <div class="gitem"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest wave of a month. This is the extreme that drives damage; it grows over the years to represent climate change.</span></div>
-        <div class="gitem"><span class="gt"><code>load change</code></span><span class="gd">One wave hitting the steel structure. More waves (taller months) means more load changes, which is what fatigues the steel.</span></div>
+        <div class="gitem"><span class="gt"><code>load change</code></span><span class="gd">One wave hitting the steel structure. More waves means more load changes, which is what fatigues the steel.</span></div>
         <div class="gitem"><span class="gt"><code>cumulative load</code></span><span class="gd">The running total of load changes, summed month by month over the decades. It only goes up — that accumulation is what eventually exceeds the design limit.</span></div>
         <div class="gitem"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still tolerate. As load changes grow, the tolerable height drops. It is the "structural resistance curve".</span></div>
         <div class="gitem"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The failure probability used in a month <b>after</b> the limit is exceeded (high) versus <b>before</b> (low). The first month to reach <code>phigh</code> is the "probable failure" date.</span></div>
@@ -442,16 +447,14 @@
 
     <div class="concepts">
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">Rayleigh wave-frequency distribution</span></div>
+        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">Rayleigh wave-frequency distribution</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">f(x; σ) = (x / σ²) · e^( −x² / 2σ² )</div>
         <p class="c-desc">Gives the frequency of a significant wave height <code>x</code>. Multiplied by the monthly load-change count, it estimates how many times a given height hits the structure.</p>
-        <button class="ref-badge" type="button" data-target="functions"><span class="rb-ico">ℹ</span> Full reference in the Info panel</button>
       </div>
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">Maximum wave height from significant height</span></div>
-        <div class="c-formula">Hmax = Hsig + | plus | ,&nbsp; plus = U( 0 , Hsig · (0.07·Δyear + 3) )</div>
+        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">Maximum wave height from significant height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+        <div class="c-formula">Hmax = Hsig + | U( 0 , Hsig · (0.07·Δyear + 3) ) |</div>
         <p class="c-desc">Turns a month's <code>Hsig</code> into its taller <code>Hmax</code>, adding a random increment that grows with the years since the base year (climate trend), capped at <code>maxH</code>.</p>
-        <button class="ref-badge" type="button" data-target="functions"><span class="rb-ico">ℹ</span> Full reference in the Info panel</button>
       </div>
     </div>
 
@@ -495,10 +498,9 @@
     </div>
 
     <div class="concept">
-      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit (structural resistance curve)</span></div>
+      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit (structural resistance curve)</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
       <div class="c-formula">Hfail(N) = max( −½·ln(N) + Hrel , Hmin )</div>
       <p class="c-desc">DIN EN 1993-1-9 / Eurocode 3: the tallest wave a structure can still endure after <code>N</code> load changes. As <code>N</code> grows the tolerable height drops — the plot below draws this curve for the existing vs. new structure.</p>
-      <button class="ref-badge" type="button" data-target="functions"><span class="rb-ico">ℹ</span> Full reference in the Info panel</button>
     </div>
 
     <!-- parameters for the fatigue plot -->
@@ -579,10 +581,9 @@
 
     <div class="concepts">
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Rule</span><span class="c-name">Repair rule (3-month pattern)</span></div>
+        <div class="c-top"><span class="c-tag">Rule</span><span class="c-name">Repair rule (3-month pattern)</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">month [t, t+1, t+2] → [ broken, broken, working ]</div>
         <p class="c-desc">If a unit breaks in month <code>t</code> it stays offline for 2 months, then returns. The fixed pattern means repair windows never overlap and a unit cannot re-break while being repaired.</p>
-        <button class="ref-badge" type="button" data-target="functions"><span class="rb-ico">ℹ</span> Full reference in the Info panel</button>
       </div>
     </div>
 
@@ -1206,6 +1207,10 @@ recompute();
   // inline "i" term buttons: open the Info panel on the matching section (default: Key terms)
   document.querySelectorAll('.tinfo[data-key]').forEach(b=>{
     b.addEventListener('click',ev=>{ev.stopPropagation();openSection('keyterms');});
+  });
+  // inline "i" equation buttons: open the Info panel on the matching section (default: Functions)
+  document.querySelectorAll('.c-info[data-target]').forEach(b=>{
+    b.addEventListener('click',ev=>{ev.stopPropagation();openSection(b.dataset.target);});
   });
 })();
 </script>
