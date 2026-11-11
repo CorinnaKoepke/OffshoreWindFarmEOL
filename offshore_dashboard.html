@@ -348,10 +348,9 @@
       </div>
     </div>-->
 
-    <p class="note">Every figure below is recomputed live from the adjustable parameters shown with each chapter.
-      Drag a slider and watch the whole downstream chain update. Legends sit to the side and scroll, so every
-      trace label stays visible. All randomness is seeded for reproducibility. Key terms and the core functions
-      live in the Info panel (top-right).</p>
+    <p class="note">Drag any slider and every figure updates live — the whole downstream chain recomputes. Legends
+      sit to the side and scroll, so every trace label stays visible. All randomness is seeded for reproducibility.
+      Key terms and the core functions live in the Info panel (top-right).</p>
   </header>
 
   <!-- ============ CHAPTER 1 · Functions (moved to Info panel) ============ -->
@@ -405,7 +404,7 @@
 
   <!-- ============ CHAPTER 2 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">1</span><h2>Generate wave heights data and estimate the expected load</h2></div>
+    <div class="chap-head"><span class="chap-num">1</span><h2>Generate the wave record and estimate the monthly load</h2></div>
     <p class="chap-desc">First we invent a realistic 60-year sea state.
       Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (typical, from a Rayleigh distribution) and a taller
       maximum height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, grown over the years via Eq.&nbsp;2 to model climate change). We then
@@ -507,16 +506,16 @@
     </div>
   </section>
 
-  <!-- ============ CHAPTER 4 · Cumulative sum ============ -->
+  <!-- ============ CHAPTER 2 · Cumulative sum ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">2</span><h2>Calculate the cumulative sum of load changes over time</h2></div>
     <p class="chap-desc">Load changes never disappear, they <b>accumulate</b> — and it is that accumulated total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, summed per
       discrete wave height, that fatigues the steel. Each curve here is one wave-height band: the higher the band, the rarer
       the waves, but the more damaging. The moment a band's accumulated count crosses what Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button> allows, that month's
       failure probability jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button> — that first month is the solid "probable failure"
-      line. <b>Left:</b> the structure is kept in continuous use, so the load only ever grows. <b>Right:</b> the structure is
-      decommissioned (the running total is reset to zero during the downtime) and rebuilt stronger, so the failure is pushed
-      further out — the core reason the decommissioning option survives longer.</p>
+      line. Which curve you see depends on the <b>operation mode</b> above: keep the structure running and the load only ever
+      grows; decommission it and the running total resets to zero during the downtime, with a stronger rebuild — pushing the
+      probable-failure date further out, which is why decommissioning survives longer.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
@@ -551,13 +550,13 @@
     </div>
   </section>
 
-  <!-- ============ CHAPTER 5 · OSS network ============ -->
+  <!-- ============ CHAPTER 3 · OSS network ============ -->
   <section class="chapter">
-    <div class="chap-head"><span class="chap-num">3</span><h2>Create an offshore substation (OSS) network, destroy something and plot the performance</h2></div>
+    <div class="chap-head"><span class="chap-num">3</span><h2>Build the offshore substation (OSS) network, simulate damage and plot performance</h2></div>
     <p class="chap-desc">This is where the abstract probabilities become a running power plant. A flat network of
       <code>numOSS · numTurbinesPerOSS + numOSS</code> units is built (the turbine clusters plus their substation platforms,
       each of which can also break). In any month whose waves clear the <code>damage</code> threshold, every unit is allowed to
-      fail with the probability computed in Chapter&nbsp;4; a broken unit then stays offline for 2 months (the repair rule)
+      fail with the probability computed in Chapter&nbsp;2; a broken unit then stays offline for 2 months (the repair rule)
       before it can run again. <b>Status</b><button class="tinfo" type="button" data-key="status" title="What is Status?">i</button> (top) is simply the fraction of units still working, so dips show outages.
       <b>Energy output</b> (bottom) is the total MW of working units — in Decommissioning and Repowering modes the per-turbine
       output is ramped down then back up (or stepped up) around end-of-life, which is why the curve changes shape there.
@@ -1066,7 +1065,7 @@ const INFO_TEXT={
 
   maxH:"A hard cap applied to the maximum wave height in Eq.&nbsp;2: the uniform 'plus' draw is clamped so H<sub>max</sub> never exceeds this value. It keeps the 60-year synthetic record physically plausible and stops the climate-change growth term (0.07·Δyear) from producing implausibly tall waves in later decades.",
 
-  loadK:"The total number of waves assumed to hit the structure in a month (here in units of ×10³). It turns the Rayleigh wave-height density of Eq.&nbsp;1 into an actual <b>count</b> of waves at each height (count = density × this value). It therefore sets the absolute level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;4 builds up — a larger value means the structure reaches its 'probable failure' date earlier. (The paper derives ≈ 2.6×10⁵ per month from a ~10&nbsp;s wave period.)",
+  loadK:"The total number of waves assumed to hit the structure in a month (here in units of ×10³). It turns the Rayleigh wave-height density of Eq.&nbsp;1 into an actual <b>count</b> of waves at each height (count = density × this value). It therefore sets the absolute level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up — a larger value means the structure reaches its 'probable failure' date earlier. (The paper derives ≈ 2.6×10⁵ per month from a ~10&nbsp;s wave period.)",
 
   minH_f:"H<sub>min</sub> for the <b>existing</b> structure's cyclic structural resistance curve (Eq.&nbsp;3): the flat lower bound of the fatigue limit below which the structure is assumed to survive any number of load changes. The paper uses H<sub>min</sub> = 8 m for the old structures. Raising it makes the old structure more robust against short, frequent waves.",
 
