@@ -445,8 +445,6 @@
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
         <div class="pctl"><label>Normal Rayleigh σ (rs2)</label>
           <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
-        <div class="pctl"><label>Min. wave height H<sub>min</sub> (m)</label>
-          <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
         <div class="pctl"><label>Max. wave height cap (m)</label>
           <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
       </div>
@@ -464,19 +462,21 @@
       <div id="p_waveTime" class="plot"></div>
     </div>
 
-    <div class="figure">
-      <div class="figtitle">Load changes over time</div>
-      <div class="figsub">Estimated number of waves impacting the structure per month (wave heights above H<sub>min</sub>).</div>
-      <div id="p_load" class="plot"></div>
-    </div>
-
-    <!-- parameter for the load plot, shown after it -->
+    <!-- parameter for the load plot -->
     <div class="params">
       <div class="ph">Parameters — load</div>
       <div class="pgrid">
         <div class="pctl"><label>Load changes per month (×10³)</label>
           <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110"></div>
+        <div class="pctl"><label>Min. wave height H<sub>min</sub> (m)</label>
+          <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
       </div>
+    </div>
+
+    <div class="figure">
+      <div class="figtitle">Load changes over time</div>
+      <div class="figsub">Estimated number of waves impacting the structure per month (wave heights above H<sub>min</sub>).</div>
+      <div id="p_load" class="plot"></div>
     </div>
 
     <div class="concept">
@@ -577,11 +577,7 @@
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
         <div class="pctl"><label>Turbines per OSS</label>
           <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="60"></div>
-        <div class="pctl"><label>Min. output per turbine (MW)</label>
-          <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="4"></div>
-        <div class="pctl"><label>Max. output per turbine (MW)</label>
-          <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="6"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Damage only when wave height &gt; (m)</label>
+        <div class="pctl" style="grid-column:1 / -1"><label>Break units only when H<sub>max</sub> exceeds (m)</label>
           <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
       </div>
     </div>
@@ -590,6 +586,17 @@
       <div class="figtitle">Status over time</div>
       <div class="figsub">Fraction of units operational. Green line = end-of-life, red line = probable-failure month.</div>
       <div id="p_status" class="plot"></div>
+    </div>
+
+    <!-- parameters for the energy plot -->
+    <div class="params">
+      <div class="ph">Parameters — energy output</div>
+      <div class="pgrid">
+        <div class="pctl"><label>Min. output per turbine (MW)</label>
+          <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="4"></div>
+        <div class="pctl"><label>Max. output per turbine (MW)</label>
+          <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="6"></div>
+      </div>
     </div>
 
     <div class="figure">
