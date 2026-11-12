@@ -493,8 +493,8 @@
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">2</span><h2>Add up the load changes over time</h2></div>
     <p class="chap-desc">Load changes do not disappear — they <b>build up</b>. It is that running total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, added up
-      month by month, that wears out the steel. Each curve here is one wave-height band: the higher the band, the rarer and
-      more damaging the waves. The moment a band's total crosses the limit set by Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button>, that month's
+      month by month, that wears out the steel. Each curve here is one wave height: the higher the wave, the rarer and
+      more damaging it is. The moment that height's running total crosses the limit set by Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button>, that month's
       chance of breaking jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button> — that first month is the solid "probable failure"
       line. Which curve you see depends on the <b>operation mode</b> above: keep the structure running and the load only ever
       grows; decommission it and the running total resets to zero during the downtime, then the rebuild is stronger — pushing
@@ -518,14 +518,12 @@
           <input type="number" id="decomYear" data-key="decomYear" min="2030" max="2055" value="2042" step="1"></div>
         <div class="pctl"><label>Year the rebuild is finished</label>
           <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2050" step="1"></div>
-        <div class="pctl"><label>Chance of breaking once the limit is passed (phigh)</label>
-          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
       </div>
     </div>
 
     <div class="figure">
       <div class="figtitle" id="cum_title">Cumulative load changes — structure stays in use</div>
-      <div class="figsub" id="cum_sub">Each curve is one wave-height band (H = H<sub>min</sub> + band). Hover the solid vertical line for the fatigue limit (Eq.&nbsp;3).</div>
+      <div class="figsub" id="cum_sub">Each curve is one wave height. Hover the solid vertical line for the fatigue limit (Eq.&nbsp;3).</div>
       <div id="p_cum" class="plot"></div>
       <div class="stat" id="stat_cum"></div>
     </div>
@@ -559,8 +557,10 @@
           <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="3"></div>
         <div class="pctl"><label>Turbines per substation</label>
           <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="60"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Chance of breaking while below the limit (plow)</label>
+        <div class="pctl"><label>Chance of breaking while below the limit (plow)</label>
           <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
+        <div class="pctl"><label>Chance of breaking once the limit is passed (phigh)</label>
+          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
         <div class="pctl" style="grid-column:1 / -1"><label>Only break units when H<sub>max</sub> is above (m)</label>
           <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
       </div>
@@ -935,7 +935,7 @@ function recompute(){
     useRebuild?'Cumulative load changes — decommissioned & rebuilt':'Cumulative load changes — structure stays in use';
   document.getElementById('cum_sub').innerHTML=
     useRebuild?'The load total resets to zero between decommissioning and rebuild, then starts counting again from zero. Hover the solid line for the fatigue limit (Eq.\u00a03).'
-              :'Each curve is one wave-height band (H = H<sub>min</sub> + band). Hover the solid vertical line for the fatigue limit (Eq.\u00a03).';
+              :'Each curve is one wave height. Hover the solid vertical line for the fatigue limit (Eq.\u00a03).';
   document.getElementById('stat_cum').innerHTML=
     `Fatigue limit (Eq.\u00a03) first passed (${useRebuild?'decommission &amp; rebuild':'existing structure'}): <b>${fmt(S.date[useRebuild?S.tdegDe:S.tdeg])}</b>`;
   plotStatus(S,P);
