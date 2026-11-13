@@ -224,9 +224,7 @@
   </section>
   -->
 
-  <!-- Hidden global inputs: base year, simulation length, random seed -->
-  <input type="hidden" id="baseYear" data-key="baseYear" value="2012">
-  <input type="hidden" id="years" data-key="years" value="53">
+  <!-- Hidden global input: random seed -->
   <input type="hidden" id="seed" data-key="seed" value="0">
 
   <!-- ============ CHAPTER 2 · Generate wave heights & Plot data ============ -->
@@ -253,6 +251,10 @@
     <div class="params">
       <div class="ph">Parameters — wave climate &amp; load</div>
       <div class="pgrid">
+        <div class="pctl"><label>Simulation start year</label>
+          <input type="number" id="baseYear" data-key="baseYear" min="2000" max="2025" value="2012" step="1"></div>
+        <div class="pctl"><label>Simulation duration (years)</label>
+          <input type="number" id="years" data-key="years" min="10" max="100" value="53" step="1"></div>
         <div class="pctl"><label>Stormy months <span style="font-size:11px;color:var(--muted);font-weight:600">(applies to all plots)</span></label>
           <select id="severe" data-key="severe">
             <option value="11,12,1,2,3,4">Nov – Apr</option>
