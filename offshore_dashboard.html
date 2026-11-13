@@ -421,7 +421,7 @@
       <div class="pgrid">
         <div class="pctl"><label>Stormy months <span style="font-size:11px;color:var(--muted);font-weight:600">(applies to all plots)</span></label>
           <select id="severe" data-key="severe">
-            <option value="1,2,3,11,12" selected>Jan, Feb, Mar, Nov, Dec (default)</option>
+            <option value="11,12,1,2,3" selected>Nov, Dec, Jan, Feb, Mar (default)</option>
             <option value="11,12,1,2,3,4">Nov – Apr</option>
             <option value="12,1,2">Dec – Feb</option>
             <option value="">All months</option>
@@ -431,8 +431,11 @@
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
         <div class="pctl"><label>Calm-month wave size (rs2, m)</label>
           <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
-        <div class="pctl"><label>Maximum wave height cap (m)</label>
-          <input type="range" id="maxH" data-key="maxH" min="10" max="60" step="1" value="40"></div>
+        <div class="pctl pctl-fixed"><label>Cap on the climate term in Eq. 2 (m)</label>
+          <input type="number" id="maxH" data-key="maxH" value="20" disabled readonly
+            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
+          <div class="hint">Fixed — not stated in the paper (comes from the reference code). The extra amount above <code>Hsig</code> in Eq.&nbsp;2 is clamped to this value so the 60-year record stays realistic as the climate term grows.</div>
+        </div>
       </div>
     </div>
 
@@ -453,7 +456,7 @@
       <div class="ph">Parameters — load</div>
       <div class="pgrid">
         <div class="pctl"><label>Waves per month (×10³)</label>
-          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="10" value="3110"></div>
+          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="1" value="259"></div>
         <div class="pctl"><label>Smallest wave that counts, H<sub>min</sub> (m)</label>
           <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="8"></div>
       </div>
@@ -479,10 +482,16 @@
           <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="8"></div>
         <div class="pctl"><label>Old structure: strength (m)</label>
           <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="17"></div>
-        <div class="pctl"><label>New structure: smallest wave that counts (m)</label>
-          <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="10"></div>
-        <div class="pctl"><label>New structure: strength (m)</label>
-          <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="19"></div>
+        <div class="pctl pctl-fixed"><label>New structure: smallest wave that counts (m)</label>
+          <input type="number" id="minHDe_f" data-key="minHDe_f" value="10" disabled readonly
+            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
+          <div class="hint">Fixed — the paper only says the new build uses “new designs and steel classes”, giving no number.</div>
+        </div>
+        <div class="pctl pctl-fixed"><label>New structure: strength (m)</label>
+          <input type="number" id="maxHDe_f" data-key="maxHDe_f" value="19" disabled readonly
+            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
+          <div class="hint">Fixed — set higher than the old structure (17 m) so the rebuilt farm outlasts it, matching the paper’s finding.</div>
+        </div>
       </div>
     </div>
 
@@ -565,8 +574,11 @@
           <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.1"></div>
         <div class="pctl"><label>Chance of a unit breaking once the limit is passed (phigh)</label>
           <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.5"></div>
-        <div class="pctl" style="grid-column:1 / -1"><label>Only break units when H<sub>max</sub> is above (m)</label>
-          <input type="range" id="damage" data-key="damage" min="5" max="25" step="1" value="15"></div>
+        <div class="pctl pctl-fixed" style="grid-column:1 / -1"><label>Only break units when H<sub>max</sub> is above (m)</label>
+          <input type="number" id="damage" data-key="damage" value="15" disabled readonly
+            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
+          <div class="hint">Fixed — not stated in the paper. In months where the maximum wave stays below this threshold, no damage can occur at all.</div>
+        </div>
       </div>
     </div>
 
@@ -647,26 +659,26 @@ function readParams(){
   return {
     mode:g('energyMode').value, baseYear:n('baseYear'), eol:localTS(n('eolYear'),1,1),
     years:n('years'), severe, seed:Math.floor(n('seed')),
-    rs1:n('rs1'), rs2:n('rs2'), Hmin:n('Hmin'), maxH:n('maxH'), loadChanges:n('loadK')*1000,
-    minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:n('minHDe_f'), maxHDe_f:n('maxHDe_f'),
+    rs1:n('rs1'), rs2:n('rs2'), Hmin:n('Hmin'), maxH:20, loadChanges:n('loadK')*1000,
+    minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:10, maxHDe_f:19,
     decom:localTS(n('decomYear'),1,1), rebuild:localTS(n('rebuildYear'),1,1),
     phigh:n('phigh'), plow:n('plow'),
-    numOSS:n('numOSS'), numT:n('numT'), minOut:n('minOut'), maxOut:n('maxOut'), damage:n('damage')
+    numOSS:n('numOSS'), numT:n('numT'), minOut:n('minOut'), maxOut:n('maxOut'), damage:15
   };
 }
 function syncLabels(){
   const g=id=>document.getElementById(id), set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   set('v_eolYear',g('eolYear').value);
   set('v_rs1',g('rs1').value); set('v_rs2',g('rs2').value);
-  set('v_Hmin',g('Hmin').value); set('v_maxH',g('maxH').value);
+  set('v_Hmin',g('Hmin').value); set('v_maxH','20');
   set('v_loadK',g('loadK').value);
   set('v_minH_f',g('minH_f').value); set('v_maxH_f',g('maxH_f').value);
-  set('v_minHDe_f',g('minHDe_f').value); set('v_maxHDe_f',g('maxHDe_f').value);
+  set('v_minHDe_f','10'); set('v_maxHDe_f','19');
   set('v_decomYear',g('decomYear').value); set('v_rebuildYear',g('rebuildYear').value);
   set('v_phigh',(+g('phigh').value).toFixed(2)); set('v_plow',(+g('plow').value).toFixed(2));
   set('v_numOSS',g('numOSS').value); set('v_numT',g('numT').value);
   set('v_minOut',g('minOut').value); set('v_maxOut',g('maxOut').value);
-  set('v_damage',g('damage').value);
+  set('v_damage','15');
 }
 
 /* ============================================================= model */
@@ -956,9 +968,9 @@ function onChange(){clearTimeout(deb);deb=setTimeout(recompute,220);}
 document.querySelectorAll('[data-key]').forEach(el=>{
   el.addEventListener('input',onChange);el.addEventListener('change',onChange);});
 
-const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'1,2,3,11,12',seed:0,
-  rs1:1.5,rs2:0.7,Hmin:8,maxH:40,loadK:3110,minH_f:8,maxH_f:17,minHDe_f:10,maxHDe_f:19,
-  decomYear:2042,rebuildYear:2050,phigh:0.5,plow:0.1,numOSS:3,numT:60,minOut:4,maxOut:6,damage:15};
+const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'11,12,1,2,3',seed:0,
+  rs1:1.5,rs2:0.7,Hmin:8,loadK:259,minH_f:8,maxH_f:17,
+  decomYear:2042,rebuildYear:2050,phigh:0.5,plow:0.1,numOSS:3,numT:60,minOut:4,maxOut:6};
 
 /* ---- axis with min / mid / max ticks under every range slider ---- */
 (function addRangeAxes(){
@@ -1053,9 +1065,9 @@ const INFO_TEXT={
 
   Hmin:"The smallest wave that counts as a load on the steel. Below this, a wave is too small to really wear the structure, so only waves above <code>Hmin</code> are counted. The paper uses <code>Hmin</code> = 8 m, and also uses it as the lowest (flat) part of the fatigue curve in Eq.&nbsp;3.",
 
-  maxH:"A hard cap on the maximum wave height in Eq.&nbsp;2: the added amount is limited so <code>Hmax</code> never goes above this value. This keeps the 60-year record realistic and stops the climate-change growth from producing unrealistically tall waves in later decades.",
+  maxH:"A cap on the climate-change <b>added</b> term in Eq.&nbsp;2 (<code>Hmax = Hsig + added</code>): the extra amount above <code>Hsig</code> is clamped so it never exceeds this value. The reference code caps it at 20 m (<code>if abs(plus) &gt; 20: plus = 20</code>), so <code>Hmax</code> stays at most <code>Hsig + 20</code> and the record stays realistic as the climate term grows over the decades.",
 
-  loadK:"The total number of waves assumed to hit the structure in a month (shown in units of ×10³). It turns the wave-height curve of Eq.&nbsp;1 into a real <b>count</b> of waves at each height (count = curve value × this number). It sets the level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up. A bigger value means the structure reaches its 'probable failure' date sooner. (The paper works out about 260,000 per month from a ~10-second wave period.)",
+  loadK:"The total number of waves assumed to hit the structure in a month (shown in units of ×10³). It turns the wave-height curve of Eq.&nbsp;1 into a real <b>count</b> of waves at each height (count = curve value × this number). It sets the level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up. A bigger value means the structure reaches its 'probable failure' date sooner. The reference code uses <code>loadChanges = 6·60·24·30 ≈ 259,200</code> per month, i.e. this slider's default of 259.",
 
   minH_f:"The smallest wave that counts for the <b>old</b> structure's fatigue curve (Eq.&nbsp;3). Below this height the structure is assumed to survive any number of load changes. The paper uses 8 m for the old structures. Raising it makes the old structure more tolerant of small, frequent waves.",
 
