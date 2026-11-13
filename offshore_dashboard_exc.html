@@ -15,46 +15,6 @@
   body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.55;}
   .page{max-width:1000px;margin:0 auto;padding:28px 20px 80px;}
 
-  /* ---------- info side panel (Key terms + Functions) ---------- */
-  .panel-toggle{position:fixed;top:18px;right:18px;z-index:60;display:inline-flex;align-items:center;gap:7px;
-    padding:9px 15px;background:var(--accent);color:#fff;border:none;border-radius:999px;cursor:pointer;
-    box-shadow:0 6px 18px rgba(37,99,235,.38);font-family:'Segoe UI',system-ui,sans-serif;font-size:13.5px;font-weight:600}
-  .panel-toggle:hover{background:#1d4ed8}
-  .panel-toggle .ico{font-size:15px;line-height:1}
-  .panel-backdrop{position:fixed;inset:0;z-index:55;background:rgba(15,23,42,.34);opacity:0;
-    pointer-events:none;transition:opacity .22s ease}
-  .panel-backdrop.open{opacity:1;pointer-events:auto}
-  .side-panel{position:fixed;top:0;right:0;height:100vh;width:min(392px,92vw);z-index:65;
-    background:var(--card);border-left:1px solid var(--border);box-shadow:-10px 0 40px rgba(15,23,42,.16);
-    transform:translateX(103%);transition:transform .26s ease;display:flex;flex-direction:column}
-  .side-panel.open{transform:none}
-  .sp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;
-    border-bottom:1px solid var(--border)}
-  .sp-title{font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;font-weight:700;color:var(--ink)}
-  .sp-close{border:none;background:#f1f5f9;color:#334155;width:30px;height:30px;border-radius:8px;
-    cursor:pointer;font-size:16px;line-height:1}
-  .sp-close:hover{background:#e2e8f0}
-  .sp-body{flex:1 1 auto;overflow-y:auto;padding:6px 16px 22px}
-  .sp-section{margin-top:18px}
-  .sp-sec-head{width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;
-    padding:3px 0;margin:0;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;
-    letter-spacing:.05em;text-transform:uppercase;color:var(--accent);text-align:left}
-  .sp-sec-head:hover{color:#1d4ed8}
-  .sp-sec-head::before{content:"";width:14px;height:2px;background:currentColor;border-radius:2px}
-  .sp-sec-chev{margin-left:auto;flex:0 0 auto;width:14px;height:14px;position:relative;transition:transform .24s ease}
-  .sp-sec-chev::before{content:"";position:absolute;left:50%;top:52%;width:6px;height:6px;
-    border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translate(-50%,-50%) rotate(45deg)}
-  .sp-section:not([data-sp-open="true"]) .sp-sec-chev{transform:rotate(-90deg)}
-  .sp-section-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
-  .sp-section:not([data-sp-open="true"]) .sp-section-body{grid-template-rows:0fr}
-  .sp-inner{min-height:0;overflow:hidden;padding-top:11px}
-  .sp-section .sp-lede{font-size:13.5px;color:#475569;margin:0 0 12px;line-height:1.5}
-  .sp-section .sp-lede code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
-  .gitem.sp{grid-template-columns:1fr;gap:4px;padding:11px 13px}
-  .gitem.sp .gt{font-size:13.5px}
-  .eq.sp{grid-template-columns:1fr;gap:8px;padding:13px 15px}
-  .eq.sp .tag{margin-bottom:2px}
-
   header.intro{background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:26px 30px;box-shadow:0 4px 18px rgba(15,23,42,.05);}
   header.intro h1{margin:0 0 10px;font-size:26px;font-weight:700;line-height:1.25}
@@ -81,14 +41,6 @@
   .pipe .pt{font-size:13.5px;color:#334155}
   .pipe .pt b{color:var(--ink)}
   .pipe .pt code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
-  .gloss{display:grid;gap:7px}
-  .gitem{font-size:13.5px;color:#334155;display:grid;grid-template-columns:210px 1fr;gap:10px;
-    background:#fff;border:1px solid var(--border);border-radius:9px;padding:8px 12px}
-  .gitem .gt{font-weight:700;color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px}
-  .gitem .gt code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;font-weight:600}
-  .gitem .gd{color:#475569}
-  @media(max-width:640px){.gitem{grid-template-columns:1fr}}
-
   .chapter{margin-top:34px}
   .chap-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
   .chap-num{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:700;
@@ -97,13 +49,6 @@
   .chap-desc{color:#475569;font-size:15px;margin:0 0 16px 0;max-width:820px}
   .chap-desc code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:13px;color:#334155}
 
-  .equations{display:grid;gap:10px}
-  .eq{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;
-    display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
-  .eq .tag{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:700;color:var(--accent);
-    letter-spacing:.02em;text-transform:uppercase}
-  .eq .formula{font-family:'Cambria Math','Segoe UI',serif;font-size:16px;margin:4px 0 2px;color:var(--code)}
-  .eq .desc{color:var(--muted);font-size:13.5px}
   /* stacked fraction */
   .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.15;font-size:.88em}
   .frac .num{border-bottom:1px solid currentColor;padding:0 4px 2px}
@@ -122,22 +67,6 @@
   .concept .c-desc{font-size:13.5px;color:#475569;margin:0 0 9px;line-height:1.5}
   .concept .c-desc code{background:var(--param-bg);padding:1px 5px;border-radius:4px;font-size:12.5px;color:#334155}
   .concept .c-desc b{color:var(--ink)}
-  /* inline "i" info button + drop-down, used next to terms in the chapter text */
-  .tinfo{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin:0 1px 0 4px;
-    padding:0;border:none;cursor:pointer;border-radius:50%;background:#eef2ff;color:var(--accent);vertical-align:middle;
-    font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;font-weight:700;line-height:1}
-  .tinfo:hover{background:#dbeafe;color:var(--accent)}
-  .ref-badge{display:inline-flex;align-items:center;gap:6px;margin-top:1px;padding:4px 11px;border-radius:999px;
-    background:#eff6ff;color:var(--accent);border:1px solid #bfdbfe;cursor:pointer;
-    font-family:'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:600}
-  .ref-badge:hover{background:#dbeafe}
-  .ref-badge .rb-ico{font-size:13px;line-height:1}
-  /* small "i" button after an equation name: opens the Info panel on Functions */
-  .c-info{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin:0 0 0 8px;
-    padding:0;border:none;cursor:pointer;border-radius:50%;background:#eef2ff;color:var(--accent);vertical-align:middle;
-    font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;font-weight:700;line-height:1}
-  .c-info:hover{background:#dbeafe;color:var(--accent)}
-
   .figure{background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:16px 16px 10px;margin:16px 0;box-shadow:0 3px 12px rgba(15,23,42,.04)}
   .figure .figtitle{font-size:16px;font-weight:700;margin:0 4px 2px}
@@ -164,7 +93,7 @@
     letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;display:flex;align-items:center;gap:8px}
   .params .ph::before{content:"";width:14px;height:2px;background:var(--accent);border-radius:2px}
   .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 26px}
-  @media(max-width:640px){.pgrid{grid-template-columns:1fr}.eq{grid-template-columns:1fr}}
+  @media(max-width:640px){.pgrid{grid-template-columns:1fr}}
   .pctl{margin:8px 0}
   .pctl label{display:flex;justify-content:flex-start;align-items:baseline;gap:8px;
     font-family:'Segoe UI',system-ui,sans-serif;font-size:13.5px;color:#334155;margin-bottom:3px}
@@ -191,19 +120,6 @@
   .raxis .tk{width:1px;height:8px;background:#cbd5e1;display:block}
   .raxis .lbl{margin-top:2px;font-size:10.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
 
-  /* per-parameter info button + explanation */
-  .pctl label .pinfo{margin-left:2px;background:none;border:none;cursor:pointer;font-size:12px;
-    color:var(--muted);padding:1px 5px;border-radius:4px;line-height:1;font-family:'Segoe UI',system-ui,sans-serif;
-    vertical-align:middle}
-  .pctl label .pinfo:hover{color:var(--accent);background:#eef2ff}
-  .pctl label .pinfo.open{color:var(--accent);background:#dbeafe}
-  .pinfo-box{display:none;margin:4px 0 2px;padding:9px 11px;background:#fff;border:1px solid #dbeafe;
-    border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-family:'Segoe UI',system-ui,sans-serif;
-    font-size:12.5px;line-height:1.5;color:#334155;max-width:100%}
-  .pinfo-box.open{display:block}
-  .pinfo-box b{color:var(--ink)}
-  .pinfo-box code{background:var(--param-bg);padding:0 4px;border-radius:3px;font-size:12px}
-
   .btnrow{display:flex;gap:10px;margin:6px 4px 2px}
   button{font-family:'Segoe UI',system-ui,sans-serif;padding:9px 18px;border-radius:9px;cursor:pointer;
     font-size:13.5px;font-weight:600;border:1px solid transparent}
@@ -216,70 +132,6 @@
 </style>
 </head>
 <body>
-<button class="panel-toggle" id="panelToggle" type="button" aria-expanded="false" aria-controls="sidePanel" aria-label="Open information panel">
-  <span class="ico">ℹ</span><span class="lbl">Info</span>
-</button>
-<div class="panel-backdrop" id="panelBackdrop"></div>
-
-<aside class="side-panel" id="sidePanel" aria-hidden="true" aria-label="Reference: key terms and functions">
-  <div class="sp-head">
-    <span class="sp-title">Reference</span>
-    <button class="sp-close" id="panelClose" type="button" aria-label="Close panel">✕</button>
-  </div>
-  <div class="sp-body">
-    <section class="sp-section" data-sp="keyterms" data-sp-open="true">
-      <button class="sp-sec-head" type="button" aria-expanded="true" aria-controls="spBodyKey">
-        <span>Key terms</span><span class="sp-sec-chev" aria-hidden="true"></span>
-      </button>
-      <div class="sp-section-body" id="spBodyKey"><div class="sp-inner">
-      <div class="gloss">
-        <div class="gitem sp"><span class="gt"><code>Hsig</code> significant wave height</span><span class="gd">The usual wave height of a month, a typical size for the sea in that period.</span></div>
-        <div class="gitem sp"><span class="gt"><code>Hmax</code> maximum wave height</span><span class="gd">The tallest single wave of the month. These extreme waves cause the damage, and they get larger over the years (climate change).</span></div>
-        <div class="gitem sp"><span class="gt">load change</span><span class="gd">One wave hitting the steel structure. More waves mean more load changes, which is what wears the steel out over time (fatigue).</span></div>
-        <div class="gitem sp"><span class="gt">cumulative load</span><span class="gd">The running total of load changes, added up month by month. It only ever goes up. That total is what finally exceeds the structure's limit.</span></div>
-        <div class="gitem sp"><span class="gt">fatigue limit (Eq.&nbsp;3)</span><span class="gd">For a given number of load changes, the tallest wave the structure can still take. As load changes grow, this tolerable height gets lower.</span></div>
-        <div class="gitem sp"><span class="gt"><code>phigh</code> / <code>plow</code></span><span class="gd">The chance of a unit breaking: <b>higher</b> once the structure's limit is exceeded (<code>phigh</code>), <b>lower</b> while it is still safe (<code>plow</code>). The first month it reaches <code>phigh</code> is the "probable failure" date.</span></div>
-        <div class="gitem sp"><span class="gt"><code>Status</code></span><span class="gd">The share of units (turbines + platforms) that are working right now. 1.0 = everything up, 0 = all down.</span></div>
-        <div class="gitem sp"><span class="gt">resilience / <code>AE</code></span><span class="gd">The main result number: the total energy delivered over the whole period (the area under the energy curve, in MW·month). A larger value means the option delivers more energy.</span></div>
-      </div>
-      </div></div>
-    </section>
-
-    <section class="sp-section" data-sp="functions" data-sp-open="true">
-      <button class="sp-sec-head" type="button" aria-expanded="true" aria-controls="spBodyFun">
-        <span>Functions</span><span class="sp-sec-chev" aria-hidden="true"></span>
-      </button>
-      <div class="sp-section-body" id="spBodyFun"><div class="sp-inner">
-      <p class="sp-lede">Three core rules, used before any data is generated. They follow the equations from the paper
-        (wave statistics and Eurocode&nbsp;3 fatigue).</p>
-      <div class="equations">
-        <div class="eq sp">
-          <div class="tag">Eq. 1</div>
-          <div class="body">
-            <div class="formula">f(x;&thinsp;σ) = <span class="frac"><span class="num">x</span><span class="den">σ²</span></span>&thinsp;·&thinsp;e<sup><span class="frac"><span class="num">−x²</span><span class="den">2σ²</span></span></sup></div>
-            <div class="desc">Describes how common each wave height is. Multiply it by the number of waves in a month to find how often a given height <code>x</code> hits the structure.</div>
-          </div>
-        </div>
-        <div class="eq sp">
-          <div class="tag">Eq. 2</div>
-          <div class="body">
-            <div class="formula">H<sub>max</sub> = H<sub>sig</sub> + | U( 0 , H<sub>sig</sub> · (0.07·(year − baseYear) + 3) ) |</div>
-            <div class="desc">Gives a month's maximum wave height <code>Hmax</code> from its significant wave height <code>Hsig</code>. The extra amount grows with the years since the base year (climate change), and is capped at <code>maxH</code>.</div>
-          </div>
-        </div>
-        <div class="eq sp">
-          <div class="tag">Eq. 3</div>
-          <div class="body">
-            <div class="formula">H<sub>fail</sub>(N) = max( −½·ln(N) + H<sub>rel</sub> , H<sub>min</sub> )</div>
-            <div class="desc">The fatigue limit (Eurocode 3): after <code>N</code> load changes, the tallest wave the structure can still take.</div>
-          </div>
-        </div>
-      </div>
-      </div></div>
-    </section>
-  </div>
-</aside>
-
 <div class="page">
 
   <!-- ============ CHAPTER 0 · Requirements ============ -->
@@ -328,10 +180,10 @@
 
     <p class="note">Drag any slider and every figure updates live. The whole chain is recomputed. Legends sit to the side
       and scroll, so every curve label stays visible. All randomness uses a fixed seed, so results are reproducible.
-      Key terms and the core rules are in the Info panel (top-right).</p>
+      </p>
   </header>
 
-  <!-- ============ CHAPTER 1 · Functions (moved to Info panel) ============ -->
+  <!-- ============ Disabled legacy functions section ============ -->
   <!--
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">1</span><h2>Functions</h2></div>
@@ -384,21 +236,19 @@
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">1</span><h2>Build the wave record and estimate the monthly load</h2></div>
     <p class="chap-desc">First we create a realistic sea record.
-      Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (the usual wave size) and a taller
-      maximum wave height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, which grows over the years to model climate change). From that we
-      count how many waves hit the structure (load changes<button class="tinfo" type="button" data-key="loadchange" title="What is a load change?">i</button>) each month, only counting waves higher than <code>Hmin</code>, and plot it all.
+      Each month gets a significant wave height <code>Hsig</code> (the usual wave size) and a taller
+      maximum wave height <code>Hmax</code> (the extreme, which grows over the years to model climate change). From that we
+      count how many waves hit the structure (load changes) each month, only counting waves higher than <code>Hmin</code>, and plot it all.
       These wave and load estimates feed the fatigue-limit and cumulative-load analysis in Chapter&nbsp;2.</p>
 
     <div class="concepts">
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">How common each wave height is</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+        <div class="c-top"><span class="c-tag">Eq. 1</span><span class="c-name">How common each wave height is</span></div>
         <div class="c-formula">f(x;&thinsp;σ) = <span class="frac"><span class="num">x</span><span class="den">σ²</span></span>&thinsp;·&thinsp;e<sup><span class="frac"><span class="num">−x²</span><span class="den">2σ²</span></span></sup></div>
-        <p class="c-desc">Shows how often a wave of height <code>x</code> occurs. Multiplied by the number of waves in a month, it estimates how many times a given height hits the structure.</p>
       </div>
       <div class="concept">
-        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">From typical height to maximum height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+        <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">From typical height to maximum height</span></div>
         <div class="c-formula">Hmax = Hsig + | U( 0 , Hsig · (0.07·(year − baseYear) + 3) ) |</div>
-        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years due to climate change and is capped to keep the simulated record realistic as the climate term grows.</p>
       </div>
     </div>
 
@@ -455,12 +305,11 @@
   <!-- ============ CHAPTER 2 · Fatigue limit and cumulative sum ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">2</span><h2>Set the fatigue limit and add up load changes</h2></div>
-    <p class="chap-desc">Eq.&nbsp;3 defines the <b>fatigue limit</b>: for each structure, it gives the tallest wave it can withstand after a given number of load changes. The curve below compares the old and new structures. Then we track how load changes <b>build up</b> month by month. Each cumulative-load curve represents one wave height; when it crosses the fatigue limit, the chance of the structure breaking changes from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button>. The solid line marks the first month this happens. The operation mode determines whether accumulated load continues, or resets during decommissioning and rebuild.</p>
+    <p class="chap-desc">Eq.&nbsp;3 defines the <b>fatigue limit</b>: for each structure, it gives the tallest wave it can withstand after a given number of load changes. The curve below compares the old and new structures. Then we track how load changes <b>build up</b> month by month. Each cumulative-load curve represents one wave height; when it crosses the fatigue limit, the chance of the structure breaking changes from <code>plow</code> to <code>phigh</code>. The solid line marks the first month this happens. The operation mode determines whether accumulated load continues, or resets during decommissioning and rebuild.</p>
 
     <div class="concept">
-      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
+      <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit</span></div>
       <div class="c-formula">Hfail(N) = max( −½·ln(N) + Hrel , Hmin )</div>
-      <p class="c-desc">(Eurocode 3) After <code>N</code> load changes, the tallest wave a structure can still take. As <code>N</code> grows this limit gets lower. The plot below draws this curve for the old and the new structure.</p>
     </div>
 
     <!-- parameters for the fatigue plot -->
@@ -485,7 +334,7 @@
       <div id="p_failure" class="plot"></div>
     </div>
 
-    <p class="chap-desc">Load changes do not disappear: their running total, or <b>cumulative load</b><button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, wears out the steel. Each curve below is one wave height; higher waves are rarer but more damaging. When a curve crosses the Eq.&nbsp;3 limit above, the failure probability changes. Which curve applies depends on the operation mode: extension or repowering keeps the load running, while decommissioning resets it during downtime and starts the rebuilt structure with a stronger fatigue limit.</p>
+    <p class="chap-desc">Load changes do not disappear: their running total, or <b>cumulative load</b>, wears out the steel. Each curve below is one wave height; higher waves are rarer but more damaging. When a curve crosses the Eq.&nbsp;3 limit above, the failure probability changes. Which curve applies depends on the operation mode: extension or repowering keeps the load running, while decommissioning resets it during downtime and starts the rebuilt structure with a stronger fatigue limit.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
@@ -523,7 +372,7 @@
       <code>numOSS · numTurbinesPerOSS + numOSS</code> units, the turbine clusters plus their substation platforms, and each
       of these can also break. In any month whose waves pass the <code>damage</code> threshold, every unit is allowed to
       break with the chance computed in Chapter&nbsp;2; a broken unit then stays offline for 2 months (the repair rule)
-      before it works again. <b>Status</b><button class="tinfo" type="button" data-key="status" title="What is Status?">i</button> (top) is simply the share of units still working, so dips show outages.
+      before it works again. <b>Status</b> (top) is simply the share of units still working, so dips show outages.
       <b>Energy output</b> (bottom) is the total power (MW) of the working units. In Decommissioning and Repowering modes the
       per-turbine output is lowered then raised again (or stepped up) around end-of-life, which is why the curve changes shape there.</p>
 
@@ -1014,82 +863,6 @@ document.querySelectorAll('[data-key]').forEach(el=>{
   });
 })();
 
-/* ---- per-parameter info button + detailed explanation ---- */
-const INFO_TEXT={
-  mode:"The end-of-life strategy, one of the three options in the paper. <b>Decommissioning</b> takes the plant down and later builds a new, modern one, so the output goes down and then back up. <b>Extension</b> keeps the current turbines running at their normal output and just maintains their safety. <b>Repowering</b> keeps the foundations and puts bigger, more efficient turbines on them, so each turbine's output steps up after end-of-life (the paper moves from ~5 MW toward 7.5 MW). In this dashboard, Decommissioning and Repowering change the energy curve, while Extension keeps the normal output.",
-
-  baseYear:"The year the simulated record starts and the reference point used in Eq.&nbsp;2 for how the maximum wave height grows with climate change: the extra amount added to <code>Hsig</code> is <code>Hsig · (0.07 · years since base year + 3)</code>. This represents increasing extremes under climate change.",
-
-  eolYear:"The year the 25-year operating permit expires. The paper treats this as the moment that forces an end-of-life decision. In the plots it is the vertical green 'End of Life' line, and it marks where the energy curve starts to change (in Decommissioning and Repowering).",
-
-  years:"How many years the simulation runs. Each year is split into 12 monthly samples of wave height. Over the simulation horizon, the three end-of-life strategies behave differently.",
-
-  severe:"Which months count as the stormy season. The paper takes Nov, Dec, Jan, Feb and Mar as the rough months and gives them the larger wave size <code>rs1</code>. All other (calm) months use the smaller size <code>rs2</code>. Choosing 'All months' makes every month stormy; the shorter lists make a calmer climate.",
-
-  seed:"The number that controls the random generator. It sets the wave heights, the maximum-wave draws, which units break, and each turbine's output, so the same seed always gives the exact same result. The paper notes the results depend on this randomness and suggests running many times; changing the seed gives a different set of results.",
-
-  rs1:"The wave size used for the <b>stormy</b> months. It is larger than the calm-month wave size. A bigger value means stormy months produce taller waves, so more load above <code>Hmin</code>.",
-
-  rs2:"The wave size used for the <b>calm</b> months. It sets the typical wave height for the calmer part of the year, so it mainly shapes the smaller waves in the distributions.",
-
-  Hmin:"The smallest wave that counts as a load on the steel. Below this, a wave is too small to really wear the structure, so only waves above <code>Hmin</code> are counted. It also sets the lowest (flat) part of the fatigue curve in Eq.&nbsp;3.",
-
-  maxH:"A cap on the climate-change <b>added</b> term in Eq.&nbsp;2 (<code>Hmax = Hsig + added</code>): the extra amount above <code>Hsig</code> is clamped so it never exceeds this value. The reference code caps it at 20 m (<code>if abs(plus) &gt; 20: plus = 20</code>), so <code>Hmax</code> stays at most <code>Hsig + 20</code> and the record stays realistic as the climate term grows over the decades.",
-
-  loadK:"The total number of waves assumed to hit the structure in a month (shown in units of ×10³). It turns the wave-height curve of Eq.&nbsp;1 into a real <b>count</b> of waves at each height (count = curve value × this number). It sets the level of the 'Load changes over time' curve and how fast the cumulative load in Chapter&nbsp;2 builds up. A bigger value means the structure reaches its 'probable failure' date sooner.",
-
-  minH_f:"The smallest wave that counts for the <b>old</b> structure's fatigue curve (Eq.&nbsp;3). Below this height the structure is assumed to survive any number of load changes. Raising it makes the old structure more tolerant of small, frequent waves.",
-
-  maxH_f:"The strength value for the <b>old</b> structure's fatigue curve (Eq.&nbsp;3): it sets how many load changes the structure can take before the allowable wave height drops. Think of it as how strong the old plant was built. A higher value means the old structure lasts longer before its breakage chance jumps to <code>phigh</code>; a lower value makes it wear out faster.",
-
-  minHDe_f:"The smallest wave that counts for the <b>new</b> structures built after decommissioning. Newer designs and stronger steel shift the curve, so this is usually a little different from the old structure's. It is the lowest (flat) part of the new structure's fatigue limit.",
-
-  maxHDe_f:"The strength value for the <b>new</b> structures (Eq.&nbsp;3). Because the new build uses modern designs and stronger steel to handle taller waves, this value is higher than for the old structures, so the rebuilt farm lasts longer. That is why, in the paper, decommissioning gives the second-largest energy output.",
-
-  decomYear:"The year the old plant is fully taken down. In the 'decommission &amp; rebuild' cumulative plot, the load total is reset to zero across the whole gap between this date and the rebuild date, because the structure is gone and no longer wears out.",
-
-  rebuildYear:"The year the new structures are finished and back in service. From that month, the cumulative load for the rebuilt farm starts counting from zero again. The gap between decommissioning and rebuild is the downtime for taking the old plant down (~2 years) plus building the new one (~4 years). That is the main reason decommissioning loses energy compared with repowering.",
-
-  phigh:"The chance of the structure breaking in a month <b>after</b> the cumulative load has passed the structure's Eq.&nbsp;3 limit. It controls how often units break in Chapter&nbsp;3 from that point on. Note: the solid vertical line in the cumulative plot is <b>not</b> set by this value. That line marks the first month the cumulative load passes the structural limit (the moment the model switches from <code>plow</code> to <code>phigh</code>), so moving this slider only changes the probability used from that month on. It does not move the line.",
-
-  plow:"The baseline chance of the structure breaking in months where the cumulative load stays below the structure's limit. It also sets how often a unit breaks in Chapter&nbsp;3 when no limit is exceeded.",
-
-  numOSS:"The number of offshore substation platforms in the network. Each one stands for one wind-farm cluster and is itself a unit that can break and need repair. Together with the turbines per substation, it sets the total number of units: <code>numOSS·numT + numOSS</code>.",
-
-  numT:"The number of turbines per wind-farm cluster. More turbines per cluster means more units that can break, but also more power when they are working.",
-
-  minOut:"The lower end of the output range per turbine (MW), drawn randomly each month for each working turbine. In Decommissioning and Repowering this lower end is itself changed after end-of-life, so it also sets the new output level.",
-
-  maxOut:"The upper end of the output range per turbine (MW). Together with <code>minOut</code> it sets how much the per-turbine output varies. The paper's repowering example raises the average output toward 7.5 MW by moving this value up after end-of-life, and the decommissioning build toward 8.5 MW.",
-
-  damage:"The maximum wave height (H<sub>max</sub>) that a wave must exceed for a unit to be allowed to break. In months where the waves stay below this threshold, no damage happens. This is the gate that decides when damage can occur."
-};
-
-(function addInfoButtons(){
-  document.querySelectorAll('.pctl').forEach(pctl=>{
-    const label=pctl.querySelector('label');
-    const input=pctl.querySelector('input,select');
-    if(!label||!input) return;
-    const key=input.dataset.key;
-    const text=INFO_TEXT[key];
-    if(!text) return;
-    const btn=document.createElement('button');
-    btn.type='button'; btn.className='pinfo'; btn.title='What does this parameter do?';
-    btn.setAttribute('aria-expanded','false'); btn.textContent='\u2139';
-    const box=document.createElement('div'); box.className='pinfo-box'; box.innerHTML=text;
-    btn.addEventListener('click',ev=>{
-      ev.stopPropagation();
-      const open=box.classList.toggle('open');
-      btn.classList.toggle('open',open);
-      btn.setAttribute('aria-expanded',open?'true':'false');
-    });
-    const val=label.querySelector('.val');
-    if(val)label.insertBefore(btn,val);   // right after the name, before the value
-    else label.appendChild(btn);         // no value: right after the name text
-    pctl.insertBefore(box,input);
-  });
-})();
-
 /* ---- sync the mode group: two 2-option fields (cumulative + network) <-> one 3-option field (energy) ---- */
 (function syncModeGroup(){
   const two=[document.getElementById('mode'),document.getElementById('eolMode')].filter(Boolean);
@@ -1122,75 +895,6 @@ const INFO_TEXT={
 setupLegends();
 recompute();
 
-/* ---- info side panel: toggle, close, keyboard, backdrop ---- */
-(function infoPanel(){
-  const panel   = document.getElementById('sidePanel');
-  const toggle  = document.getElementById('panelToggle');
-  const closeBtn= document.getElementById('panelClose');
-  const backdrop= document.getElementById('panelBackdrop');
-  if(!panel||!toggle) return;
-  function setPanel(open){
-    panel.classList.toggle('open',open);
-    backdrop.classList.toggle('open',open);
-    toggle.setAttribute('aria-expanded', open?'true':'false');
-    panel.setAttribute('aria-hidden', open?'false':'true');
-    if(open) panel.scrollTop=0;
-  }
-  toggle.addEventListener('click',()=>setPanel(!panel.classList.contains('open')));
-  closeBtn.addEventListener('click',()=>setPanel(false));
-  backdrop.addEventListener('click',()=>setPanel(false));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')setPanel(false);});
-})();
-
-/* ---- info panel: collapsible sub-sections (Key terms / Functions) ---- */
-(function spSubsections(){
-  const KEY='offshoreDashboard.spSubs';
-  let saved={}; try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){saved={};}
-  document.querySelectorAll('#sidePanel .sp-section').forEach(sec=>{
-    const key=sec.dataset.sp;
-    const head=sec.querySelector('.sp-sec-head');
-    if(!head) return;
-    const apply=open=>{
-      sec.setAttribute('data-sp-open',open?'true':'false');
-      head.setAttribute('aria-expanded',open?'true':'false');
-    };
-    if(key && key in saved) apply(saved[key]);          // restore last state
-    else apply(true);                                   // default: open
-    head.addEventListener('click',()=>{
-      const nowOpen=sec.getAttribute('data-sp-open')!=='true';
-      apply(nowOpen);
-      if(key){saved[key]=nowOpen;try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}}
-    });
-  });
-})();
-
-/* ---- inline term-info "i" buttons: explanation drops in place after the term ---- */
-(function refBadges(){
-  const panel=document.getElementById('sidePanel');
-  if(!panel) return;
-  function openSection(key){
-    panel.classList.add('open');
-    const bd=document.getElementById('panelBackdrop'); if(bd)bd.classList.add('open');
-    const tg=document.getElementById('panelToggle'); if(tg)tg.setAttribute('aria-expanded','true');
-    panel.setAttribute('aria-hidden','false');
-    const sec=panel.querySelector('.sp-section[data-sp="'+key+'"]');
-    if(!sec) return;
-    sec.setAttribute('data-sp-open','true');
-    const head=sec.querySelector('.sp-sec-head'); if(head)head.setAttribute('aria-expanded','true');
-    setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}),280);
-  }
-  document.querySelectorAll('.ref-badge[data-target]').forEach(b=>{
-    b.addEventListener('click',()=>openSection(b.dataset.target));
-  });
-  // inline "i" term buttons: open the Info panel on the matching section (default: Key terms)
-  document.querySelectorAll('.tinfo[data-key]').forEach(b=>{
-    b.addEventListener('click',ev=>{ev.stopPropagation();openSection('keyterms');});
-  });
-  // inline "i" equation buttons: open the Info panel on the matching section (default: Functions)
-  document.querySelectorAll('.c-info[data-target]').forEach(b=>{
-    b.addEventListener('click',ev=>{ev.stopPropagation();openSection(b.dataset.target);});
-  });
-})();
 </script>
 </body>
 </html>
