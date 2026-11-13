@@ -168,6 +168,9 @@
   .pctl{margin:8px 0}
   .pctl label{display:flex;justify-content:flex-start;align-items:baseline;gap:8px;
     font-family:'Segoe UI',system-ui,sans-serif;font-size:13.5px;color:#334155;margin-bottom:3px}
+  .pctl label .exact-value{flex:0 0 84px;width:84px;margin-left:auto;padding:3px 6px;
+    background:#fff;color:var(--ink);border:1px solid #cbd5e1;border-radius:6px;
+    font-size:12.5px;font-family:'Segoe UI',sans-serif;font-variant-numeric:tabular-nums}
   .pctl label .val{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
   .pctl input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
   .pctl select,.pctl input[type=number]{width:100%;padding:7px 9px;background:#fff;color:var(--ink);
@@ -972,6 +975,22 @@ const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'11,12,1
   };
   document.querySelectorAll('input[type=range]').forEach(inp=>{
     const min=+inp.min, max=+inp.max, step=niceStep(max-min,6);
+    const label=inp.closest('.pctl')?.querySelector('label');
+    if(label){
+      const exact=document.createElement('input');
+      exact.type='number'; exact.className='exact-value';
+      exact.min=inp.min; exact.max=inp.max; exact.step=inp.step; exact.value=inp.value;
+      label.appendChild(exact);
+      inp.addEventListener('input',()=>{exact.value=inp.value;});
+      exact.addEventListener('input',()=>{
+        if(exact.value===''||!exact.validity.valid)return;
+        inp.value=exact.value;
+        inp.dispatchEvent(new Event('input',{bubbles:true}));
+      });
+      exact.addEventListener('change',()=>{
+        if(!exact.validity.valid)exact.value=inp.value;
+      });
+    }
     const ticks=[];
     for(let v=Math.ceil(min/step)*step; v<=max+1e-9; v+=step) ticks.push(+v.toFixed(6));
     // add the true endpoints only if they aren't already represented / not cramped in
