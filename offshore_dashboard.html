@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -411,7 +411,7 @@
       <div class="concept">
         <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">From typical height to maximum height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">Hmax = Hsig + | U( 0 , Hsig · (0.07·(year − baseYear) + 3) ) |</div>
-        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years due to climate change, and is capped at <code>maxH</code>.</p>
+        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years due to climate change and is capped at <b>20&nbsp;m</b> (so <code>Hmax ≤ Hsig + 20</code>). That cap is not stated in the paper — it comes from the reference code and keeps the 60-year record realistic as the climate term grows.</p>
       </div>
     </div>
 
@@ -431,11 +431,6 @@
           <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="1.5"></div>
         <div class="pctl"><label>Calm-month wave size (rs2, m)</label>
           <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.7"></div>
-        <div class="pctl pctl-fixed"><label>Cap on the climate term in Eq. 2 (m)</label>
-          <input type="number" id="maxH" data-key="maxH" value="20" disabled readonly
-            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
-          <div class="hint">Fixed — not stated in the paper (comes from the reference code). The extra amount above <code>Hsig</code> in Eq.&nbsp;2 is clamped to this value so the 60-year record stays realistic as the climate term grows.</div>
-        </div>
       </div>
     </div>
 
@@ -482,15 +477,10 @@
           <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="8"></div>
         <div class="pctl"><label>Old structure: strength (m)</label>
           <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="17"></div>
-        <div class="pctl pctl-fixed"><label>New structure: smallest wave that counts (m)</label>
-          <input type="number" id="minHDe_f" data-key="minHDe_f" value="10" disabled readonly
-            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
-          <div class="hint">Fixed — the paper only says the new build uses “new designs and steel classes”, giving no number.</div>
-        </div>
-        <div class="pctl pctl-fixed"><label>New structure: strength (m)</label>
-          <input type="number" id="maxHDe_f" data-key="maxHDe_f" value="19" disabled readonly
-            style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
-          <div class="hint">Fixed — set higher than the old structure (17 m) so the rebuilt farm outlasts it, matching the paper’s finding.</div>
+        <div class="pctl"><label>New structure: smallest wave that counts (m)</label>
+          <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="10"></div>
+        <div class="pctl"><label>New structure: strength (m)</label>
+          <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="19">
         </div>
       </div>
     </div>
@@ -660,7 +650,7 @@ function readParams(){
     mode:g('energyMode').value, baseYear:n('baseYear'), eol:localTS(n('eolYear'),1,1),
     years:n('years'), severe, seed:Math.floor(n('seed')),
     rs1:n('rs1'), rs2:n('rs2'), Hmin:n('Hmin'), maxH:20, loadChanges:n('loadK')*1000,
-    minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:10, maxHDe_f:19,
+    minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:n('minHDe_f'), maxHDe_f:n('maxHDe_f'),
     decom:localTS(n('decomYear'),1,1), rebuild:localTS(n('rebuildYear'),1,1),
     phigh:n('phigh'), plow:n('plow'),
     numOSS:n('numOSS'), numT:n('numT'), minOut:n('minOut'), maxOut:n('maxOut'), damage:15
@@ -673,7 +663,7 @@ function syncLabels(){
   set('v_Hmin',g('Hmin').value); set('v_maxH','20');
   set('v_loadK',g('loadK').value);
   set('v_minH_f',g('minH_f').value); set('v_maxH_f',g('maxH_f').value);
-  set('v_minHDe_f','10'); set('v_maxHDe_f','19');
+  set('v_minHDe_f',g('minHDe_f').value); set('v_maxHDe_f',g('maxHDe_f').value);
   set('v_decomYear',g('decomYear').value); set('v_rebuildYear',g('rebuildYear').value);
   set('v_phigh',(+g('phigh').value).toFixed(2)); set('v_plow',(+g('plow').value).toFixed(2));
   set('v_numOSS',g('numOSS').value); set('v_numT',g('numT').value);
@@ -969,7 +959,7 @@ document.querySelectorAll('[data-key]').forEach(el=>{
   el.addEventListener('input',onChange);el.addEventListener('change',onChange);});
 
 const DEFAULTS={mode:'Decom',baseYear:2015,eolYear:2040,years:60,severe:'11,12,1,2,3',seed:0,
-  rs1:1.5,rs2:0.7,Hmin:8,loadK:259,minH_f:8,maxH_f:17,
+  rs1:1.5,rs2:0.7,Hmin:8,loadK:259,minH_f:8,maxH_f:17,minHDe_f:10,maxHDe_f:19,
   decomYear:2042,rebuildYear:2050,phigh:0.5,plow:0.1,numOSS:3,numT:60,minOut:4,maxOut:6};
 
 /* ---- axis with min / mid / max ticks under every range slider ---- */
