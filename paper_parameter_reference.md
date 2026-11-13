@@ -8,7 +8,6 @@ This is a paper-only lookup for the parameters in `offshore_dashboard_exc.html`.
 |---|---|---|
 | Simulation start year (`baseYear`) | 2015; Section 4.1, Figure 3b, p. 6 | “The synthetic wave data for a period of 60 years, starting in 2015” |
 | Simulation duration (`years`) | 60 years; Section 4.1, p. 6; Figure 3b | “over a large time span of 60 years” |
-| Random seed (`seed`, hidden) | No fixed seed stated; discussion of randomness and repeated simulations, p. 9 | “Repeated simulations can improve the results and the interpretation.” |
 | Stormy months (`severe`) | November-March; Section 4.1, pp. 5-6 | “November, December, January, February, and March are assumed to be severe weather months” |
 | Stormy-month wave scale (`rs1`) | `σ = 1.5`, upper end of the seasonal range; Section 4.1, pp. 5-6. Figure 3 uses average `σ = 1.1`, p. 7. | “severe weather months with large σ” |
 | Calm-month wave scale (`rs2`) | `σ = 0.7`, lower end of the seasonal range; Section 4.1, pp. 5-6 | “varies between σ = 0.7 and σ = 1.5, depending on the season” |
