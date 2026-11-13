@@ -160,8 +160,8 @@
     <div class="block">
       <div class="bhead">Structure</div>
       <div class="pipeline">
-        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b>: build a record of waves, count how many load changes each month puts on the steel, and show the <b>fatigue limit</b> (how much load a structure can survive).</span></div>
-        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Cumulative load</b>: add the load up month by month and find <b>when</b> the structure reaches its "probable failure" point.</span></div>
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b>: build a record of waves and estimate the monthly load changes on the steel.</span></div>
+        <div class="pipe"><span class="pn">2</span><span class="pt"><b>Fatigue limit &amp; cumulative load</b>: compare the old and new structures' limits, then add load month by month to find when the structure reaches probable failure.</span></div>
         <div class="pipe"><span class="pn">3</span><span class="pt"><b>Network &amp; energy</b>: turn those failure chances into turbine outages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
       </div>
     </div>
@@ -178,9 +178,6 @@
       </div>
     </div>-->
 
-    <p class="note">Drag any slider and every figure updates live. The whole chain is recomputed. Legends sit to the side
-      and scroll, so every curve label stays visible. All randomness uses a fixed seed, so results are reproducible.
-      </p>
   </header>
 
   <!-- ============ Disabled legacy functions section ============ -->
@@ -334,7 +331,7 @@
       <div id="p_failure" class="plot"></div>
     </div>
 
-    <p class="chap-desc">Load changes do not disappear: their running total, or <b>cumulative load</b>, wears out the steel. Each curve below is one wave height; higher waves are rarer but more damaging. When a curve crosses the Eq.&nbsp;3 limit above, the failure probability changes. Which curve applies depends on the operation mode: extension or repowering keeps the load running, while decommissioning resets it during downtime and starts the rebuilt structure with a stronger fatigue limit.</p>
+    <p class="chap-desc">The load changes running total, or <b>cumulative load</b>, wears out the steel. Each curve below is one wave height; higher waves are rarer but more damaging. When a curve crosses the Eq.&nbsp;3 limit above, the failure probability changes. Which curve applies depends on the operation mode: extension or repowering keeps the load running, while decommissioning resets it during downtime and starts the rebuilt structure with a stronger fatigue limit.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
@@ -372,9 +369,7 @@
       <code>numOSS · numTurbinesPerOSS + numOSS</code> units, the turbine clusters plus their substation platforms, and each
       of these can also break. In any month whose waves pass the <code>damage</code> threshold, every unit is allowed to
       break with the chance computed in Chapter&nbsp;2; a broken unit then stays offline for 2 months (the repair rule)
-      before it works again. <b>Status</b> (top) is simply the share of units still working, so dips show outages.
-      <b>Energy output</b> (bottom) is the total power (MW) of the working units. In Decommissioning and Repowering modes the
-      per-turbine output is lowered then raised again (or stepped up) around end-of-life, which is why the curve changes shape there.</p>
+      before it works again. <b>Status</b> (top) is simply the share of units still working, so dips show outages.</p>
 
     <!-- parameters for the OSS/energy chapter -->
     <div class="params">
