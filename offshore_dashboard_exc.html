@@ -303,13 +303,12 @@
       </p>
       <p class="btext">The risk the paper measures is <b>taller waves caused by climate change</b>,
         because taller waves wear out (fatigue) the steel structures over decades.</p>
-      <p class="btext">The simulation starts in <b>2015</b> and runs for <b>60 years</b> (720 months). </p>
     </div>
 
     <div class="block">
       <div class="bhead">Structure</div>
       <div class="pipeline">
-        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b>: build a 60-year record of waves, count how many load changes each month puts on the steel, and show the <b>fatigue limit</b> (how much load a structure can survive).</span></div>
+        <div class="pipe"><span class="pn">1</span><span class="pt"><b>Waves &amp; load</b>: build a record of waves, count how many load changes each month puts on the steel, and show the <b>fatigue limit</b> (how much load a structure can survive).</span></div>
         <div class="pipe"><span class="pn">2</span><span class="pt"><b>Cumulative load</b>: add the load up month by month and find <b>when</b> the structure reaches its "probable failure" point.</span></div>
         <div class="pipe"><span class="pn">3</span><span class="pt"><b>Network &amp; energy</b>: turn those failure chances into turbine outages across a network of platforms, then read off <b>status</b> and <b>energy output</b>.</span></div>
       </div>
@@ -376,15 +375,15 @@
   </section>
   -->
 
-  <!-- Hidden global inputs: base year, sim length, random seed (fixed; stated in intro) -->
-  <input type="hidden" id="baseYear" data-key="baseYear" value="2015">
-  <input type="hidden" id="years" data-key="years" value="60">
+  <!-- Hidden global inputs: base year, simulation length, random seed -->
+  <input type="hidden" id="baseYear" data-key="baseYear" value="2012">
+  <input type="hidden" id="years" data-key="years" value="53">
   <input type="hidden" id="seed" data-key="seed" value="23">
 
   <!-- ============ CHAPTER 2 · Generate wave heights & Plot data ============ -->
   <section class="chapter">
     <div class="chap-head"><span class="chap-num">1</span><h2>Build the wave record and estimate the monthly load</h2></div>
-    <p class="chap-desc">First we create a realistic 60-year sea record.
+    <p class="chap-desc">First we create a realistic sea record.
       Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (the usual wave size) and a taller
       maximum wave height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, which grows over the years to model climate change). From that we
       count how many waves hit the structure (load changes<button class="tinfo" type="button" data-key="loadchange" title="What is a load change?">i</button>) each month, only counting waves higher than <code>Hmin</code>, and plot it all.
@@ -400,7 +399,7 @@
       <div class="concept">
         <div class="c-top"><span class="c-tag">Eq. 2</span><span class="c-name">From typical height to maximum height</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
         <div class="c-formula">Hmax = Hsig + | U( 0 , Hsig · (0.07·(year − baseYear) + 3) ) |</div>
-        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years due to climate change and is capped at <b>20&nbsp;m</b> (so <code>Hmax ≤ Hsig + 20</code>). That cap is not stated in the paper — it comes from the reference code and keeps the 60-year record realistic as the climate term grows.</p>
+        <p class="c-desc">Turns a month's usual height <code>Hsig</code> into its taller maximum <code>Hmax</code>. The extra amount grows with the years due to climate change and is capped to keep the simulated record realistic as the climate term grows.</p>
       </div>
     </div>
 
@@ -417,9 +416,9 @@
           </select>
         </div>
         <div class="pctl"><label>Stormy-month wave size (rs1, m)</label>
-          <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="2.4"></div>
+          <input type="range" id="rs1" data-key="rs1" min="0.5" max="4" step="0.1" value="3.1"></div>
         <div class="pctl"><label>Calm-month wave size (rs2, m)</label>
-          <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="1.2"></div>
+          <input type="range" id="rs2" data-key="rs2" min="0.2" max="3" step="0.1" value="0.9"></div>
       </div>
     </div>
 
@@ -440,9 +439,9 @@
       <div class="ph">Parameters — load</div>
       <div class="pgrid">
         <div class="pctl"><label>Waves per month (×10³)</label>
-          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="1" value="420"></div>
+          <input type="range" id="loadK" data-key="loadK" min="10" max="5000" step="1" value="1734"></div>
         <div class="pctl"><label>Smallest wave that counts, H<sub>min</sub> (m)</label>
-          <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="6"></div>
+          <input type="range" id="Hmin" data-key="Hmin" min="2" max="12" step="1" value="11"></div>
       </div>
     </div>
 
@@ -463,13 +462,13 @@
       <div class="ph">Parameters — fatigue limit (Eq. 3)</div>
       <div class="pgrid">
         <div class="pctl"><label>Old structure: smallest wave that counts (m)</label>
-          <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="10"></div>
+          <input type="range" id="minH_f" data-key="minH_f" min="4" max="14" step="1" value="5"></div>
         <div class="pctl"><label>Old structure: strength (m)</label>
-          <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="20"></div>
+          <input type="range" id="maxH_f" data-key="maxH_f" min="10" max="26" step="1" value="23"></div>
         <div class="pctl"><label>New structure: smallest wave that counts (m)</label>
-          <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="7"></div>
+          <input type="range" id="minHDe_f" data-key="minHDe_f" min="4" max="14" step="1" value="12"></div>
         <div class="pctl"><label>New structure: strength (m)</label>
-          <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="24">
+          <input type="range" id="maxHDe_f" data-key="maxHDe_f" min="12" max="28" step="1" value="25">
         </div>
       </div>
     </div>
@@ -505,11 +504,11 @@
             The full choice (Decommissioning vs Extension vs Repowering) is made in the network chapter below. These two fields stay in sync.
           </div></div>
         <div class="pctl"><label>End-of-life year</label>
-          <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2038" step="1"></div>
+          <input type="number" id="eolYear" data-key="eolYear" min="2020" max="2050" value="2044" step="1"></div>
         <div class="pctl"><label>Year decommissioning is finished</label>
-          <input type="number" id="decomYear" data-key="decomYear" min="2030" max="2055" value="2041" step="1"></div>
+          <input type="number" id="decomYear" data-key="decomYear" min="2030" max="2055" value="2048" step="1"></div>
         <div class="pctl"><label>Year the rebuild is finished</label>
-          <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2048" step="1"></div>
+          <input type="number" id="rebuildYear" data-key="rebuildYear" min="2040" max="2065" value="2053" step="1"></div>
       </div>
     </div>
 
@@ -545,17 +544,17 @@
             The full choice (Decommissioning vs Extension vs Repowering) is made above the energy plot. These fields stay in sync.
           </div></div>
         <div class="pctl"><label>Number of substations</label>
-          <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="4"></div>
+          <input type="range" id="numOSS" data-key="numOSS" min="1" max="6" step="1" value="2"></div>
         <div class="pctl"><label>Turbines per substation</label>
-          <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="45"></div>
+          <input type="range" id="numT" data-key="numT" min="10" max="100" step="5" value="85"></div>
         <div class="pctl"><label>Chance of a unit breaking while below the limit (plow)</label>
-          <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.2"></div>
+          <input type="range" id="plow" data-key="plow" min="0" max="0.5" step="0.05" value="0.35"></div>
         <div class="pctl"><label>Chance of a unit breaking once the limit is passed (phigh)</label>
-          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.65"></div>
+          <input type="range" id="phigh" data-key="phigh" min="0.1" max="0.9" step="0.05" value="0.8"></div>
         <div class="pctl pctl-fixed" style="grid-column:1 / -1"><label>Only break units when H<sub>max</sub> is above (m)</label>
-          <input type="number" id="damage" data-key="damage" value="15" disabled readonly
+          <input type="number" id="damage" data-key="damage" value="12" disabled readonly
             style="width:90px;padding:7px 9px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'Segoe UI',sans-serif">
-          <div class="hint">Fixed — not stated in the paper. In months where the maximum wave stays below this threshold, no damage can occur at all.</div>
+          <div class="hint">In months where the maximum wave stays below this threshold, no damage can occur.</div>
         </div>
       </div>
     </div>
@@ -580,9 +579,9 @@
             Full choice of the three end-of-life strategies, kept in sync with the mode fields in the cumulative and network chapters.
           </div></div>
         <div class="pctl"><label>Minimum output per turbine (MW)</label>
-          <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="5"></div>
+          <input type="range" id="minOut" data-key="minOut" min="2" max="8" step="0.5" value="3"></div>
         <div class="pctl"><label>Maximum output per turbine (MW)</label>
-          <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="8.5"></div>
+          <input type="range" id="maxOut" data-key="maxOut" min="4" max="15" step="0.5" value="11.5"></div>
       </div>
     </div>
 
@@ -641,7 +640,7 @@ function readParams(){
     minH_f:n('minH_f'), maxH_f:n('maxH_f'), minHDe_f:n('minHDe_f'), maxHDe_f:n('maxHDe_f'),
     decom:localTS(n('decomYear'),1,1), rebuild:localTS(n('rebuildYear'),1,1),
     phigh:n('phigh'), plow:n('plow'),
-    numOSS:n('numOSS'), numT:n('numT'), minOut:n('minOut'), maxOut:n('maxOut'), damage:15
+    numOSS:n('numOSS'), numT:n('numT'), minOut:n('minOut'), maxOut:n('maxOut'), damage:n('damage')
   };
 }
 function syncLabels(){
@@ -656,7 +655,7 @@ function syncLabels(){
   set('v_phigh',(+g('phigh').value).toFixed(2)); set('v_plow',(+g('plow').value).toFixed(2));
   set('v_numOSS',g('numOSS').value); set('v_numT',g('numT').value);
   set('v_minOut',g('minOut').value); set('v_maxOut',g('maxOut').value);
-  set('v_damage','15');
+  set('v_damage',g('damage').value);
 }
 
 /* ============================================================= model */
@@ -1023,11 +1022,11 @@ document.querySelectorAll('[data-key]').forEach(el=>{
 const INFO_TEXT={
   mode:"The end-of-life strategy, one of the three options in the paper. <b>Decommissioning</b> takes the plant down and later builds a new, modern one, so the output goes down and then back up. <b>Extension</b> keeps the current turbines running at their normal output and just maintains their safety. <b>Repowering</b> keeps the foundations and puts bigger, more efficient turbines on them, so each turbine's output steps up after end-of-life (the paper moves from ~5 MW toward 7.5 MW). In this dashboard, Decommissioning and Repowering change the energy curve, while Extension keeps the normal output.",
 
-  baseYear:"The year the simulated record starts. It is the reference point of the 60-year dataset and, importantly, the starting year used in Eq.&nbsp;2 for how the maximum wave height grows with climate change: the extra amount added to <code>Hsig</code> is <code>Hsig · (0.07 · years since base year + 3)</code>. So the further a month is from the base year, the more likely it is to have an extreme maximum wave. This represents increasing extremes under climate change.",
+  baseYear:"The year the simulated record starts and the reference point used in Eq.&nbsp;2 for how the maximum wave height grows with climate change: the extra amount added to <code>Hsig</code> is <code>Hsig · (0.07 · years since base year + 3)</code>. This represents increasing extremes under climate change.",
 
   eolYear:"The year the 25-year operating permit expires. The paper treats this as the moment that forces an end-of-life decision. In the plots it is the vertical green 'End of Life' line, and it marks where the energy curve starts to change (in Decommissioning and Repowering).",
 
-  years:"How many years the simulation runs. Each year is split into 12 months, so 60 years gives 720 monthly samples of wave height. The paper looks 60 years ahead on purpose, because predicting waves that far ahead is the hard part; over that span the three end-of-life strategies clearly behave differently.",
+  years:"How many years the simulation runs. Each year is split into 12 monthly samples of wave height. Over the simulation horizon, the three end-of-life strategies behave differently.",
 
   severe:"Which months count as the stormy season. The paper takes Nov, Dec, Jan, Feb and Mar as the rough months and gives them the larger wave size <code>rs1</code>. All other (calm) months use the smaller size <code>rs2</code>. Choosing 'All months' makes every month stormy; the shorter lists make a calmer climate.",
 
@@ -1067,7 +1066,7 @@ const INFO_TEXT={
 
   maxOut:"The upper end of the output range per turbine (MW). Together with <code>minOut</code> it sets how much the per-turbine output varies. The paper's repowering example raises the average output toward 7.5 MW by moving this value up after end-of-life, and the decommissioning build toward 8.5 MW.",
 
-  damage:"The maximum wave height (H<sub>max</sub>) that a wave must exceed for a unit to be allowed to break. In months where the waves stay below this threshold, no damage happens at all. The paper only applies breakage in months where H<sub>max</sub> is above 15 m, so this is the gate that decides when damage can occur."
+  damage:"The maximum wave height (H<sub>max</sub>) that a wave must exceed for a unit to be allowed to break. In months where the waves stay below this threshold, no damage happens. This is the gate that decides when damage can occur."
 };
 
 (function addInfoButtons(){
