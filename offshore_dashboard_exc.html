@@ -712,7 +712,7 @@ function plotFailure(P){const x=[];for(let e=0;e<=10;e+=0.1)x.push(Math.pow(10,e
   ],Lf);}
 
 function plotCum(id,cum,S,tdeg,P){const N=S.nCols,d=[];
-  for(let c=0;c<N;c++)d.push({x:S.date.map(dateLabel),y:cum.map(r=>r[c]),mode:'lines',type:'scatter',
+  for(let c=0;c<N;c++)d.push({x:S.date.map(dateLabel),y:cum.map(r=>r[c]===0?null:r[c]),mode:'lines',type:'scatter',
     line:{color:viridis(c,N),width:1.5},name:'H='+(P.Hmin+c),
     hovertemplate:'H='+(P.Hmin+c)+'<br>cum. load=%{y:,.0f}<extra></extra>'});
   const eolL=dateLabel(P.eol),tL=dateLabel(S.date[tdeg]);
