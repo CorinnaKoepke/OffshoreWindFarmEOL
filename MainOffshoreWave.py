@@ -277,7 +277,12 @@ tdeg, prop = degradationTime(WTlist, wmin, wmax, phigh, plow)
 wmin = 10
 wmax = 19
 WTlist = WaveTimeCumSumDe
-tdegDe, propDe = degradationTime(WTlist, wmin, wmax, phigh, plow)
+# Before the new structure is built (up to Rebuild) the old one is what's
+# taking the waves, so use its fatigue limit. After Rebuild, use the new
+# structure's (higher) limit on the freshly-reset load total.
+tdegDeNew, propDeNew = degradationTime(WaveTimeCumSumDe, wmin, wmax, phigh, plow)
+propDe = [(prop[t] if date_list[t] <= Rebuild else propDeNew[t]) for t in range(len(date_list))]
+tdegDe = propDe.index(phigh) if phigh in propDe else len(date_list)-1
 
             
 #################################################################
