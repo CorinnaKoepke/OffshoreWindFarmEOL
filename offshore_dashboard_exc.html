@@ -387,8 +387,7 @@
       Each month gets a significant wave height <code>Hsig</code><button class="tinfo" type="button" data-key="hsig" title="What is Hsig?">i</button> (the usual wave size) and a taller
       maximum wave height <code>Hmax</code><button class="tinfo" type="button" data-key="hmax" title="What is Hmax?">i</button> (the extreme, which grows over the years to model climate change). From that we
       count how many waves hit the structure (load changes<button class="tinfo" type="button" data-key="loadchange" title="What is a load change?">i</button>) each month, only counting waves higher than <code>Hmin</code>, and plot it all.
-      The last figure compares the <b>fatigue limits</b> of the old structures versus the new build, that is, how many load
-      changes each can survive at a given wave height. These numbers drive everything that follows.</p>
+      These wave and load estimates feed the fatigue-limit and cumulative-load analysis in Chapter&nbsp;2.</p>
 
     <div class="concepts">
       <div class="concept">
@@ -451,6 +450,13 @@
       <div id="p_load" class="plot"></div>
     </div>
 
+  </section>
+
+  <!-- ============ CHAPTER 2 · Fatigue limit and cumulative sum ============ -->
+  <section class="chapter">
+    <div class="chap-head"><span class="chap-num">2</span><h2>Set the fatigue limit and add up load changes</h2></div>
+    <p class="chap-desc">Eq.&nbsp;3 defines the <b>fatigue limit</b>: for each structure, it gives the tallest wave it can withstand after a given number of load changes. The curve below compares the old and new structures. Then we track how load changes <b>build up</b> month by month. Each cumulative-load curve represents one wave height; when it crosses the fatigue limit, the chance of the structure breaking changes from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button>. The solid line marks the first month this happens. The operation mode determines whether accumulated load continues, or resets during decommissioning and rebuild.</p>
+
     <div class="concept">
       <div class="c-top"><span class="c-tag">Eq. 3</span><span class="c-name">Fatigue limit</span><button class="c-info" type="button" data-target="functions" title="Full reference in the Info panel">i</button></div>
       <div class="c-formula">Hfail(N) = max( −½·ln(N) + Hrel , Hmin )</div>
@@ -478,18 +484,8 @@
       <div class="figsub">Eq.&nbsp;3 fatigue limit for the old and the new structure (x-axis is logarithmic). The shaded box spans the p&nbsp;=&nbsp;0.1 / 0.5 failure range.</div>
       <div id="p_failure" class="plot"></div>
     </div>
-  </section>
 
-  <!-- ============ CHAPTER 2 · Cumulative sum ============ -->
-  <section class="chapter">
-    <div class="chap-head"><span class="chap-num">2</span><h2>Add up the load changes over time</h2></div>
-    <p class="chap-desc">Load changes do not disappear. They <b>build up</b>. It is that running total (cumulative load)<button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, added up
-      month by month, that wears out the steel. Each curve here is one wave height: the higher the wave, the rarer and
-      more damaging it is. The moment that height's running total crosses the limit set by Eq.&nbsp;3<button class="tinfo" type="button" data-key="eq3" title="What is Eq. 3?">i</button>, the chance of the structure breaking in that month
-      jumps from <code>plow</code> to <code>phigh</code><button class="tinfo" type="button" data-key="phighplow" title="What are phigh / plow?">i</button>. The solid "probable failure"
-      line marks that first month. Which curve you see depends on the <b>operation mode</b> above: keep the structure running and the load only ever
-      grows; decommission it and the running total resets to zero during the downtime, then the rebuild is stronger, pushing
-      the probable-failure date further out. </p>
+    <p class="chap-desc">Load changes do not disappear: their running total, or <b>cumulative load</b><button class="tinfo" type="button" data-key="cumload" title="What is cumulative load?">i</button>, wears out the steel. Each curve below is one wave height; higher waves are rarer but more damaging. When a curve crosses the Eq.&nbsp;3 limit above, the failure probability changes. Which curve applies depends on the operation mode: extension or repowering keeps the load running, while decommissioning resets it during downtime and starts the rebuilt structure with a stronger fatigue limit.</p>
 
     <!-- parameters for cumulative -->
     <div class="params">
